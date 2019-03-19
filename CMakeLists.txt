@@ -177,7 +177,17 @@ if(MSVC)
     OPTION(FREECAD_RELEASE_SEH "Enable Structured Exception Handling for Release version." ON)
     OPTION(FREECAD_LIBPACK_USE "Use the LibPack to Build FreeCAD (only Win32 so far)." ON)
     OPTION(FREECAD_LIBPACK_USEPYSIDE "Use PySide in LibPack rather to PyQt and Swig." ON)
-    set(FREECAD_LIBPACK_DIR ${CMAKE_SOURCE_DIR} CACHE PATH  "Directory of the FreeCAD LibPack")
+    IF(DEFINED ENV{FREECAD_LIBPACK_DIR})
+      set(FREECAD_LIBPACK_DIR $ENV{FREECAD_LIBPACK_DIR} CACHE PATH  "Directory of the FreeCAD LibPack")
+      MESSAGE(STATUS "Found libpack env variable: ${FREECAD_LIBPACK_DIR}")
+      IF(EXISTS ${FREECAD_LIBPACK_DIR}/lib/Qt53DCore.lib)
+        OPTION(BUILD_QT5 "Build with Qt5." ON)
+      ELSE()
+        OPTION(BUILD_QT5 "Build with Qt5." ON)
+      ENDIF()
+    ELSE()
+        set(FREECAD_LIBPACK_DIR ${CMAKE_SOURCE_DIR} CACHE PATH  "Directory of the FreeCAD LibPack")
+    ENDIF()
     OPTION(BUILD_USE_PCH "Activate precompiled headers where it's used." ON)
 else(MSVC)
     OPTION(FREECAD_LIBPACK_USE "Use the LibPack to Build FreeCAD (only Win32 so far)." OFF)
@@ -367,6 +377,7 @@ if(FREECAD_LIBPACK_USE)
     find_file(FREECAD_LIBPACK_CHECKFILE10X boost_program_options-vc110-mt-1_55.lib ${FREECAD_LIBPACK_DIR}/lib )
     find_file(FREECAD_LIBPACK_CHECKCUSTOM boost_program_options-vc90-mt-gd-1_41.lib ${FREECAD_LIBPACK_DIR}/lib )
     find_file(FREECAD_LIBPACK_CHECKFILE_CLBUNDLER MANIFEST.db ${FREECAD_LIBPACK_DIR})
+    find_file(FREECAD_LIBPACK_CHECKFILE12X boost_program_options-vc141-mt-x64-1_67.lib ${FREECAD_LIBPACK_DIR}/lib)
 
     # don't show them in the GUI
     set(FREECAD_LIBPACK_CHECKFILE6X "${FREECAD_LIBPACK_CHECKFILE6X}" CACHE INTERNAL "Find libpack")
@@ -376,6 +387,7 @@ if(FREECAD_LIBPACK_USE)
     set(FREECAD_LIBPACK_CHECKFILE10X "${FREECAD_LIBPACK_CHECKFILE10X}" CACHE INTERNAL "Find libpack")
     set(FREECAD_LIBPACK_CHECKCUSTOM "${FREECAD_LIBPACK_CHECKCUSTOM}" CACHE INTERNAL "Find libpack")
     set(FREECAD_LIBPACK_CHECKFILE_CLBUNDLER "${FREECAD_LIBPACK_CHECKFILE_CLBUNDLER}" CACHE INTERNAL "Find libpack")
+    set(FREECAD_LIBPACK_CHECKFILE12X "${FREECAD_LIBPACK_CHECKFILE12X}" CACHE INTERNAL "Find libpack")
 
     IF(FREECAD_LIBPACK_CHECKFILE_CLBUNDLER)
         set(FREECAD_LIBPACK_VERSION "CLbundler" CACHE STRING "Displays if the libpack has been found" FORCE)
@@ -397,6 +409,13 @@ if(FREECAD_LIBPACK_USE)
     ELSEIF(FREECAD_LIBPACK_CHECKCUSTOM)
         set(FREECAD_LIBPACK_VERSION "Custom" CACHE STRING "Displays if the libpack has been found" FORCE)
         include(cMake/UseLibPackCustom.cmake)
+    ELSEIF(FREECAD_LIBPACK_CHECKFILE12X)
+        set(FREECAD_LIBPACK_VERSION "12.x" CACHE STRING "Displays if the libpack has been found" FORCE)
+        #SET(BUILD_FEM OFF CACHE BOOL "Build the FreeCAD FEM module")
+        SET(BUILD_SMESH OFF)
+        SET(BUILD_FEM OFF)
+        SET(BUILD_FEM_NETGEN OFF)
+        include(cMake/UseLibPack12x.cmake)
     ELSE(FREECAD_LIBPACK_CHECKFILE_CLBUNDLER)
         set(FREECAD_LIBPACK_VERSION "NOTFOUND" CACHE STRING "Displays if the libpack has been found" FORCE)
         message(SEND_ERROR  "Could not find libpack in specified location:" ${FREECAD_LIBPACK_DIR})
@@ -424,7 +443,7 @@ if(FREECAD_LIBPACK_USE)
 
 endif(FREECAD_LIBPACK_USE)
 
-if(NOT FREECAD_LIBPACK_USE OR FREECAD_LIBPACK_CHECKFILE_CLBUNDLER)
+if(NOT FREECAD_LIBPACK_USE OR FREECAD_LIBPACK_CHECKFILE_CLBUNDLER OR FREECAD_LIBPACK_CHECKFILE12X)
 
 # ================================================================================
 # == for other OSes search the packages ==========================================
@@ -587,8 +606,7 @@ endif()
 # -------------------------------- Boost --------------------------------
 
     SET(_boost_TEST_VERSIONS ${Boost_ADDITIONAL_VERSIONS})
-
-    set (BOOST_COMPONENTS filesystem program_options regex system thread)
+    set (BOOST_COMPONENTS filesystem program_options regex system thread python37)
     find_package(Boost ${BOOST_MIN_VERSION}
         COMPONENTS ${BOOST_COMPONENTS} REQUIRED)
 
@@ -1088,7 +1106,7 @@ endif()
     endif(BUILD_GUI)
 
 
-endif(NOT FREECAD_LIBPACK_USE OR FREECAD_LIBPACK_CHECKFILE_CLBUNDLER)
+endif(NOT FREECAD_LIBPACK_USE OR FREECAD_LIBPACK_CHECKFILE_CLBUNDLER OR FREECAD_LIBPACK_CHECKFILE12X) 
 
 if(BUILD_VR)
     find_package(Rift)
