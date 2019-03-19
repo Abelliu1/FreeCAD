@@ -62,6 +62,7 @@ if (BUILD_QT5)
   set (Qt5Widgets_DIR ${Qt5_ROOT_DIR}/lib/cmake/Qt5Widgets CACHE PATH "")
   set (Qt5Xml_DIR ${Qt5_ROOT_DIR}/lib/cmake/Qt5Xml CACHE PATH "")
   set (Qt5XmlPatterns_DIR ${Qt5_ROOT_DIR}/lib/cmake/Qt5XmlPatterns CACHE PATH "")
+  set (Qt5WebEngineWidgets_DIR ${Qt5_ROOT_DIR}/lib/cmake/Qt5WebEngineWidgets CACHE PATH "")
 endif (BUILD_QT5)
 
 SET(XercesC_INCLUDE_DIRS "${FREECAD_LIBPACK_DIR}/include/xercesc")
