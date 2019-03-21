@@ -291,8 +291,8 @@ void TDragger::drag()
     Base::Quantity quantity(
       static_cast<double>(translationIncrementCount.getValue()) * translationIncrement.getValue(), Base::Unit::Length);
 
-    QString message = QString::fromLatin1("%1 %2")
-            .arg(QObject::tr("Translation:"), quantity.getUserString());
+    QString message(QObject::tr("Translation:")+QString::fromUtf8(" "));
+    message += quantity.getUserString();
     getMainWindow()->showMessage(message, 3000);
 }
 
@@ -576,8 +576,8 @@ void RDragger::drag()
       static_cast<double>(rotationIncrementCount.getValue())  * (180.0 / M_PI) *
       rotationIncrement.getValue(), Base::Unit::Angle);
 
-    QString message = QString::fromLatin1("%1 %2")
-            .arg(QObject::tr("Rotation:"), quantity.getUserString());
+    QString message(QObject::tr("Rotation:")+QString::fromUtf8(" "));
+    message += quantity.getUserString();
     getMainWindow()->showMessage(message, 3000);
 }
 
@@ -1072,7 +1072,7 @@ bool SoFCCSysDragger::isShownTranslationY()
 
 bool SoFCCSysDragger::isShownTranslationZ()
 {
-  SoSwitch *sw = SO_GET_ANY_PART(this, "zTranslatorSwitch", SoSwitch);
+  SoSwitch *sw = SO_GET_ANY_PART(this, "yTranslatorSwitch", SoSwitch);
   return (sw->whichChild.getValue() == SO_SWITCH_ALL);
 }
 

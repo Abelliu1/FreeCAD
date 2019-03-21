@@ -324,36 +324,14 @@ public:
    * Removes degenerated facets.
    */
   bool Fixup ();
-
-private:
-  float fEpsilon;
-};
-
-/**
- * The MeshRemoveSmallEdges class tries to fix degenerations by removing small edges.
- * @see MeshFixDegeneratedFacets
- * @author Werner Mayer
- */
-class MeshExport MeshRemoveSmallEdges : public MeshValidation
-{
-public:
-  /**
-   * Construction.
-   */
-  MeshRemoveSmallEdges (MeshKernel &rclM, float fMinEdgeLen = MeshDefinitions::_fMinPointDistance)
-      : MeshValidation(rclM), fMinEdgeLength(fMinEdgeLen) { }
-  /**
-   * Destruction.
-   */
-  ~MeshRemoveSmallEdges () { }
   /**
    * Removes all facets with an edge smaller than \a fMinEdgeLength without leaving holes or gaps
-   * in the mesh.
+   * in the mesh. Returns the number of removed facets.
    */
-  bool Fixup ();
-
+  unsigned long RemoveEdgeTooSmall (float fMinEdgeLength = MeshDefinitions::_fMinPointDistance,
+                                    float fMinEdgeAngle  = MeshDefinitions::_fMinEdgeAngle);
 private:
-  float fMinEdgeLength;
+  float fEpsilon;
 };
 
 /**

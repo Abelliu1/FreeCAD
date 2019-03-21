@@ -110,11 +110,13 @@ bool AttachExtension::changeAttacherType(const char* typeName)
         AttachEngine* pNewAttacher = static_cast<Attacher::AttachEngine*>(Base::Type::createInstanceByName(typeName));
         this->setAttacher(pNewAttacher);
         return true;
+    } else {
+        std::stringstream errMsg;
+        errMsg << "Object if this type is not derived from AttachEngine: " << typeName;
+        throw AttachEngineException(errMsg.str());
     }
-
-    std::stringstream errMsg;
-    errMsg << "Object if this type is not derived from AttachEngine: " << typeName;
-    throw AttachEngineException(errMsg.str());
+    assert(false);//exec shouldn't ever get here
+    return false;
 }
 
 bool AttachExtension::positionBySupport()

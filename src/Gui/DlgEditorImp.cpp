@@ -39,7 +39,7 @@ namespace Gui {
 namespace Dialog {
 struct DlgSettingsEditorP
 {
-    QVector<QPair<QString, unsigned int> > colormap; // Color map
+    QVector<QPair<QString, unsigned long> > colormap; // Color map
 };
 } // namespace Dialog
 } // namespace Gui
@@ -57,75 +57,73 @@ DlgSettingsEditorImp::DlgSettingsEditorImp( QWidget* parent )
   : PreferencePage( parent )
 {
     this->setupUi(this);
-    this->EnableFolding->hide(); // Switch off until we have an editor with folding
-
     d = new DlgSettingsEditorP();
     QColor col;
     col = Qt::black; 
-    unsigned int lText = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lText = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Text")), lText));
     col = Qt::cyan; 
-    unsigned int lBookmarks = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lBookmarks = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Bookmark")), lBookmarks));
     col = Qt::red; 
-    unsigned int lBreakpnts = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lBreakpnts = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Breakpoint")), lBreakpnts));
     col = Qt::blue; 
-    unsigned int lKeywords = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lKeywords = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Keyword")), lKeywords));
     col.setRgb(0, 170, 0); 
-    unsigned int lComments = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lComments = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Comment")), lComments));
     col.setRgb(160, 160, 164); 
-    unsigned int lBlockCom = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lBlockCom = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Block comment")), lBlockCom));
     col = Qt::blue; 
-    unsigned int lNumbers = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lNumbers = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Number")), lNumbers));
     col = Qt::red; 
-    unsigned int lStrings = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lStrings = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("String")), lStrings));
     col = Qt::red; 
-    unsigned int lCharacter = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lCharacter = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Character")), lCharacter));
     col.setRgb(255, 170, 0); 
-    unsigned int lClass = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lClass = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Class name")), lClass));
     col.setRgb(255, 170, 0); 
-    unsigned int lDefine = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lDefine = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Define name")), lDefine));
     col.setRgb(160, 160, 164); 
-    unsigned int lOperat = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lOperat = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Operator")), lOperat));
     col.setRgb(170, 170, 127); 
-    unsigned int lPyOutput = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lPyOutput = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Python output")), lPyOutput));
     col = Qt::red; 
-    unsigned int lPyError = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lPyError = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Python error")), lPyError));
     col.setRgb(224, 224, 224); 
-    unsigned int lCLine = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
-    d->colormap.push_back(QPair<QString, unsigned int>
+    unsigned long lCLine = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    d->colormap.push_back(QPair<QString, unsigned long>
         (QString::fromLatin1(QT_TR_NOOP("Current line highlight")), lCLine));
 
     QStringList labels; labels << tr("Items");
     this->displayItems->setHeaderLabels(labels);
     this->displayItems->header()->hide();
-    for (QVector<QPair<QString, unsigned int> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it) {
+    for (QVector<QPair<QString, unsigned long> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it) {
         QTreeWidgetItem* item = new QTreeWidgetItem(this->displayItems);
         item->setText(0, tr((*it).first.toLatin1()));
     }
@@ -148,7 +146,7 @@ DlgSettingsEditorImp::~DlgSettingsEditorImp()
 void DlgSettingsEditorImp::on_displayItems_currentItemChanged(QTreeWidgetItem *item)
 {
     int index = displayItems->indexOfTopLevelItem(item);
-    unsigned int col = d->colormap[index].second;
+    unsigned long col = d->colormap[index].second;
     colorButton->setColor(QColor((col >> 24) & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff));
 }
 
@@ -156,7 +154,7 @@ void DlgSettingsEditorImp::on_displayItems_currentItemChanged(QTreeWidgetItem *i
 void DlgSettingsEditorImp::on_colorButton_changed()
 {
     QColor col = colorButton->color();
-    unsigned int lcol = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
+    unsigned long lcol = (col.red() << 24) | (col.green() << 16) | (col.blue() << 8);
 
     int index = displayItems->indexOfTopLevelItem(displayItems->currentItem());
     d->colormap[index].second = lcol;
@@ -174,10 +172,8 @@ void DlgSettingsEditorImp::saveSettings()
 
     // Saves the color map
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Editor");
-    for (QVector<QPair<QString, unsigned int> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it) {
-        unsigned long col = static_cast<unsigned long>((*it).second);
-        hGrp->SetUnsigned((*it).first.toLatin1(), col);
-    }
+    for (QVector<QPair<QString, unsigned long> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it)
+        hGrp->SetUnsigned((*it).first.toLatin1(), (*it).second);
 
     hGrp->SetInt( "FontSize", fontSize->value() );
     hGrp->SetASCII( "Font", fontFamily->currentText().toLatin1() );
@@ -206,10 +202,9 @@ void DlgSettingsEditorImp::loadSettings()
 
     // Restores the color map
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Editor");
-    for (QVector<QPair<QString, unsigned int> >::Iterator it = d->colormap.begin(); it != d->colormap.end(); ++it){
-        unsigned long col = static_cast<unsigned long>((*it).second);
-        col = hGrp->GetUnsigned((*it).first.toLatin1(), col);
-        (*it).second = static_cast<unsigned int>(col);
+    for (QVector<QPair<QString, unsigned long> >::Iterator it = d->colormap.begin(); it != d->colormap.end(); ++it){
+        unsigned long col = hGrp->GetUnsigned((*it).first.toLatin1(), (*it).second);
+        (*it).second = col;
         QColor color;
         color.setRgb((col >> 24) & 0xff, (col >> 16) & 0xff, (col >> 8) & 0xff);
         pythonSyntax->setColor( (*it).first, color );
@@ -240,7 +235,7 @@ void DlgSettingsEditorImp::changeEvent(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange) {
         int index = 0;
-        for (QVector<QPair<QString, unsigned int> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it)
+        for (QVector<QPair<QString, unsigned long> >::ConstIterator it = d->colormap.begin(); it != d->colormap.end(); ++it)
             this->displayItems->topLevelItem(index++)->setText(0, tr((*it).first.toLatin1()));
         this->retranslateUi(this);
     } else {

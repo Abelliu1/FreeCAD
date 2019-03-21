@@ -85,12 +85,6 @@
 # include <QMimeData>
 #endif
 
-#if !defined(FC_OS_MACOSX)
-# include <GL/gl.h>
-# include <GL/glu.h>
-# include <GL/glext.h>
-#endif
-
 #include <QVariantAnimation>
 
 #include <sstream>
@@ -1867,7 +1861,8 @@ void View3DInventorViewer::printDimension()
 
         // Create final string and update window
         QString dim = QString::fromLatin1("%1 x %2")
-                      .arg(wStr, hStr);
+                      .arg(wStr)
+                      .arg(hStr);
         getMainWindow()->setPaneText(2, dim);
     }
     else

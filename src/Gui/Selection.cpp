@@ -371,7 +371,7 @@ std::vector<SelectionObject> SelectionSingleton::getSelectionEx(const char* pDoc
         if (It->pDoc == pcDoc) {
             // right type?
             if (It->pObject->getTypeId().isDerivedFrom(typeId)){
-                // if the object already has an entry
+                // if the object has already an entry
                 if (SortMap.find(It->pObject) != SortMap.end()){
                     // only add sub-element
                     if (!It->SubName.empty()) {
@@ -506,10 +506,14 @@ bool SelectionSingleton::setPreselect(const char* pDocName, const char* pObjectN
             } else {
                 msg = QCoreApplication::translate("SelectionFilter","Not allowed:");
             }
-            msg.append(QString::fromLatin1(" %1.%2.%3 ")
-                  .arg(QString::fromLatin1(pDocName),
-                       QString::fromLatin1(pObjectName),
-                       QString::fromLatin1(pSubName)));
+            msg += QString::fromUtf8(" "); 
+            msg.append(
+                        QObject::tr("%1.%2.%3")
+                       .arg(QString::fromLatin1(pDocName))
+                       .arg(QString::fromLatin1(pObjectName))
+                       .arg(QString::fromLatin1(pSubName))
+                        );
+            msg += QString::fromUtf8(" "); 
 
             if (getMainWindow()) {
                 getMainWindow()->showMessage(msg);
@@ -1246,14 +1250,11 @@ PyObject *SelectionSingleton::sGetSelection(PyObject * /*self*/, PyObject *args)
 
     try {
         std::set<App::DocumentObject*> noduplicates;
-        std::vector<App::DocumentObject*> selectedObjects; // keep the order of selection
         Py::List list;
         for (std::vector<SelectionSingleton::SelObj>::iterator it = sel.begin(); it != sel.end(); ++it) {
-            if (noduplicates.insert(it->pObject).second) {
-                selectedObjects.push_back(it->pObject);
-            }
+            noduplicates.insert(it->pObject);
         }
-        for (std::vector<App::DocumentObject*>::iterator it = selectedObjects.begin(); it != selectedObjects.end(); ++it) {
+        for (std::set<App::DocumentObject*>::iterator it = noduplicates.begin(); it != noduplicates.end(); ++it) {
             list.append(Py::asObject((*it)->getPyObject()));
         }
         return Py::new_reference_to(list);

@@ -37,7 +37,6 @@
 
 #include <algorithm>
 #include <locale>
-#include <limits>
 
 using namespace Base;
 using namespace std;
@@ -249,7 +248,7 @@ ZipWriter::ZipWriter(const char* FileName)
     //FIXME: Check whether this is correct
     ZipStream.imbue(std::locale::classic());
 #endif
-    ZipStream.precision(std::numeric_limits<double>::digits10 + 1);
+    ZipStream.precision(16);
     ZipStream.setf(ios::fixed,ios::floatfield);
 }
 
@@ -262,7 +261,7 @@ ZipWriter::ZipWriter(std::ostream& os)
     //FIXME: Check whether this is correct
     ZipStream.imbue(std::locale::classic());
 #endif
-    ZipStream.precision(std::numeric_limits<double>::digits10 + 1);
+    ZipStream.precision(16);
     ZipStream.setf(ios::fixed,ios::floatfield);
 }
 

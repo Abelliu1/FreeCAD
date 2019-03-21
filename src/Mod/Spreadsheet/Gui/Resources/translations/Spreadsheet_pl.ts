@@ -230,7 +230,7 @@
     <name>ColorPickerPopup</name>
     <message>
       <source>Custom Color</source>
-      <translation>Kolor użytkownika</translation>
+      <translation type="unfinished">Custom Color</translation>
     </message>
   </context>
   <context>

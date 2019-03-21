@@ -55,7 +55,7 @@ CmdImageOpen::CmdImageOpen()
     sToolTipText    = QT_TR_NOOP("Open image view");
     sWhatsThis      = "Image_Open";
     sStatusTip      = sToolTipText;
-    sPixmap         = "Image_Open";
+    sPixmap         = "image-import";
 }
 
 void CmdImageOpen::activated(int iMsg)
@@ -103,7 +103,7 @@ CmdCreateImagePlane::CmdCreateImagePlane()
     sToolTipText    = QT_TR_NOOP("Create a planar image in the 3D space");
     sWhatsThis      = "Image_CreateImagePlane";
     sStatusTip      = sToolTipText;
-    sPixmap         = "Image_CreateImagePlane";
+    sPixmap         = "image-import-to-plane";
 }
 
 void CmdCreateImagePlane::activated(int iMsg)
@@ -177,7 +177,7 @@ CmdImageScaling::CmdImageScaling()
     sToolTipText    = QT_TR_NOOP("Image Scaling");
     sWhatsThis      = "Image_Scaling";
     sStatusTip      = sToolTipText;
-    sPixmap         = "Image_Scaling";
+    sPixmap         = "image-scale";
 }
 
 void CmdImageScaling::activated(int iMsg)

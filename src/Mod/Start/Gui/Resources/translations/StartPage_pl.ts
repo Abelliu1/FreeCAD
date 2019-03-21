@@ -223,7 +223,7 @@
       <translation>Strona startowa</translation>
     </message>
     <message>
-      <location filename="../../../StartPage/StartPage.py" line="545"/>
+      <location filename="../../../StartPage/StartPage.py" line="542"/>
       <source>Start page</source>
       <translation>Strona startowa</translation>
     </message>
@@ -266,7 +266,7 @@
     <message>
       <location filename="../../DlgStartPreferences.ui" line="42"/>
       <source>Contents</source>
-      <translation>Zawartość</translation>
+      <translation type="unfinished">Contents</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="48"/>
@@ -276,7 +276,7 @@
     <message>
       <location filename="../../DlgStartPreferences.ui" line="55"/>
       <source>Show examples folder contents</source>
-      <translation>Pokaż folder przykładów zawartości</translation>
+      <translation type="unfinished">Show examples folder contents</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="62"/>
@@ -326,12 +326,12 @@
     <message>
       <location filename="../../DlgStartPreferences.ui" line="199"/>
       <source>in FreeCAD</source>
-      <translation>w FreeCAD</translation>
+      <translation type="unfinished">in FreeCAD</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="218"/>
       <source>In external browser</source>
-      <translation>W zewnętrznej przeglądarce</translation>
+      <translation type="unfinished">In external browser</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="236"/>
@@ -346,7 +346,7 @@
     <message>
       <location filename="../../DlgStartPreferences.ui" line="269"/>
       <source>Link color</source>
-      <translation>Kolor odnośnika</translation>
+      <translation type="unfinished">Link color</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="276"/>
@@ -361,12 +361,12 @@
     <message>
       <location filename="../../DlgStartPreferences.ui" line="308"/>
       <source>Page background color</source>
-      <translation>Kolor tła strony</translation>
+      <translation type="unfinished">Page background color</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="321"/>
       <source>The color of the text on the main pages</source>
-      <translation>Kolor tekstu na głównych stronach</translation>
+      <translation type="unfinished">The color of the text on the main pages</translation>
     </message>
     <message>
       <location filename="../../DlgStartPreferences.ui" line="341"/>

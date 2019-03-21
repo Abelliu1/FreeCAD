@@ -27,8 +27,6 @@
 # include <QRegExp>
 #endif
 
-#include <limits>
-
 #include "ui_DlgSettingsUnits.h"
 #include "DlgSettingsUnitsImp.h"
 #include "NavigationStyle.h"
@@ -51,7 +49,6 @@ DlgSettingsUnitsImp::DlgSettingsUnitsImp(QWidget* parent)
     : PreferencePage( parent ), ui(new Ui_DlgSettingsUnits)
 {
     ui->setupUi(this);
-    ui->spinBoxDecimals->setMaximum(std::numeric_limits<double>::digits10 + 1);
 
     //fillUpListBox();
     ui->tableWidget->setVisible(false);

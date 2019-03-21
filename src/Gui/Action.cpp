@@ -428,6 +428,7 @@ void WorkbenchComboBox::actionEvent ( QActionEvent* e )
             int index = this->findData(data);
             // added a workbench
             if (index < 0 && action->isVisible()) {
+                QString text = action->text();
                 QIcon icon = action->icon();
                 if (icon.isNull())
                     this->addItem(action->text(), data);

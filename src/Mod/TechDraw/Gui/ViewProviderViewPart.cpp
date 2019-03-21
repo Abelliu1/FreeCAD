@@ -58,7 +58,6 @@ ViewProviderViewPart::ViewProviderViewPart()
 
     static const char *group = "Lines";
     static const char *dgroup = "Decoration";
-    static const char *hgroup = "Highlight";
 
     //default line weights
     Base::Reference<ParameterGrp> hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
@@ -87,9 +86,6 @@ ViewProviderViewPart::ViewProviderViewPart()
 
     //properties that affect Section Line
     ADD_PROPERTY_TYPE(ShowSectionLine ,(true)    ,dgroup,App::Prop_None,"Show/hide section line if applicable");
-    
-    //properties that affect Detail Highlights
-    ADD_PROPERTY_TYPE(HighlightAdjust,(0.0),hgroup,App::Prop_None,"Adjusts the rotation of the Detail highlight");
 }
 
 ViewProviderViewPart::~ViewProviderViewPart()
@@ -108,7 +104,6 @@ void ViewProviderViewPart::onChanged(const App::Property* prop)
         prop == &(HiddenWidth) ||
         prop == &(IsoWidth) ||
         prop == &(ExtraWidth) ||
-        prop == &(HighlightAdjust) ||
         prop == &(ArcCenterMarks) ||
         prop == &(CenterScale) ||
         prop == &(ShowSectionLine)  ||
@@ -137,13 +132,13 @@ void ViewProviderViewPart::attach(App::DocumentObject *pcFeat)
 
 void ViewProviderViewPart::setDisplayMode(const char* ModeName)
 {
-    ViewProviderDrawingView::setDisplayMode(ModeName);
+    ViewProviderDocumentObject::setDisplayMode(ModeName);
 }
 
 std::vector<std::string> ViewProviderViewPart::getDisplayModes(void) const
 {
     // get the modes of the father
-    std::vector<std::string> StrList = ViewProviderDrawingView::getDisplayModes();
+    std::vector<std::string> StrList = ViewProviderDocumentObject::getDisplayModes();
 
     return StrList;
 }

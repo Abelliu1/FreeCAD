@@ -79,7 +79,7 @@ CmdSurfaceCut::CmdSurfaceCut()
     sToolTipText  = QT_TR_NOOP("Cuts a Shape with another Shape.\nReturns a modified version of the first shape");
     sWhatsThis    = "Surface_Cut";
     sStatusTip    = QT_TR_NOOP("Surface Cut function");
-    sPixmap       = "Surface_Cut";
+    sPixmap       = "Cut.svg";
     sAccel        = "CTRL+H";
 }
 
@@ -137,7 +137,7 @@ CmdSurfaceFilling::CmdSurfaceFilling()
     sToolTipText  = QT_TR_NOOP("Fills a series of boundary curves, constraint curves and vertexes with a surface");
     sStatusTip    = QT_TR_NOOP("Fills a series of boundary curves, constraint curves and vertexes with a surface");
     sWhatsThis    = "Surface_Filling";
-    sPixmap       = "Surface_Filling";
+    sPixmap       = "Filling.svg";
 }
 
 void CmdSurfaceFilling::activated(int iMsg)

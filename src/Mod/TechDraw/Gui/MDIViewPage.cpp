@@ -118,12 +118,6 @@ MDIViewPage::MDIViewPage(ViewProviderPage *pageVp, Gui::Document* doc, QWidget* 
     m_exportSVGAction = new QAction(tr("&Export SVG"), this);
     connect(m_exportSVGAction, SIGNAL(triggered()), this, SLOT(saveSVG()));
 
-    m_exportDXFAction = new QAction(tr("Export DXF"), this);
-    connect(m_exportDXFAction, SIGNAL(triggered()), this, SLOT(saveDXF()));
-
-    m_exportPDFAction = new QAction(tr("Export PDF"), this);
-    connect(m_exportPDFAction, SIGNAL(triggered()), this, SLOT(savePDF()));
-
     isSelectionBlocked = false;
 
     QString tabText = QString::fromUtf8(pageVp->getDrawPage()->getNameInDocument());
@@ -266,11 +260,6 @@ void MDIViewPage::centerOnPage(void)
         QPointF viewCenter = getTemplateCenter(pageTemplate);
         m_view->centerOn(viewCenter);
     }
-}
-
-bool MDIViewPage::addView(const App::DocumentObject *obj)
-{
-    return attachView(const_cast<App::DocumentObject*>(obj));
 }
 
 bool MDIViewPage::attachView(App::DocumentObject *obj)
@@ -576,12 +565,7 @@ void MDIViewPage::printPdf(std::string file)
     printer.setFullPage(true);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(filename);
-//    printer.setOrientation(m_orientation);
-    if (m_paperSize == QPrinter::Ledger)  {
-        printer.setOrientation((QPrinter::Orientation) (1 - m_orientation));  //reverse 0/1
-    } else {
-        printer.setOrientation(m_orientation);
-    }
+    printer.setOrientation(m_orientation);
     printer.setPaperSize(m_paperSize);
     print(&printer);
 }
@@ -738,8 +722,8 @@ QPrinter::PaperSize MDIViewPage::getPaperSize(int w, int h) const
         {105, 241}, // US Common
         {110, 220}, // DLE
         {210, 330}, // Folio
-        {431.8f, 279.4f}, // Ledger (28)   note, two names for same size paper (ANSI B)
-        {279.4f, 431.8f} // Tabloid (29)   causes trouble with orientation on PDF export
+        {431.8f, 279.4f}, // Ledger
+        {279.4f, 431.8f} // Tabloid
     };
 
     QPrinter::PaperSize ps = QPrinter::Custom;
@@ -749,19 +733,13 @@ QPrinter::PaperSize MDIViewPage::getPaperSize(int w, int h) const
             ps = static_cast<QPrinter::PaperSize>(i);
             break;
         }
-        else                                          //handle landscape & portrait w/h
+        else
         if (std::abs(paperSizes[i][0]-h) <= 1 &&
             std::abs(paperSizes[i][1]-w) <= 1) {
             ps = static_cast<QPrinter::PaperSize>(i);
             break;
         }
     }
-    if (ps == QPrinter::Ledger)  {                    //check if really Tabloid
-        if (w < 431) {
-            ps = QPrinter::Tabloid;
-        }
-    }
-
     return ps;
 }
 
@@ -785,8 +763,6 @@ void MDIViewPage::contextMenuEvent(QContextMenuEvent *event)
     menu.addAction(m_toggleFrameAction);
     menu.addAction(m_toggleKeepUpdatedAction);
     menu.addAction(m_exportSVGAction);
-    menu.addAction(m_exportDXFAction);
-    menu.addAction(m_exportPDFAction);
     menu.exec(event->globalPos());
 }
 
@@ -833,42 +809,6 @@ void MDIViewPage::saveSVG(std::string file)
     m_view->saveSvg(filename);
 }
 
-void MDIViewPage::saveDXF()
-{
-//    TechDraw::DrawPage* page = m_vpPage->getDrawPage();
-    QString defaultDir;
-    QString fileName = Gui::FileDialog::getSaveFileName(Gui::getMainWindow(),
-                                                   QString::fromUtf8(QT_TR_NOOP("Save Dxf File ")),
-                                                   defaultDir,
-                                                   QString::fromUtf8(QT_TR_NOOP("Dxf (*.dxf)")));
-    if (fileName.isEmpty()) {
-        return;
-    }
-
-    std::string sFileName = fileName.toUtf8().constData();
-    saveDXF(sFileName);
-}
-
-void MDIViewPage::saveDXF(std::string fileName)
-{
-    TechDraw::DrawPage* page = m_vpPage->getDrawPage();
-    std::string PageName = page->getNameInDocument();
-    Gui::Command::openCommand("Save page to dxf");
-    Gui::Command::doCommand(Gui::Command::Doc,"import TechDraw");
-    Gui::Command::doCommand(Gui::Command::Doc,"TechDraw.writeDXFPage(App.activeDocument().%s,u\"%s\")",
-                            PageName.c_str(),(const char*)fileName.c_str());
-    Gui::Command::commitCommand();
-}
-
-void MDIViewPage::savePDF()
-{
-    printPdf();
-}
-
-void MDIViewPage::savePDF(std::string file)
-{
-    printPdf(file);
-}
 
 /////////////// Selection Routines ///////////////////
 // wf: this is never executed???
@@ -1278,11 +1218,14 @@ bool MDIViewPage::compareSelections(std::vector<Gui::SelectionObject> treeSel, Q
 
 void MDIViewPage::showStatusMsg(const char* s1, const char* s2, const char* s3) const
 {
-    QString msg = QString::fromLatin1("%1 %2.%3.%4 ")
-            .arg(tr("Selected:"),
-                 QString::fromUtf8(s1),
-                 QString::fromUtf8(s2),
-                 QString::fromUtf8(s3));
+    QString msg = tr("Selected:");
+    msg += QString::fromUtf8(" ");
+    msg.append(QObject::tr("%1.%2.%3")
+               .arg(QString::fromUtf8(s1))
+               .arg(QString::fromUtf8(s2))
+               .arg(QString::fromUtf8(s3))
+               );
+    msg += QString::fromUtf8(" ");
     if (Gui::getMainWindow()) {
         Gui::getMainWindow()->showMessage(msg,3000);
     }

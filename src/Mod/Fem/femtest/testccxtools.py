@@ -121,7 +121,6 @@ class TestCcxTools(unittest.TestCase):
 
         static_analysis_dir = testtools.get_unit_test_tmp_dir(self.temp_dir, 'FEM_ccx_static/')
         fea = ccxtools.FemToolsCcx(analysis, solver_object, test_mode=True)
-        fea.update_objects()
 
         fcc_print('Setting up working directory {}'.format(static_analysis_dir))
         fea.setup_working_dir(static_analysis_dir)
@@ -258,7 +257,6 @@ class TestCcxTools(unittest.TestCase):
         self.active_doc.recompute()
         static_multiplemat_dir = testtools.get_unit_test_tmp_dir(self.temp_dir, 'FEM_ccx_multimat/')
         fea = ccxtools.FemToolsCcx(analysis, solver_object, test_mode=True)
-        fea.update_objects()
         fea.setup_working_dir(static_multiplemat_dir)
 
         fcc_print('Checking FEM inp file prerequisites for ccxtools multimat analysis...')
@@ -326,9 +324,8 @@ class TestCcxTools(unittest.TestCase):
 
         self.active_doc.recompute()
 
-        frequency_analysis_dir = testtools.get_unit_test_tmp_dir(self.temp_dir, 'FEM_ccx_frequency/')
+        frequency_analysis_dir = self.temp_dir + 'FEM_ccx_frequency/'
         fea = ccxtools.FemToolsCcx(analysis, solver_object, test_mode=True)
-        fea.update_objects()
 
         fcc_print('Setting up working directory {}'.format(frequency_analysis_dir))
         fea.setup_working_dir(frequency_analysis_dir)
@@ -456,9 +453,8 @@ class TestCcxTools(unittest.TestCase):
 
         self.active_doc.recompute()
 
-        thermomech_analysis_dir = testtools.get_unit_test_tmp_dir(self.temp_dir, 'FEM_ccx_thermomech/')
+        thermomech_analysis_dir = self.temp_dir + 'FEM_ccx_thermomech/'
         fea = ccxtools.FemToolsCcx(analysis, test_mode=True)
-        fea.update_objects()
 
         fcc_print('Setting up working directory {}'.format(thermomech_analysis_dir))
         fea.setup_working_dir(thermomech_analysis_dir)
@@ -706,9 +702,8 @@ class TestCcxTools(unittest.TestCase):
 
         self.active_doc.recompute()
 
-        Flow1D_thermomech_analysis_dir = testtools.get_unit_test_tmp_dir(self.temp_dir, 'FEM_ccx_Flow1D_thermomech/')
+        Flow1D_thermomech_analysis_dir = self.temp_dir + 'FEM_ccx_Flow1D_thermomech/'
         fea = ccxtools.FemToolsCcx(analysis, test_mode=True)
-        fea.update_objects()
 
         fcc_print('Setting up working directory {}'.format(Flow1D_thermomech_analysis_dir))
         fea.setup_working_dir(Flow1D_thermomech_analysis_dir)
@@ -791,7 +786,6 @@ def create_test_results():
     FreeCAD.open(static_analysis_dir + 'cube_static.FCStd')
     FemGui.setActiveAnalysis(FreeCAD.ActiveDocument.Analysis)
     fea = ccxtools.FemToolsCcx()
-    fea.update_objects()
 
     print("create static result files")
     fea.reset_all()
@@ -817,7 +811,6 @@ def create_test_results():
     FreeCAD.open(frequency_analysis_dir + 'cube_frequency.FCStd')
     FemGui.setActiveAnalysis(FreeCAD.ActiveDocument.Analysis)
     fea = ccxtools.FemToolsCcx()
-    fea.update_objects()
 
     print("create frequency result files")
     fea.reset_all()

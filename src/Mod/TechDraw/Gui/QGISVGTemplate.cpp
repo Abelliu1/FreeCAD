@@ -154,8 +154,9 @@ void QGISVGTemplate::createClickHandles(void)
 
     //read all of PageResult into oStream (except the DrawingContent marker comment - why??)
     std::ifstream ifile (fi.filePath().c_str());
-    while (std::getline(ifile,line))
+    while (!ifile.eof())
     {
+        std::getline(ifile,line);
         // check if the marker in the template is found
         if(line.find("<!-- DrawingContent -->") == std::string::npos) {
             // if not -  write line to oStream

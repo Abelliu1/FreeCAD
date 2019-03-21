@@ -34,12 +34,10 @@ TEMPORARY = "temporary"
 BESIDE = "beside"
 CUSTOM = "custom"
 
-
-_PARAM_PATH = "User parameter:BaseApp/Preferences/Mod/Fem/"
-_GENERAL_PARAM = _PARAM_PATH + "General"
-_CCX_PARAM = _PARAM_PATH + "Ccx"
-_ELMER_PARAM = _PARAM_PATH + "Elmer"
-_Z88_PARAM = _PARAM_PATH + "Z88"
+_ELMER_PARAM = "User parameter:BaseApp/Preferences/Mod/Fem/Elmer"
+_GRID_PARAM = "User parameter:BaseApp/Preferences/Mod/Fem/Grid"
+_CCX_PARAM = "User parameter:BaseApp/Preferences/Mod/Fem/Ccx"
+_Z88_PARAM = "User parameter:BaseApp/Preferences/Mod/Fem/Z88"
 
 
 class _BinaryDlg(object):
@@ -71,7 +69,7 @@ _BINARIES = {
         customPath="elmerBinaryPath"),
     "ElmerGrid": _BinaryDlg(
         default="ElmerGrid",
-        param=_ELMER_PARAM,
+        param=_GRID_PARAM,
         useDefault="UseStandardGridLocation",
         customPath="gridBinaryPath"),
     "Z88": _BinaryDlg(
@@ -89,12 +87,12 @@ def getBinary(name):
 
 
 def getCustomDir():
-    param = App.ParamGet(_GENERAL_PARAM)
+    param = App.ParamGet(_ELMER_PARAM)
     return param.GetString("CustomDirectoryPath")
 
 
 def getDirSetting():
-    param = App.ParamGet(_GENERAL_PARAM)
+    param = App.ParamGet(_ELMER_PARAM)
     if param.GetBool("UseTempDirectory"):
         return TEMPORARY
     elif param.GetBool("UseBesideDirectory"):

@@ -87,11 +87,9 @@ public:
     virtual double getScale(void) const;
     void checkScale(void);
     void requestPaint(void);
-    virtual void handleXYLock(void);
-    virtual bool isLocked(void) const;
 
 protected:
-    virtual void onChanged(const App::Property* prop) override;
+    void onChanged(const App::Property* prop) override;
     std::string pageFeatName;
     bool autoPos;
     bool mouseMove;

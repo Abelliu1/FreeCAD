@@ -30,7 +30,6 @@
 #endif
 
 #include "DlgGeneralImp.h"
-#include "ui_DlgGeneral.h"
 #include "Action.h"
 #include "Application.h"
 #include "DockWindowManager.h"
@@ -51,10 +50,12 @@ using namespace Gui::Dialog;
  *  true to construct a modal dialog.
  */
 DlgGeneralImp::DlgGeneralImp( QWidget* parent )
-  : PreferencePage(parent)
-  , ui(new Ui_DlgGeneral)
+  : PreferencePage( parent ), watched(0)
 {
-    ui->setupUi(this);
+    this->setupUi(this);
+    // hide to fix 0000375: Mac Interface window style setting not saved
+    windowStyleLabel->hide();
+    WindowStyle->hide();
     
     // fills the combo box with all available workbenches
     // sorted by their menu text
@@ -68,9 +69,27 @@ DlgGeneralImp::DlgGeneralImp( QWidget* parent )
     for (QMap<QString, QString>::Iterator it = menuText.begin(); it != menuText.end(); ++it) {
         QPixmap px = Application::Instance->workbenchIcon(it.value());
         if (px.isNull())
-            ui->AutoloadModuleCombo->addItem(it.key(), QVariant(it.value()));
+            AutoloadModuleCombo->addItem(it.key(), QVariant(it.value()));
         else
-            ui->AutoloadModuleCombo->addItem(px, it.key(), QVariant(it.value()));
+            AutoloadModuleCombo->addItem(px, it.key(), QVariant(it.value()));
+    }
+
+    // do not save the content but the current item only
+    QWidget* dw = DockWindowManager::instance()->getDockWindow("Report view");
+    if (dw)
+    {
+        watched = dw->findChild<QTabWidget*>();
+        if (watched)
+        {
+            for (int i=0; i<watched->count(); i++)
+                AutoloadTabCombo->addItem( watched->tabText(i) );
+            watched->installEventFilter(this);
+        }
+    }
+    if (!watched) {
+        // use separate dock widgets instead of the old tab widget
+        tabReportLabel->hide();
+        AutoloadTabCombo->hide();
     }
 }
 
@@ -79,6 +98,9 @@ DlgGeneralImp::DlgGeneralImp( QWidget* parent )
  */
 DlgGeneralImp::~DlgGeneralImp()
 {
+    // no need to delete child widgets, Qt does it all for us
+    if (watched)
+        watched->removeEventFilter(this);
 }
 
 /** Sets the size of the recent file list from the user parameters.
@@ -96,15 +118,16 @@ void DlgGeneralImp::setRecentFileSize()
 
 void DlgGeneralImp::saveSettings()
 {
-    int index = ui->AutoloadModuleCombo->currentIndex();
-    QVariant data = ui->AutoloadModuleCombo->itemData(index);
+    int index = AutoloadModuleCombo->currentIndex();
+    QVariant data = AutoloadModuleCombo->itemData(index);
     QString startWbName = data.toString();
     App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/General")->
                           SetASCII("AutoloadModule", startWbName.toLatin1());
-
-    ui->RecentFiles->onSave();
-    ui->SplashScreen->onSave();
-    ui->PythonWordWrap->onSave();
+    
+    AutoloadTabCombo->onSave();
+    RecentFiles->onSave();
+    SplashScreen->onSave();
+    PythonWordWrap->onSave();
   
     QWidget* pc = DockWindowManager::instance()->getDockWindow("Python console");
     PythonConsole *pcPython = qobject_cast<PythonConsole*>(pc);
@@ -119,27 +142,31 @@ void DlgGeneralImp::saveSettings()
         }
     }
 
+    // set new user defined style
+    //(void)QApplication::setStyle(WindowStyle->currentText());
+
     setRecentFileSize();
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("General");
     QString lang = QLocale::languageToString(QLocale::system().language());
     QByteArray language = hGrp->GetASCII("Language", (const char*)lang.toLatin1()).c_str();
-    QByteArray current = ui->Languages->itemData(ui->Languages->currentIndex()).toByteArray();
-    if (current != language) {
+    QByteArray current = Languages->itemData(Languages->currentIndex()).toByteArray();
+    if (current != language)
+    {
         hGrp->SetASCII("Language", current.constData());
         Translator::instance()->activateLanguage(current.constData());
     }
 
-    QVariant size = ui->toolbarIconSize->itemData(ui->toolbarIconSize->currentIndex());
+    QVariant size = this->toolbarIconSize->itemData(this->toolbarIconSize->currentIndex());
     int pixel = size.toInt();
     hGrp->SetInt("ToolbarIconSize", pixel);
     getMainWindow()->setIconSize(QSize(pixel,pixel));
 
     hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/MainWindow");
-    hGrp->SetBool("TiledBackground", ui->tiledBackground->isChecked());
+    hGrp->SetBool("TiledBackground", this->tiledBackground->isChecked());
     QMdiArea* mdi = getMainWindow()->findChild<QMdiArea*>();
-    mdi->setProperty("showImage", ui->tiledBackground->isChecked());
+    mdi->setProperty("showImage", this->tiledBackground->isChecked());
 
-    QVariant sheet = ui->StyleSheets->itemData(ui->StyleSheets->currentIndex());
+    QVariant sheet = this->StyleSheets->itemData(this->StyleSheets->currentIndex());
     if (this->selectedStyleSheet != sheet.toString()) {
         this->selectedStyleSheet = sheet.toString();
         hGrp->SetASCII("StyleSheet", (const char*)sheet.toByteArray());
@@ -158,11 +185,11 @@ void DlgGeneralImp::saveSettings()
     }
 
     if (sheet.toString().isEmpty()) {
-        if (ui->tiledBackground->isChecked()) {
+        if (this->tiledBackground->isChecked()) {
             qApp->setStyleSheet(QString());
             ActionStyleEvent e(ActionStyleEvent::Restore);
             qApp->sendEvent(getMainWindow(), &e);
-            mdi->setBackground(QPixmap(QLatin1String("images:background.png")));
+            mdi->setBackground(QPixmap(QLatin1String(":/icons/background.png")));
         }
         else {
             qApp->setStyleSheet(QString());
@@ -198,26 +225,38 @@ void DlgGeneralImp::loadSettings()
     start = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/General")->
                                   GetASCII("AutoloadModule", start.c_str());
     QString startWbName = QLatin1String(start.c_str());
-    ui->AutoloadModuleCombo->setCurrentIndex(ui->AutoloadModuleCombo->findData(startWbName));
+    AutoloadModuleCombo->setCurrentIndex(AutoloadModuleCombo->findData(startWbName));
 
-    ui->RecentFiles->onRestore();
-    ui->SplashScreen->onRestore();
-    ui->PythonWordWrap->onRestore();
+    AutoloadTabCombo->onRestore();
+    RecentFiles->onRestore();
+    SplashScreen->onRestore();
+    PythonWordWrap->onRestore();
+
+    // fill up styles
+    //
+    QStringList styles = QStyleFactory::keys();
+    WindowStyle->addItems(styles);
+    QString style = QApplication::style()->objectName().toLower();
+    int i=0;
+    for (QStringList::ConstIterator it = styles.begin(); it != styles.end(); ++it, i++) {
+        if (style == (*it).toLower()) {
+            WindowStyle->setCurrentIndex( i );
+            break;
+        }
+    }
 
     // search for the language files
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("General");
-    QString langToStr = QLocale::languageToString(QLocale::system().language());
-    QByteArray language = hGrp->GetASCII("Language", langToStr.toLatin1()).c_str();
-
+    QString lang = QLocale::languageToString(QLocale::system().language());
+    QByteArray language = hGrp->GetASCII("Language", (const char*)lang.toLatin1()).c_str();
     int index = 1;
+    Languages->addItem(QString::fromLatin1("English"), QByteArray("English"));
     TStringMap list = Translator::instance()->supportedLocales();
-    ui->Languages->addItem(QString::fromLatin1("English"), QByteArray("English"));
     for (TStringMap::iterator it = list.begin(); it != list.end(); ++it, index++) {
+        QLocale locale(QString::fromLatin1(it->second.c_str()));
         QByteArray lang = it->first.c_str();
         QString langname = QString::fromLatin1(lang.constData());
-
 #if QT_VERSION >= 0x040800
-        QLocale locale(QString::fromLatin1(it->second.c_str()));
         QString native = locale.nativeLanguageName();
         if (!native.isEmpty()) {
             if (native[0].isLetter())
@@ -225,31 +264,26 @@ void DlgGeneralImp::loadSettings()
             langname = native;
         }
 #endif
-
-        ui->Languages->addItem(langname, lang);
+        Languages->addItem(langname, lang);
         if (language == lang) {
-            ui->Languages->setCurrentIndex(index);
+            Languages->setCurrentIndex(index);
         }
     }
 
-    QAbstractItemModel* model = ui->Languages->model();
-    if (model)
-        model->sort(0);
-
     int current = getMainWindow()->iconSize().width();
-    ui->toolbarIconSize->addItem(tr("Small (%1px)").arg(16), QVariant((int)16));
-    ui->toolbarIconSize->addItem(tr("Medium (%1px)").arg(24), QVariant((int)24));
-    ui->toolbarIconSize->addItem(tr("Large (%1px)").arg(32), QVariant((int)32));
-    ui->toolbarIconSize->addItem(tr("Extra large (%1px)").arg(48), QVariant((int)48));
-    index = ui->toolbarIconSize->findData(QVariant(current));
+    this->toolbarIconSize->addItem(tr("Small (%1px)").arg(16), QVariant((int)16));
+    this->toolbarIconSize->addItem(tr("Medium (%1px)").arg(24), QVariant((int)24));
+    this->toolbarIconSize->addItem(tr("Large (%1px)").arg(32), QVariant((int)32));
+    this->toolbarIconSize->addItem(tr("Extra large (%1px)").arg(48), QVariant((int)48));
+    index = this->toolbarIconSize->findData(QVariant(current));
     if (index < 0) {
-        ui->toolbarIconSize->addItem(tr("Custom (%1px)").arg(current), QVariant((int)current));
-        index = ui->toolbarIconSize->findData(QVariant(current));
+        this->toolbarIconSize->addItem(tr("Custom (%1px)").arg(current), QVariant((int)current));
+        index = this->toolbarIconSize->findData(QVariant(current));
     } 
-    ui->toolbarIconSize->setCurrentIndex(index);
+    this->toolbarIconSize->setCurrentIndex(index);
 
     hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/MainWindow");
-    ui->tiledBackground->setChecked(hGrp->GetBool("TiledBackground", false));
+    this->tiledBackground->setChecked(hGrp->GetBool("TiledBackground", false));
 
     // List all .qss/.css files
     QMap<QString, QString> cssFiles;
@@ -272,24 +306,38 @@ void DlgGeneralImp::loadSettings()
     }
 
     // now add all unique items
-    ui->StyleSheets->addItem(tr("No style sheet"), QString::fromLatin1(""));
+    this->StyleSheets->addItem(tr("No style sheet"), QString::fromLatin1(""));
     for (QMap<QString, QString>::iterator it = cssFiles.begin(); it != cssFiles.end(); ++it) {
-        ui->StyleSheets->addItem(it.key(), it.value());
+        this->StyleSheets->addItem(it.key(), it.value());
     }
 
     this->selectedStyleSheet = QString::fromLatin1(hGrp->GetASCII("StyleSheet").c_str());
-    index = ui->StyleSheets->findData(this->selectedStyleSheet);
-    if (index > -1) ui->StyleSheets->setCurrentIndex(index);
+    index = this->StyleSheets->findData(this->selectedStyleSheet);
+    if (index > -1) this->StyleSheets->setCurrentIndex(index);
 }
 
 void DlgGeneralImp::changeEvent(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-    }
-    else {
+        retranslateUi(this);
+        for (int i = 0; i < Languages->count(); i++) {
+            QByteArray lang = Languages->itemData(i).toByteArray();
+            Languages->setItemText(i, Gui::Translator::tr(lang.constData()));
+        }
+    } else {
         QWidget::changeEvent(e);
     }
+}
+
+bool DlgGeneralImp::eventFilter(QObject* o, QEvent* e)
+{
+    // make sure that report tabs have been translated
+    if (o == watched && e->type() == QEvent::LanguageChange) {
+        for (int i=0; i<watched->count(); i++)
+            AutoloadTabCombo->setItemText( i, watched->tabText(i) );
+    }
+
+    return QWidget::eventFilter(o, e);
 }
 
 #include "moc_DlgGeneralImp.cpp"

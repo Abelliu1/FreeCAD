@@ -137,7 +137,7 @@ void ViewProviderDimension::onChanged(const App::Property* p)
             qgiv->updateView(true);
         }
     }
-    ViewProviderDrawingView::onChanged(p);
+    Gui::ViewProviderDocumentObject::onChanged(p);
 }
 
 TechDraw::DrawViewDimension* ViewProviderDimension::getViewObject() const

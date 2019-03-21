@@ -85,7 +85,6 @@ public:
 
 private:
     virtual void findColors(Part::Feature*, std::vector<App::Color>&) const {}
-    std::vector<App::DocumentObject*> filterPart(App::Part* part) const;
 
 private:
     Handle(TDocStd_Document) pDoc;
@@ -93,7 +92,6 @@ private:
     Handle(XCAFDoc_ColorTool) aColorTool;
     TDF_Label rootLabel;
     bool keepExplicitPlacement;
-    bool filterBaseFeature;
 };
 
 class ImportExport ExportOCAFCmd : public ExportOCAF

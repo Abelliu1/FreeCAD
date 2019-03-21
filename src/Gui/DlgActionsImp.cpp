@@ -356,12 +356,12 @@ void DlgCustomActionsImp::on_buttonReplaceAction_clicked()
         if (!accel.isEmpty()) {
             // show shortcut inside tooltip
             QString ttip = QString::fromLatin1("%1 (%2)")
-                .arg(action->toolTip(), accel);
+                .arg(action->toolTip()).arg(accel);
             action->setToolTip(ttip);
 
             // show shortcut inside status tip
             QString stip = QString::fromLatin1("(%1)\t%2")
-                .arg(accel, action->statusTip());
+                .arg(accel).arg(action->statusTip());
             action->setStatusTip(stip);
         }
     }

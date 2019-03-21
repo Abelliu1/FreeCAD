@@ -1,20 +1,15 @@
-; CalculiX-Steel
+; Standard material for CalculiX sample calculations
 ; (c) 2013 Juergen Riegel (CC-BY 3.0)
-; information about the content of such cards can be found on the wiki:
-; https://www.freecadweb.org/wiki/Material
-; file created by FreeCAD0.18.16022 (Git)
+; information about the content of such cards you can find here:
+; http://www.freecadweb.org/wiki/index.php?title=Material
 
-[General]
+[FCMat]
 Name = CalculiX-Steel
 Description = Standard steel material for CalculiX sample calculations
 Father = Metal
-
-[Mechanical]
-Density = 7900 kg/m^3
-PoissonRatio = 0.3
 YoungsModulus = 210000 MPa
-
-[Thermal]
+PoissonRatio = 0.3
+Density = 7900 kg/m^3
 SpecificHeat = 590 J/kg/K
 ThermalConductivity = 43 W/m/K
-ThermalExpansionCoefficient = 0.000012 m/m/K
+ThermalExpansionCoefficient = 12 um/m/K

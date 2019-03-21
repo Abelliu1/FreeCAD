@@ -821,11 +821,6 @@ class ViewProviderComponent:
                 if len(vobj.DiffuseColor) > 1:
                     d = vobj.DiffuseColor
                     vobj.DiffuseColor = d
-        elif prop == "Visibility":
-            for host in self.getHosts():
-                if hasattr(host, 'ViewObject'):
-                    host.ViewObject.Visibility = vobj.Visibility
-
         return
 
     def attach(self,vobj):
@@ -922,9 +917,15 @@ class ViewProviderComponent:
                     objlink = getattr(self.Object,link)
                     if objlink:
                         c.append(objlink)
-            for link in self.getHosts():
-                c.append(link)
-
+            for link in self.Object.InList:
+                if hasattr(link,"Host"):
+                    if link.Host:
+                        if link.Host == self.Object:
+                            c.append(link)
+                elif hasattr(link,"Hosts"):
+                    for host in link.Hosts:
+                        if host == self.Object:
+                            c.append(link)
             return c
         return []
 
@@ -968,22 +969,6 @@ class ViewProviderComponent:
         if obj.CloneOf:
             if self.areDifferentColors(obj.ViewObject.DiffuseColor,obj.CloneOf.ViewObject.DiffuseColor) or force:
                 obj.ViewObject.DiffuseColor = obj.CloneOf.ViewObject.DiffuseColor
-    
-    def getHosts(self):
-        hosts = []
-
-        if hasattr(self,"Object"):
-            for link in self.Object.InList:
-                if hasattr(link,"Host"):
-                    if link.Host:
-                        if link.Host == self.Object:
-                            hosts.append(link)
-                elif hasattr(link,"Hosts"):
-                    for host in link.Hosts:
-                        if host == self.Object:
-                            hosts.append(link)
-        
-        return hosts
 
 
 class ArchSelectionObserver:

@@ -160,7 +160,7 @@
     </message>
     <message>
       <source>Global Sensitivity:</source>
-      <translation type="unfinished">Global Sensitivity:</translation>
+      <translation>Visuotinis jautrumas:</translation>
     </message>
   </context>
   <context>
@@ -403,11 +403,11 @@ while doing a left or right click and move the mouse up or down</translation>
     <name>Gui::Dialog::AboutDialog</name>
     <message>
       <source>Libraries</source>
-      <translation type="unfinished">Libraries</translation>
+      <translation>Panaudotos bibliotekos</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
-      <translation type="unfinished">This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</translation>
+      <translation>Ši programinė įranga naudoja kitas atvirosios programinės įrangos dalis, kurių autorių teisės ir kitos nuosavybės teisės priklauso atitinkamiems savininkams:</translation>
     </message>
     <message>
       <source>License</source>
@@ -850,20 +850,20 @@ while doing a left or right click and move the mouse up or down</translation>
       <translation>Daugiau, nei kartą apibrėžtas trumpinys</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Trumpinys „%1“ yra nurodytas daugiau, nei kartą. Tai gali sukelti netikėtą elgseną.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Trumpinys jau nurodytas</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation type="unfinished">The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation type="unfinished">Do you want to override it?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -2878,7 +2878,7 @@ Prašome nurodti kitą aplanką.</translation>
     </message>
     <message>
       <source>Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</source>
-      <translation type="unfinished">Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</translation>
+      <translation>Nurodomas neapibrėžtumo plotas pasirenkant elementus erdviniame rodinyje. Didesnė reikšmė leidžia lengviau pasirinkti daiktą, bet taip pat gali būti neįmanoma pasirinkti kai kurių smulkių detalių.</translation>
     </message>
     <message>
       <source>Tree View</source>
@@ -2985,6 +2985,10 @@ Prašome nurodti kitą aplanką.</translation>
       <translation>Rikiuoti darbastalius</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Rikiuoti įgalintus darbastalius&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Perkelti į viršų</translation>
     </message>
@@ -2999,10 +3003,6 @@ Prašome nurodti kitą aplanką.</translation>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Pridėti viską į įgalintųjų darbastalių sąrašą</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation type="unfinished">&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -5303,11 +5303,15 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Export failed</source>
-      <translation type="unfinished">Export failed</translation>
+      <translation>Eksportavimas nepavyko</translation>
     </message>
     <message>
       <source>Split</source>
       <translation type="unfinished">Split</translation>
+    </message>
+    <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
     </message>
     <message>
       <source>Translation:</source>
@@ -5715,8 +5719,8 @@ Be aware the point where you click matters.</source>
       <translation>Įgalinamas arba užbaigiamas pažymėto daikto taisymas</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation type="unfinished">Activates or Deactivates the selected object's edit mode</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Įgalinamas arba užbaigiamas pažymėto daikto taisymas</translation>
     </message>
   </context>
   <context>
@@ -6757,7 +6761,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Creates a new view window for the active document</source>
-      <translation type="unfinished">Creates a new view window for the active document</translation>
+      <translation>Sukurti naują rodinio langą aktyviam dokumentui</translation>
     </message>
   </context>
   <context>

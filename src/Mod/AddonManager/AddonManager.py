@@ -238,7 +238,7 @@ class AddonsInstaller(QtGui.QDialog):
         self.horizontalLayout.addWidget(self.buttonExecute)
 
         self.buttonCheck = QtGui.QPushButton()
-        icon = QtGui.QIcon.fromTheme("reload",QtGui.QIcon(":/icons/view-refresh.svg"))
+        icon = QtGui.QIcon.fromTheme("reload")
         self.buttonCheck.setIcon(icon)
         self.horizontalLayout.addWidget(self.buttonCheck)
         self.buttonCheck.hide()

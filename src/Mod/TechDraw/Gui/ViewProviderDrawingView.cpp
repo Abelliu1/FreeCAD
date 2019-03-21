@@ -66,8 +66,7 @@ ViewProviderDrawingView::ViewProviderDrawingView()
 
     ADD_PROPERTY_TYPE(KeepLabel ,(false),group,App::Prop_None,"Keep Label on Page even if toggled off");
 
-    // Do not show in property editor   why? wf  WF: because DisplayMode applies only to coin and we
-    // don't use coin.
+    // Do not show in property editor   why? wf
     DisplayMode.setStatus(App::Property::ReadOnly,true);
     m_docReady = true;
 }
@@ -244,9 +243,9 @@ void ViewProviderDrawingView::onGuiRepaint(const TechDraw::DrawView* dv)
         if (qgiv) {
             qgiv->updateView(true);
         } else {                                //we are not part of the Gui page yet. ask page to add us.
-            MDIViewPage* page = getMDIViewPage();
+            auto page = dv->findParentPage();
             if (page != nullptr) {
-                page->addView(dv);
+                page->requestPaint();
             }
         }
     }

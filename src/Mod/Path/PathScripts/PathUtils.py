@@ -742,11 +742,10 @@ def sort_jobs(locations, keys, attractors=[]):
     def find_closest(location_list, location, dist):
         q = PriorityQueue()
 
-        for i,j in enumerate(location_list):
-            # prevent dictionary comparison by inserting the index
-            q.put((dist(j, location) + weight(j), i, j))
+        for j in location_list:
+            q.put((dist(j, location) + weight(j), j))
 
-        prio, i, result = q.get()
+        prio, result = q.get()
 
         return result
 

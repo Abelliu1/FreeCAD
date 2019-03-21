@@ -392,33 +392,33 @@ void CmdTestProgress3::activated(int iMsg)
     try
     {
         // level 1
-        unsigned long level1 = 5;
-        Base::SequencerLauncher seq1("Starting progress bar", level1);
-        for (unsigned long i=0; i<level1;i++)
+        unsigned long steps = 5;
+        Base::SequencerLauncher seq1("Starting progress bar", steps);
+        for (unsigned long i=0; i<steps;i++)
         {
             QWaitCondition().wait(&mutex, 200);
             seq1.next(true);
 
             // level 2
-            unsigned long level2 = 6;
-            Base::SequencerLauncher seq2("Starting progress bar", level2);
-            for (unsigned long j=0; j<level2;j++)
+            unsigned long steps = 6;
+            Base::SequencerLauncher seq2("Starting progress bar", steps);
+            for (unsigned long j=0; j<steps;j++)
             {
                 QWaitCondition().wait(&mutex, 150);
                 seq2.next(true);
 
                 // level 3
-                unsigned long level3 = 7;
-                Base::SequencerLauncher seq3("Starting progress bar", level3);
-                for (unsigned long k=0; k<level3;k++)
+                unsigned long steps = 7;
+                Base::SequencerLauncher seq3("Starting progress bar", steps);
+                for (unsigned long k=0; k<steps;k++)
                 {
                     QWaitCondition().wait(&mutex, 100);
                     seq3.next(true);
 
                     // level 4
-                    unsigned long level4 = 8;
-                    Base::SequencerLauncher seq4("Starting progress bar", level4);
-                    for (unsigned long l=0; l<level4;l++)
+                    unsigned long steps = 8;
+                    Base::SequencerLauncher seq4("Starting progress bar", steps);
+                    for (unsigned long l=0; l<steps;l++)
                     {
                         QWaitCondition().wait(&mutex, 5);
                         seq4.next(true);

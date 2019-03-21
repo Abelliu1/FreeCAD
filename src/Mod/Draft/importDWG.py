@@ -33,8 +33,6 @@
 #  Converter application to convert to/from DXF. Then the real work is done by
 #  importDXF
 
-import six
-
 if open.__module__ == '__builtin__':
     pythonopen = open # to distinguish python built-in open function from the one declared here
 
@@ -103,8 +101,8 @@ def convertToDxf(dwgfilename):
         basename = os.path.basename(dwgfilename)
         cmdline = '"%s" "%s" "%s" "ACAD2000" "DXF" "0" "1" "%s"' % (teigha, indir, outdir, basename)
         print("Converting: " + cmdline)
-        if six.PY2:
-            if isinstance(cmdline,six.text_type):
+        if sys.version_info.major < 3:
+            if isinstance(cmdline,unicode):
                 encoding = sys.getfilesystemencoding()
                 cmdline = cmdline.encode(encoding)
         subprocess.call(cmdline,  shell=True)     #os.system(cmdline)

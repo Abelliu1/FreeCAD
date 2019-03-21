@@ -161,7 +161,7 @@ public:
      */
     virtual void* Produce () const
     {
-        return (new CLASS);
+        return (void*)(new CLASS);
     }
 };
 

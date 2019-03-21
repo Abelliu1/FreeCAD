@@ -57,12 +57,10 @@ public:
     void showDefaultButtons(bool);
 
 protected:
-    void open();
     void changeEvent(QEvent *e);
     void keyPressEvent(QKeyEvent*);
 
 private Q_SLOTS:
-    void openTransaction();
     void on_applyButton_clicked();
     void on_applyIncrementalPlacement_toggled(bool);
     void onPlacementChanged(int);
@@ -103,10 +101,6 @@ private:
      * after user selects points and clicks Selected point(s)
      */
     std::vector<SelectionObject> selectionObjects;
-    /** If false apply the placement directly to the transform nodes,
-     * otherwise change the placement property.
-     */
-    bool changeProperty;
 
     friend class TaskPlacement;
 };
@@ -138,7 +132,6 @@ public:
     bool reject();
     void clicked(int id);
 
-    void open();
     bool isAllowedAlterDocument(void) const
     { return true; }
     bool isAllowedAlterView(void) const

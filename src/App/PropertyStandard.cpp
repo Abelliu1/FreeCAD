@@ -456,7 +456,34 @@ void PropertyEnumeration::setPyObject(PyObject *value)
             hasSetValue();
         }
     }
-#if PY_MAJOR_VERSION < 3
+    else if (PyUnicode_Check(value)) {
+#if PY_MAJOR_VERSION >= 3
+        const char* str = PyUnicode_AsUTF8 (value);
+        if (_enum.contains(str)) {
+            aboutToSetValue();
+            _enum.setValue(PyUnicode_AsUTF8 (value));
+            hasSetValue();
+        }
+        else {
+            std::stringstream out;
+            out << "'" << str << "' is not part of the enumeration";
+            throw Base::ValueError(out.str());
+        }
+#else
+        PyObject* unicode = PyUnicode_AsUTF8String(value);
+        const char* str = PyString_AsString (unicode);
+        if (_enum.contains(str)) {
+            aboutToSetValue();
+            _enum.setValue(PyString_AsString (unicode));
+            hasSetValue();
+        }
+        else {
+            std::stringstream out;
+            out << "'" << str << "' is not part of the enumeration";
+            throw Base::ValueError(out.str());
+        }
+        Py_DECREF(unicode);
+    }
     else if (PyString_Check(value)) {
         const char* str = PyString_AsString (value);
         if (_enum.contains(str)) {
@@ -469,8 +496,8 @@ void PropertyEnumeration::setPyObject(PyObject *value)
             out << "'" << str << "' is not part of the enumeration";
             throw Base::ValueError(out.str());
         }
-    }
 #endif
+    }
     else if (PyUnicode_Check(value)) {
 #if PY_MAJOR_VERSION >=3
         std::string str = PyUnicode_AsUTF8(value);

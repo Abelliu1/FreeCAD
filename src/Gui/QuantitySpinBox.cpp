@@ -737,9 +737,11 @@ bool QuantitySpinBox::event(QEvent * event)
             event->accept();
             return true;
         }
+        else
+            return QAbstractSpinBox::event(event);
     }
-
-    return QAbstractSpinBox::event(event);
+    else
+        return QAbstractSpinBox::event(event);
 }
 
 void QuantitySpinBox::focusInEvent(QFocusEvent * event)

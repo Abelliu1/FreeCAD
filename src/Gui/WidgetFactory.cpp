@@ -1237,7 +1237,7 @@ void PyResource::load(const char* name)
 
                 if (!fi.exists()) {
                     QString what = QObject::tr("Cannot find file %1 neither in %2 nor in %3")
-                        .arg(fn, cwd, home);
+                        .arg(fn).arg(cwd).arg(home);
                     throw Base::FileSystemError(what.toUtf8().constData());
                 }
                 else {

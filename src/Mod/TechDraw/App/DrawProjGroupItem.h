@@ -78,12 +78,11 @@ public:
 
     virtual double getScale(void) const override;
     void autoPosition(void);
-    bool isAnchor(void) const;
+    bool isAnchor(void);
 
 
 protected:
     void onChanged(const App::Property* prop) override;
-    virtual bool isLocked(void) const override;
 
 private:
     static const char* TypeEnums[];

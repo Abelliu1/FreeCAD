@@ -242,19 +242,18 @@ SbBool SoSFMeshObject::readValue(SoInput *in)
 // This writes the value of a field to a file.
 void SoSFMeshObject::writeValue(SoOutput *out) const
 {
-    if (!value) {
-        int32_t count = 0;
-        out->write(count);
-        out->write(count);
-        return;
-    }
-
     if (!out->isBinary()) {
         SoOutputStream str(out);
         MeshCore::MeshOutput(value->getKernel()).SaveMeshNode(str);
         return;
     }
 
+    if (!value) {
+        int32_t count = 0;
+        out->write(count);
+        out->write(count);
+        return;
+    }
     const MeshCore::MeshPointArray& rPoints = value->getKernel().GetPoints();
     std::vector<float> verts;
     verts.reserve(3*rPoints.size());
@@ -1053,7 +1052,8 @@ void SoFCMeshObjectShape::stopSelection(SoAction * action, const Mesh::MeshObjec
 
     delete [] selectBuf;
     selectBuf = 0;
-    std::sort(hit.begin(),hit.end());
+    bool sorted = true;
+    if(sorted) std::sort(hit.begin(),hit.end());
 
     Gui::SoGLSelectAction *doaction = static_cast<Gui::SoGLSelectAction*>(action);
     doaction->indices.reserve(hit.size());

@@ -1134,14 +1134,14 @@ class EngagePoint
   public:
 	struct EngageState
 	{
-		size_t currentPathIndex = 0;
-		size_t currentSegmentIndex = 0;
+		size_t currentPathIndex;
+		size_t currentSegmentIndex;
 		double segmentPos = 0;
 		double totalDistance = 0;
 		double currentPathLength = 0;
 		int passes = 0;
 
-		double metric = 0; // engage point metric
+		double metric; // engage point metric
 
 		bool operator<(const EngageState &other) const
 		{

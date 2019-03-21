@@ -127,6 +127,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Global Sensitivity:  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Dominant Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -156,10 +160,6 @@
     </message>
     <message>
         <source>Reverse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Global Sensitivity:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -294,11 +294,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Press middle+left or middle+right button</source>
+        <source>Press middle and left or right mouse button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Scroll middle mouse button or keep middle button depressed
+        <source>Scroll middle mouse button or keep middle button pressed
 while doing a left or right click and move the mouse up or down</source>
         <translation type="unfinished"></translation>
     </message>
@@ -399,21 +399,6 @@ while doing a left or right click and move the mouse up or down</source>
     </message>
 </context>
 <context>
-    <name>Gui::Dialog::AboutDialog</name>
-    <message>
-        <source>Libraries</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>License</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Gui::Dialog::ButtonModel</name>
     <message>
         <source>Button %1</source>
@@ -421,37 +406,6 @@ while doing a left or right click and move the mouse up or down</source>
     </message>
     <message>
         <source>Out Of Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Gui::Dialog::CameraDialog</name>
-    <message>
-        <source>Camera settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Orientation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Q0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Q1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Q2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Q3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current view</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -849,19 +803,17 @@ while doing a left or right click and move the mouse up or down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>The shortcut &apos;%1&apos; is defined more than once. This could result into unexpected behaviour.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Already defined shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The shortcut &apos;%1&apos; is defined more than once. This could result in unexpected behaviour.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The shortcut &apos;%1&apos; is already assigned to &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do you want to override it?</source>
+        <source>The shortcut &apos;%1&apos; is already assigned to &apos;%2&apos;.
+
+Please define another shortcut.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1383,14 +1335,6 @@ while doing a left or right click and move the mouse up or down</source>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Duplicate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Addons...</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Gui::Dialog::DlgMacroExecuteImp</name>
@@ -1454,19 +1398,6 @@ This file already exists.</source>
     </message>
     <message>
         <source>Failed to rename to &apos;%1&apos;.
-Perhaps a file permission error?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate Macro</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duplicate Failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to duplicate to &apos;%1&apos;.
 Perhaps a file permission error?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2042,51 +1973,7 @@ Specify another directory, please.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show navigation cube</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Corner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use OpenGL Vertex Buffer Object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Document Camera Orientation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Prevents view tilting when pinch-zooming. Affects only Gesture nav. style. Mouse tilting is not disabled by this setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable touchscreen tilt gesture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Drag at cursor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Marker size:</source>
+        <source>Use OpenGL Vertex Buffer Object (experimental)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2098,70 +1985,6 @@ Specify another directory, please.</source>
     </message>
     <message>
         <source>Open a new viewer or restart %1 to apply anti-aliasing changes.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>5px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>7px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>9px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>11px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>13px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>15px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Isometric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dimetric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trimetric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Front</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2790,46 +2613,6 @@ Specify another directory, please.</source>
         <source>Metric small parts &amp; CNC(mm, mm/min)</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Imperial Civil (ft/ft^2/ft^3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Minimum fractional inch:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum fractional inch to display.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/2&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/4&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/8&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/16&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/32&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/64&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1/128&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Gui::Dialog::DlgSettingsViewColor</name>
@@ -2870,19 +2653,7 @@ Specify another directory, please.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tree View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Object being edited</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Active container</source>
+        <source>Sets the area of confusion for picking elements in 3D view. Larger value make it easier to pick stuff, but will make some small features impossible to select.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2978,6 +2749,10 @@ Specify another directory, please.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Move up</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2991,10 +2766,6 @@ Specify another directory, please.</source>
     </message>
     <message>
         <source>Add all to enabled workbenches</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3072,6 +2843,10 @@ Specify another directory, please.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>When deleting all transient directory you won&apos;t be able to recover any files afterwards.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Finished</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3083,10 +2858,6 @@ Specify another directory, please.</source>
         <source>Press &apos;Start Recovery&apos; to start the recovery process of the document listed below.
 
 The &apos;Status&apos; column shows whether the document could be recovered.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When deleting all transient directories you won&apos;t be able to recover any files afterwards.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3421,6 +3192,14 @@ The &apos;Status&apos; column shows whether the document could be recovered.</so
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Apply placement changes immediately</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply incremental changes to object placement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3446,30 +3225,6 @@ The &apos;Status&apos; column shows whether the document could be recovered.</so
     </message>
     <message>
         <source>Use center of mass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Axial:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply axial</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift click for opposite direction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Selected points</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply incremental changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select 1, 2, or 3 points before clicking this button.  A point may be on a vertex, face, or edge.  If on a face or edge the point used will be the point at the mouse position along face or edge.  If 1 point is selected it will be used as the center of rotation.  If 2 points are selected the midpoint between them will be the center of rotation and a new custom axis will be created, if needed.  If 3 points are selected the first point becomes the center of rotation and lies on the vector that is normal to the plane defined by the 3 points.  Some distance and angle information is provided in the report view, which can be useful when aligning objects.  For your convenience when Shift + click is used the appropriate distance or angle is copied to the clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3583,6 +3338,10 @@ The &apos;Status&apos; column shows whether the document could be recovered.</so
     <name>Gui::DockWnd::CombiView</name>
     <message>
         <source>CombiView</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3862,19 +3621,19 @@ Do you want to save your changes?</source>
 <context>
     <name>Gui::GestureNavigationStyle</name>
     <message>
-        <source>Tap OR click left mouse button.</source>
+        <source>Tap. Or click left mouse button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drag screen with two fingers OR press right mouse button.</source>
+        <source>Drag screen with two fingers. Or press right mouse button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drag screen with one finger OR press left mouse button. In Sketcher and other edit modes, hold Alt in addition.</source>
+        <source>Drag the screen with one finger. Or press left mouse button. In Sketcher and other edit modes, hold Alt in addition.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pinch (place two fingers on the screen and drag them apart from or towards each other) OR scroll middle mouse button OR PgUp/PgDown on keyboard.</source>
+        <source>Pinch (put two fingers on the screen and drag them apart/to each other). Or scroll middle mouse button. Or PgUp/PgDown on keyboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4156,26 +3915,27 @@ How do you want to proceed?</source>
 <context>
     <name>Gui::MayaGestureNavigationStyle</name>
     <message>
-        <source>Tap OR click left mouse button.</source>
+        <source>Tap. Or click left mouse button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drag screen with two fingers OR press ALT + middle mouse button.</source>
+        <source>Drag screen with two fingers. Or press ALT + middle mouse button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Drag screen with one finger OR press ALT + left mouse button. In Sketcher and other edit modes, hold Alt in addition.</source>
+        <source>Drag the screen with one finger. Or press ALT + left mouse button. In Sketcher and other edit modes, hold Alt in addition.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pinch (place two fingers on the screen and drag them apart from or towards each other) OR scroll middle mouse button OR press ALT + right mouse button OR PgUp/PgDown on keyboard.</source>
+        <source>Pinch (put two fingers on the screen and drag them apart/to each other). Or scroll middle mouse button. Or press ALT + right mouse button. Or PgUp/PgDown on keyboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Gui::NetworkRetriever</name>
     <message>
-        <source>Download started...</source>
+        <source>Download started...
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4254,13 +4014,6 @@ How do you want to proceed?</source>
     <name>Gui::PropertyEditor::LinkListLabel</name>
     <message>
         <source>Change the linked objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Gui::PropertyEditor::PropertyEditor</name>
-    <message>
-        <source>Edit %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4638,13 +4391,6 @@ Do you want to specify another directory?</source>
     </message>
 </context>
 <context>
-    <name>Gui::TreePanel</name>
-    <message>
-        <source>Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Gui::TreeWidget</name>
     <message>
         <source>Create group...</source>
@@ -4708,14 +4454,6 @@ Do you want to specify another directory?</source>
     </message>
     <message>
         <source>%1, Internal name: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search for objects</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5269,35 +5007,23 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source> %1.%2.%3 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotation: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Delete group content?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The %1 is not empty, delete its content as well?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Split</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Translation:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rotation:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toggle active part</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit text</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5690,7 +5416,7 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Activates or Deactivates the selected object&apos;s edit mode</source>
+        <source>Enters or leaves the selected object&apos;s edit mode</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6025,11 +5751,11 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot merge project with itself.</source>
+        <source>%1 document (*.fcstd)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 document (*.FCStd)</source>
+        <source>Cannot merge project with itself.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6706,6 +6432,21 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
+    <name>StdCmdViewAxo</name>
+    <message>
+        <source>Standard-View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Axonometric</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set to axonometric view</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StdCmdViewBottom</name>
     <message>
         <source>Standard-View</source>
@@ -6731,22 +6472,7 @@ Be aware the point where you click matters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Creates a new view window for the active document</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StdCmdViewDimetric</name>
-    <message>
-        <source>Standard-View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dimetric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set to dimetric view</source>
+        <source>Creates a new  view window for the active document</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6837,21 +6563,6 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Set to front view</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StdCmdViewIsometric</name>
-    <message>
-        <source>Standard-View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Isometric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set to isometric view</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7036,21 +6747,6 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
-    <name>StdCmdViewTrimetric</name>
-    <message>
-        <source>Standard-View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Trimetric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set to trimetric view</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StdCmdViewVR</name>
     <message>
         <source>Standard-View</source>
@@ -7167,66 +6863,6 @@ Be aware the point where you click matters.</source>
     </message>
 </context>
 <context>
-    <name>StdTreeCollapseDocument</name>
-    <message>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Collapse/Expand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expand active document and collapse all others</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StdTreeMultiDocument</name>
-    <message>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Multi Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display all documents in the tree view</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StdTreeSingleDocument</name>
-    <message>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Single Document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only display the active document in the tree view</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StdTreeViewDocument</name>
-    <message>
-        <source>View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Document Tree</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set visibility of inactive documents in tree view</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StdViewBoxZoom</name>
     <message>
         <source>Standard-View</source>
@@ -7337,19 +6973,15 @@ Be aware the point where you click matters.</source>
 <context>
     <name>Std_Delete</name>
     <message>
-        <source>These items are linked to items selected for deletion and might break.</source>
+        <source>Object dependencies</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>These items are selected for deletion, but are not in the active document.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Selection Issues</source>
+        <source>The following, referencing objects might break.
+
+Are you sure you want to continue?
+
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7450,50 +7082,6 @@ Do you want to duplicate them, too?</source>
     </message>
     <message>
         <source>Do you want to continue?</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ViewIsometricCmd</name>
-    <message>
-        <source>Isometric</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set NaviCube to Isometric mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ViewOrthographicCmd</name>
-    <message>
-        <source>Orthographic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set View to Orthographic mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ViewPerspectiveCmd</name>
-    <message>
-        <source>Perspective</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set View to Perspective mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ViewZoomToFitCmd</name>
-    <message>
-        <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom so that model fills the view</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

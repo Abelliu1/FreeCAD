@@ -503,7 +503,7 @@ public:
   double fvalue;
   struct {
     std::string name;
-    double fvalue = 0;
+    double fvalue;
   } constant;
   std::vector<Expression*> arguments;
   std::vector<Expression*> list;

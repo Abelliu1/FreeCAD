@@ -25,7 +25,7 @@
 
 #include <QStandardItemModel>
 #include <QDialog>
-#include <QHash>
+#include <QMap>
 
 class SoNode;
 
@@ -56,13 +56,13 @@ public:
     /// insert the first node in tree
     void setNode(SoNode* node);
     /// set names per node
-    void setNodeNames(const QHash<SoNode*, QString>& names);
+    void setNodeNames(const QMap<SoNode*, QString>& names);
     /// returns standard parent's flags
     Qt::ItemFlags flags (const QModelIndex & index) const;
 
 private:
     void setNode(QModelIndex, SoNode*);
-    QHash<SoNode*, QString> nodeNames;
+    QMap<SoNode*, QString> nodeNames;
 };
 
 /// Dialog window to display scenegraph model as a tree

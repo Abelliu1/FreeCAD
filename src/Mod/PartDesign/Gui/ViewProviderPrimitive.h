@@ -52,6 +52,7 @@ protected:
     void updateAddSubShapeIndicator();
     
     std::string                 displayMode;
+    PartGui::SoBrepFaceSet*     previewFaceSet;
 };
 
 } // namespace PartDesignGui

@@ -65,6 +65,7 @@ namespace Spaceball
         int xRot;
         int yRot;
         int zRot;
+        bool handled;
     };
 
     class ButtonEvent : public EventBase

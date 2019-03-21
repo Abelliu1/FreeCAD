@@ -160,7 +160,7 @@
     </message>
     <message>
       <source>Global Sensitivity:</source>
-      <translation type="unfinished">Global Sensitivity:</translation>
+      <translation>Czułość Całkowita:</translation>
     </message>
   </context>
   <context>
@@ -407,7 +407,7 @@ while doing a left or right click and move the mouse up or down</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
-      <translation type="unfinished">This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</translation>
+      <translation>To oprogramowanie używa komponentów typu open source, którego prawa autorskie i inne prawa zastrzeżone należą do ich właścicieli:</translation>
     </message>
     <message>
       <source>License</source>
@@ -429,7 +429,7 @@ while doing a left or right click and move the mouse up or down</translation>
     <name>Gui::Dialog::CameraDialog</name>
     <message>
       <source>Camera settings</source>
-      <translation>Ustawienia kamery</translation>
+      <translation type="unfinished">Camera settings</translation>
     </message>
     <message>
       <source>Orientation</source>
@@ -437,23 +437,23 @@ while doing a left or right click and move the mouse up or down</translation>
     </message>
     <message>
       <source>Q0</source>
-      <translation>Q0</translation>
+      <translation type="unfinished">Q0</translation>
     </message>
     <message>
       <source>Q1</source>
-      <translation>Q1</translation>
+      <translation type="unfinished">Q1</translation>
     </message>
     <message>
       <source>Q2</source>
-      <translation>Q2</translation>
+      <translation type="unfinished">Q2</translation>
     </message>
     <message>
       <source>Q3</source>
-      <translation>Q3</translation>
+      <translation type="unfinished">Q3</translation>
     </message>
     <message>
       <source>Current view</source>
-      <translation>Bieżący widok</translation>
+      <translation type="unfinished">Current view</translation>
     </message>
   </context>
   <context>
@@ -850,20 +850,20 @@ while doing a left or right click and move the mouse up or down</translation>
       <translation>Skrót zdefiniowany wielokrotnie</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Skrót '%1' jest zdefiniowany więcej niż raz. Może to prowadzić do nieoczekiwanego zachowania.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Skrót już jest zdefiniowany</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation type="unfinished">The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation>Czy na pewno chcesz nadpisać?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -2048,11 +2048,11 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Show navigation cube</source>
-      <translation type="unfinished">Show navigation cube</translation>
+      <translation>Pokaż nawigację</translation>
     </message>
     <message>
       <source>Corner</source>
-      <translation>Narożnik</translation>
+      <translation>Róg</translation>
     </message>
     <message>
       <source>Top left</source>
@@ -2084,7 +2084,7 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Disable touchscreen tilt gesture</source>
-      <translation type="unfinished">Disable touchscreen tilt gesture</translation>
+      <translation>Wyłącz gest pochylenia ekranu dotykowego</translation>
     </message>
     <message>
       <source>Drag at cursor</source>
@@ -2801,11 +2801,11 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Minimum fractional inch:</source>
-      <translation type="unfinished">Minimum fractional inch:</translation>
+      <translation>Minimalny ułamek cala:</translation>
     </message>
     <message>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum fractional inch to display.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum fractional inch to display.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimalny ułamek cala do wyświetlenia.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <source>1/2"</source>
@@ -2876,7 +2876,7 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</source>
-      <translation type="unfinished">Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</translation>
+      <translation>Ustawia teren obszaru na zbieranie elementów w widoku 3D. Większa wartość ułatwia wybieranie rzeczy, ale uniemożliwi wybór niektórych małych funkcji.</translation>
     </message>
     <message>
       <source>Tree View</source>
@@ -2884,11 +2884,11 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Object being edited</source>
-      <translation type="unfinished">Object being edited</translation>
+      <translation>Obiekt jest edytowany</translation>
     </message>
     <message>
       <source>Active container</source>
-      <translation type="unfinished">Active container</translation>
+      <translation>Aktywny pojemnik</translation>
     </message>
   </context>
   <context>
@@ -2983,6 +2983,10 @@ Specify another directory, please.</source>
       <translation>Sortuj włączone środowiska</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Sortuj włączone środowiska&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Przesuń w górę</translation>
     </message>
@@ -2997,10 +3001,6 @@ Specify another directory, please.</source>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Dodaj wszystkie do włączonych modułów</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation type="unfinished">&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -3457,7 +3457,7 @@ Kolumna "Stan" pokazuje, czy dokument może być odzyskany.</translation>
     </message>
     <message>
       <source>Axial:</source>
-      <translation>Osiowe:</translation>
+      <translation type="unfinished">Axial:</translation>
     </message>
     <message>
       <source>Apply axial</source>
@@ -3465,7 +3465,7 @@ Kolumna "Stan" pokazuje, czy dokument może być odzyskany.</translation>
     </message>
     <message>
       <source>Shift click for opposite direction</source>
-      <translation type="unfinished">Shift click for opposite direction</translation>
+      <translation>Naciśnij Shift aby odwrócić kierunek</translation>
     </message>
     <message>
       <source>Selected points</source>
@@ -5294,6 +5294,10 @@ Be aware the point where you click matters.</source>
       <translation>Rozdziel</translation>
     </message>
     <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
+    </message>
+    <message>
       <source>Translation:</source>
       <translation>Przesunięcie:</translation>
     </message>
@@ -5303,7 +5307,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Toggle active part</source>
-      <translation>Włącz aktywną część</translation>
+      <translation>Przełącz aktywną część</translation>
     </message>
     <message>
       <source>Edit text</source>
@@ -5699,8 +5703,8 @@ Be aware the point where you click matters.</source>
       <translation>Przełącza tryb edycji zaznaczonego obiektu</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation>Aktywuje lub Deaktywuje tryb edycji zaznaczonych obiektów</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Wejście lub wyjście do trybu edycji zaznaczonego obiektu</translation>
     </message>
   </context>
   <context>
@@ -6756,7 +6760,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Set to dimetric view</source>
-      <translation type="unfinished">Set to dimetric view</translation>
+      <translation>Ustaw widok aksonometryczny dwuwymiarowy</translation>
     </message>
   </context>
   <context>
@@ -7056,7 +7060,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Set to trimetric view</source>
-      <translation type="unfinished">Set to trimetric view</translation>
+      <translation>Ustaw widok aksonometryczny trójwymiarowy</translation>
     </message>
   </context>
   <context>
@@ -7198,7 +7202,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Multi Document</source>
-      <translation type="unfinished">Multi Document</translation>
+      <translation>Wiele dokumentów</translation>
     </message>
     <message>
       <source>Display all documents in the tree view</source>
@@ -7355,11 +7359,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Are you sure you want to continue?</source>
-      <translation>Czy na pewno chcesz kontynuować?</translation>
+      <translation type="unfinished">Are you sure you want to continue?</translation>
     </message>
     <message>
       <source>Delete Selection Issues</source>
-      <translation type="unfinished">Delete Selection Issues</translation>
+      <translation>Usuń Problemy Zaznaczenia</translation>
     </message>
   </context>
   <context>
@@ -7477,11 +7481,11 @@ Do you want to duplicate them, too?</source>
     <name>ViewOrthographicCmd</name>
     <message>
       <source>Orthographic</source>
-      <translation>Ortogonalny</translation>
+      <translation>Ortograficzny</translation>
     </message>
     <message>
       <source>Set View to Orthographic mode</source>
-      <translation>Ustaw widok w Trybie Ortogonalnym</translation>
+      <translation>Ustaw widok w Trybie Ortograficznym</translation>
     </message>
   </context>
   <context>
@@ -7499,11 +7503,11 @@ Do you want to duplicate them, too?</source>
     <name>ViewZoomToFitCmd</name>
     <message>
       <source>Zoom to fit</source>
-      <translation type="unfinished">Zoom to fit</translation>
+      <translation>Przybliż aby dopasować</translation>
     </message>
     <message>
       <source>Zoom so that model fills the view</source>
-      <translation type="unfinished">Zoom so that model fills the view</translation>
+      <translation>Przybliż tak, aby model wypełnił widok</translation>
     </message>
   </context>
   <context>

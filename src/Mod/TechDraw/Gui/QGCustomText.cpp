@@ -58,7 +58,6 @@ QGCustomText::QGCustomText()
 
     isHighlighted = false;
     m_colCurrent = getNormalColor();
-    m_colNormal  = m_colCurrent;
 }
 
 void QGCustomText::centerAt(QPointF centerPos)
@@ -112,8 +111,7 @@ void QGCustomText::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 }
 
 void QGCustomText::setPrettyNormal() {
-//    m_colCurrent = getNormalColor();
-    m_colCurrent = m_colNormal;
+    m_colCurrent = getNormalColor();
     update();
 }
 

@@ -42,7 +42,6 @@
 #include <Mod/TechDraw/App/DrawProjGroup.h>
 
 #include "Rez.h"
-#include "DrawGuiUtil.h"
 #include "QGIProjGroup.h"
 
 using namespace TechDrawGui;
@@ -63,6 +62,7 @@ QGIProjGroup::QGIProjGroup()
     setFiltersChildEvents(true);
     borderVisible = false;
 }
+
 
 TechDraw::DrawProjGroup * QGIProjGroup::getDrawView(void) const
 {
@@ -118,8 +118,12 @@ QVariant QGIProjGroup::itemChange(GraphicsItemChange change, const QVariant &val
 
                 if (type == QString::fromLatin1("Front")) {
                     gView->setLocked(true);                  //this locks in GUI only
-                    gView->alignTo(m_origin, QString::fromLatin1("None"));
+                    fView->LockPosition.setValue(true);      //lock in App also
                     installSceneEventFilter(gView);
+                    App::DocumentObject *docObj = getViewObject();
+                    TechDraw::DrawProjGroup *projectionGroup = dynamic_cast<TechDraw::DrawProjGroup *>(docObj);
+                    projectionGroup->Anchor.setValue(fView);
+                    updateView();
                 } else if ( type == QString::fromLatin1("Top") ||
                     type == QString::fromLatin1("Bottom")) {
                     gView->alignTo(m_origin, QString::fromLatin1("Vertical"));
@@ -127,13 +131,7 @@ QVariant QGIProjGroup::itemChange(GraphicsItemChange change, const QVariant &val
                             type == QString::fromLatin1("Right") ||
                             type == QString::fromLatin1("Rear") ) {
                     gView->alignTo(m_origin, QString::fromLatin1("Horizontal"));
-                } else if ( type == QString::fromLatin1("FrontTopRight") ||
-                            type == QString::fromLatin1("FrontBottomLeft") ) {
-                    gView->alignTo(m_origin, QString::fromLatin1("45slash"));
-                } else if ( type == QString::fromLatin1("FrontTopLeft") ||
-                            type == QString::fromLatin1("FrontBottomRight") ) {
-                    gView->alignTo(m_origin, QString::fromLatin1("45backslash"));
-                }
+                } 
             }
          }
     }
@@ -170,16 +168,23 @@ void QGIProjGroup::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
        QGIView *qAnchor = getAnchorQItem();
         if((mousePos - event->screenPos()).manhattanLength() < 5) {
             if(qAnchor && qAnchor->shape().contains(event->pos())) {
-                event->ignore();
-                qAnchor->mouseReleaseEvent(event);
+              qAnchor->mouseReleaseEvent(event);
             }
-        } else if(scene() && qAnchor) {
+        } else if(scene() && qAnchor && (qAnchor == scene()->mouseGrabberItem())) {
             // End of Drag
-            getViewObject()->setPosition(Rez::appX(x()),Rez::appX(getY()));
+            Gui::Command::openCommand("Drag Projection Group");
+            //TODO: See if these commands actually handle the horizontal/vertical constraints properly...
+            Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.X = %f",
+                                    getViewName(), Rez::appX(x()));
+            Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Y = %f",
+                                    getViewName(), Rez::appX(getY()));// inverts Y
+            Gui::Command::commitCommand();
+            //Gui::Command::updateActive();
         }
     }
     QGIViewCollection::mouseReleaseEvent(event);
 }
+
 
 QGIView * QGIProjGroup::getAnchorQItem() const
 {

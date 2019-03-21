@@ -117,7 +117,10 @@
       </widget>
      </item>
      <item>
-      <widget class="Gui::InputField" name="spSlope">
+      <widget class="QDoubleSpinBox" name="spSlope">
+       <property name="decimals">
+        <number>2</number>
+       </property>
        <property name="maximum">
         <double>1000000000.000000000000000</double>
        </property>
@@ -126,9 +129,6 @@
        </property>
        <property name="value">
         <double>1000000.000000000000000</double>
-       </property>
-       <property name="unit" stdset="0">
-        <string notr="true">Pa</string>
        </property>
       </widget>
      </item>
@@ -164,13 +164,6 @@
   <zorder>lw_referencesMaster</zorder>
   <zorder>lbl_info_2</zorder>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Gui::InputField</class>
-   <extends>QLineEdit</extends>
-   <header>Gui/InputField.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

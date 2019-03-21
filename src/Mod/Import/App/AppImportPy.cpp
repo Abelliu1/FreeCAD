@@ -253,8 +253,8 @@ private:
             Handle(TDocStd_Document) hDoc;
             hApp->NewDocument(TCollection_ExtendedString("MDTV-CAF"), hDoc);
 
-            //bool keepExplicitPlacement = list.size() > 1;
-            bool keepExplicitPlacement = Standard_True;
+            bool keepExplicitPlacement = list.size() > 1;
+            keepExplicitPlacement = Standard_True;
             Import::ExportOCAFCmd ocaf(hDoc, keepExplicitPlacement);
 
             std::map<Part::Feature*, std::vector<App::Color> > partColors;
@@ -416,9 +416,6 @@ private:
             dxf_file.DoRead(IgnoreErrors);
             pcDoc->recompute();
         }
-        catch (const Standard_Failure& e) {
-            throw Py::RuntimeError(e.GetMessageString());
-        }
         catch (const Base::Exception& e) {
             throw Py::RuntimeError(e.what());
         }
@@ -432,7 +429,8 @@ private:
         std::string filePath;
         std::string layerName;
         const char* optionSource = nullptr;
-        std::string defaultOptions = "User parameter:BaseApp/Preferences/Mod/Import";
+        char* defaultOptions = "User parameter:BaseApp/Preferences/Mod/Import";
+        char* useOptionSource = nullptr;
         int   versionParm = -1;
         bool  versionOverride = false;
         bool  polyOverride = false;
@@ -458,12 +456,14 @@ private:
                polyOverride = true; 
             }
             if (optionSource != nullptr) {
-                defaultOptions = optionSource;
+                strcpy(useOptionSource,optionSource);
+            } else {
+                useOptionSource = defaultOptions;
             }
 
             try {
                 ImpExpDxfWrite writer(filePath);
-                writer.setOptionSource(defaultOptions);
+                writer.setOptionSource(useOptionSource);
                 writer.setOptions();
                 if (versionOverride) {
                     writer.setVersion(versionParm);
@@ -505,12 +505,14 @@ private:
                polyOverride = true; 
             }
             if (optionSource != nullptr) {
-                defaultOptions = optionSource;
+                strcpy(useOptionSource,optionSource);
+            } else {
+                useOptionSource = defaultOptions;
             }
 
             try {
                 ImpExpDxfWrite writer(filePath);
-                writer.setOptionSource(defaultOptions);
+                writer.setOptionSource(useOptionSource);
                 writer.setOptions();
                 if (versionOverride) {
                     writer.setVersion(versionParm);
@@ -539,7 +541,8 @@ private:
         std::string filePath;
         std::string layerName;
         const char* optionSource = nullptr;
-        std::string defaultOptions = "User parameter:BaseApp/Preferences/Mod/Import";
+        char* defaultOptions = "User parameter:BaseApp/Preferences/Mod/Import";
+        char* useOptionSource = nullptr;
         int   versionParm = -1;
         bool  versionOverride = false;
         bool  polyOverride = false;
@@ -565,12 +568,14 @@ private:
             }
 
             if (optionSource != nullptr) {
-                defaultOptions = optionSource;
+                strcpy(useOptionSource,optionSource);
+            } else {
+                useOptionSource = defaultOptions;
             }
 
             try {
                 ImpExpDxfWrite writer(filePath);
-                writer.setOptionSource(defaultOptions);
+                writer.setOptionSource(useOptionSource);
                 writer.setOptions();
                 if (versionOverride) {
                     writer.setVersion(versionParm);
@@ -616,12 +621,14 @@ private:
             }
 
             if (optionSource != nullptr) {
-                defaultOptions = optionSource;
+                strcpy(useOptionSource,optionSource);
+            } else {
+                useOptionSource = defaultOptions;
             }
             
             try {
                 ImpExpDxfWrite writer(filePath);
-                writer.setOptionSource(defaultOptions);
+                writer.setOptionSource(useOptionSource);
                 writer.setOptions();
                 if (versionOverride) {
                     writer.setVersion(versionParm);

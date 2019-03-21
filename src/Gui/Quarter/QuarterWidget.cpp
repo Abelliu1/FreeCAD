@@ -167,9 +167,6 @@ public:
 #endif
         setFormat(surfaceFormat);
     }
-    ~CustomGLWidget()
-    {
-    }
     void initializeGL()
     {
         QOpenGLContext *context = QOpenGLContext::currentContext();
@@ -190,13 +187,6 @@ public:
     }
     void aboutToDestroyGLContext()
     {
-#if QT_VERSION >= 0x050900
-        // With Qt 5.9 a signal is emitted while the QuarterWidget is being destroyed.
-        // At this state its type is a QWidget, not a QuarterWidget any more.
-        QuarterWidget* qw = qobject_cast<QuarterWidget*>(parent());
-        if (!qw)
-            return;
-#endif
         QMetaObject::invokeMethod(parent(), "aboutToDestroyGLContext",
             Qt::DirectConnection,
             QGenericReturnArgument());

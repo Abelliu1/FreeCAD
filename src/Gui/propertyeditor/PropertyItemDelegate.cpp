@@ -38,8 +38,8 @@ using namespace Gui::PropertyEditor;
 PropertyItemDelegate::PropertyItemDelegate(QObject* parent)
     : QItemDelegate(parent), pressed(false)
 {
-    connect(this, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)),
-            this, SLOT(editorClosed(QWidget*, QAbstractItemDelegate::EndEditHint)));
+    connect(this, SIGNAL(closeEditor(QWidget*,QAbstractItemDelegate::EndEditHint)), 
+            this, SLOT(editorClosed(QWidget*)));
 }
 
 PropertyItemDelegate::~PropertyItemDelegate()
@@ -114,12 +114,9 @@ bool PropertyItemDelegate::editorEvent (QEvent * event, QAbstractItemModel* mode
     return QItemDelegate::editorEvent(event, model, option, index);
 }
 
-void PropertyItemDelegate::editorClosed(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
+void PropertyItemDelegate::editorClosed(QWidget *editor)
 {
-    // don't close the editor when pressing Tab or Shift+Tab
-    // https://forum.freecadweb.org/viewtopic.php?f=3&t=34627#p290957
-    if (hint != EditNextItem && hint != EditPreviousItem)
-        editor->close();
+    editor->close();
 }
 
 QWidget * PropertyItemDelegate::createEditor (QWidget * parent, const QStyleOptionViewItem & /*option*/, 

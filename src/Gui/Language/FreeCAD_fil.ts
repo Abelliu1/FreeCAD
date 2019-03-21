@@ -160,7 +160,7 @@
     </message>
     <message>
       <source>Global Sensitivity:</source>
-      <translation type="unfinished">Global Sensitivity:</translation>
+      <translation>Ang Malawakang Pagkasensitibo:</translation>
     </message>
   </context>
   <context>
@@ -403,7 +403,7 @@ while doing a left or right click and move the mouse up or down</translation>
     <name>Gui::Dialog::AboutDialog</name>
     <message>
       <source>Libraries</source>
-      <translation type="unfinished">Libraries</translation>
+      <translation>Aklatan</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
@@ -850,20 +850,20 @@ while doing a left or right click and move the mouse up or down</translation>
       <translation>Maramihang pagtukoy sa daang tuwiran</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Ang daang tuwiran '%1' ay tinukoy nang higit sa isang beses. Ito ay maaaring magresulta sa hindi inaasahang pag-uugali.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Nilalaman ng daang tuwiran</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation type="unfinished">The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation type="unfinished">Do you want to override it?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -2984,6 +2984,10 @@ mangyaring Tukuyin ang ibang direktoryo,.</translation>
       <translation>Pinag-uri-uriin ang workbenches</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Pinag-uri-uriin ang workbenches&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Galawin pataas</translation>
     </message>
@@ -2998,10 +3002,6 @@ mangyaring Tukuyin ang ibang direktoryo,.</translation>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Idagdag ang lahat sa mga workbench na pinagana</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation type="unfinished">&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -5303,11 +5303,15 @@ Magkaroon ng kamalayan sa punto kung saan mo pindutin ang mga bagay.</translatio
     </message>
     <message>
       <source>Export failed</source>
-      <translation type="unfinished">Export failed</translation>
+      <translation>Hindi matagumpay na pag-export</translation>
     </message>
     <message>
       <source>Split</source>
       <translation type="unfinished">Split</translation>
+    </message>
+    <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
     </message>
     <message>
       <source>Translation:</source>
@@ -5715,8 +5719,8 @@ Magkaroon ng kamalayan sa punto kung saan mo pindutin ang mga bagay.</translatio
       <translation>Ang mga toggle sa anyo ng pag-babago ng piniling bagay</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation type="unfinished">Activates or Deactivates the selected object's edit mode</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Ang mga pumapasok o nag-iiwan ng anyo ng pag-edit ng piniling bagay</translation>
     </message>
   </context>
   <context>
@@ -6757,7 +6761,7 @@ Magkaroon ng kamalayan sa punto kung saan mo pindutin ang mga bagay.</translatio
     </message>
     <message>
       <source>Creates a new view window for the active document</source>
-      <translation type="unfinished">Creates a new view window for the active document</translation>
+      <translation>Lumilikha ng bagong durungawan para sa dokumentong aktibo</translation>
     </message>
   </context>
   <context>

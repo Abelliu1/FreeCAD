@@ -79,8 +79,7 @@ DlgPreferencesImp::DlgPreferencesImp(QWidget* parent, Qt::WindowFlags fl)
  */
 DlgPreferencesImp::~DlgPreferencesImp()
 {
-    // no need to delete child widgets, Qt does it all for us
-    delete ui;
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void DlgPreferencesImp::setupPages()
@@ -298,7 +297,7 @@ void DlgPreferencesImp::applyChanges()
 
 void DlgPreferencesImp::showEvent(QShowEvent* ev)
 {
-    //canEmbedScrollArea = false;
+    canEmbedScrollArea = false;
     QDialog::showEvent(ev);
 }
 
@@ -308,7 +307,7 @@ void DlgPreferencesImp::resizeEvent(QResizeEvent* ev)
         // embed the widget stack into a scroll area if the size is
         // bigger than the available desktop
         QRect rect = QApplication::desktop()->availableGeometry();
-        int maxHeight = rect.height() - 60;
+        int maxHeight = rect.height();
         int maxWidth = rect.width();
         if (height() > maxHeight || width() > maxWidth) {
             canEmbedScrollArea = false;
@@ -325,7 +324,7 @@ void DlgPreferencesImp::resizeEvent(QResizeEvent* ev)
             if (bar) {
                 int newWidth = width() + bar->width();
                 newWidth = std::min<int>(newWidth, maxWidth);
-                int newHeight = std::min<int>(height(), maxHeight);
+                int newHeight = std::min<int>(height(), maxHeight-30);
                 QMetaObject::invokeMethod(this, "resizeWindow",
                     Qt::QueuedConnection,
                     QGenericReturnArgument(),

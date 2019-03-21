@@ -378,11 +378,10 @@ void ReportOutput::changeEvent(QEvent *ev)
     if (ev->type() == QEvent::StyleChange) {
         QPalette pal = palette();
         QColor color = pal.windowText().color();
-        unsigned int text = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
-        unsigned long value = static_cast<unsigned long>(text);
+        unsigned long text = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
         // if this parameter is not already set use the style's window text color
-        value = getWindowParameter()->GetUnsigned("colorText", value);
-        getWindowParameter()->SetUnsigned("colorText", value);
+        text = getWindowParameter()->GetUnsigned("colorText", text);
+        getWindowParameter()->SetUnsigned("colorText", text);
     }
     QTextEdit::changeEvent(ev);
 }

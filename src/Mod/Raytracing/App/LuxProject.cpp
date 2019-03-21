@@ -87,7 +87,8 @@ App::DocumentObjectExecReturn *LuxProject::execute(void)
     ofstream ofile(tempName.c_str());
 
     // copy the input of the resource file
-    while (getline (file,line)) {
+    while (!file.eof()) {
+        getline (file,line);
         // check if the marker in the template is found
         if(line.find("#RaytracingContent") == string::npos) {
             if(line.find("#RaytracingCamera") == string::npos) {

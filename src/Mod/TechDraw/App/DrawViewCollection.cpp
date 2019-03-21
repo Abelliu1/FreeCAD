@@ -27,7 +27,6 @@
 #endif
 
 #include <App/Document.h>
-#include <App/DocumentObject.h>
 
 #include <Base/Console.h>
 #include <Base/Exception.h>
@@ -46,38 +45,13 @@ PROPERTY_SOURCE(TechDraw::DrawViewCollection, TechDraw::DrawView)
 DrawViewCollection::DrawViewCollection()
 {
     nowUnsetting = false;
-    static const char *group = "Collection";
-    ADD_PROPERTY_TYPE(Views     ,(0), group, App::Prop_None,"Collection Views");
+    static const char *group = "Drawing view";
+    ADD_PROPERTY_TYPE(Views     ,(0), group, App::Prop_None,"Attached Views");
     Views.setScope(App::LinkScope::Global);
 }
 
 DrawViewCollection::~DrawViewCollection()
 {
-}
-
-void DrawViewCollection::onChanged(const App::Property* prop)
-{
-    TechDraw::DrawView::onChanged(prop);
-}
-
-short DrawViewCollection::mustExecute() const
-{
-    if (Views.isTouched()) {
-        return 1;
-    } else {
-        return TechDraw::DrawView::mustExecute();
-    }
-}
-
-App::DocumentObjectExecReturn *DrawViewCollection::execute(void)
-{
-    if (!keepUpdated()) {
-        return App::DocumentObject::StdReturn;
-    }
-
-    lockChildren();
-
-    return DrawView::execute();
 }
 
 int DrawViewCollection::addView(DrawView *view)
@@ -132,6 +106,15 @@ void DrawViewCollection::rebuildViewList()
     Views.setValues(newViews);
 }
 
+short DrawViewCollection::mustExecute() const
+{
+    if (Views.isTouched()) {
+        return 1;
+    } else {
+        return TechDraw::DrawView::mustExecute();
+    }
+}
+
 int DrawViewCollection::countChildren()
 {
     //Count the children recursively if needed
@@ -155,16 +138,9 @@ void DrawViewCollection::onDocumentRestored()
     DrawView::execute();
 }
 
-void DrawViewCollection::lockChildren(void) 
+void DrawViewCollection::onChanged(const App::Property* prop)
 {
-//    Base::Console().Message("DVC::lockChildren()\n");
-    for (auto& v:Views.getValues()) {
-        TechDraw::DrawView *view = dynamic_cast<TechDraw::DrawView *>(v);
-        if (!view) {
-            throw Base::ValueError("DrawViewCollection::lockChildren bad View\n");
-        }
-        view->handleXYLock();
-    }
+    TechDraw::DrawView::onChanged(prop);
 }
 
 void DrawViewCollection::unsetupObject()
@@ -185,6 +161,17 @@ void DrawViewCollection::unsetupObject()
     }
     Views.setValues(emptyViews);
 }
+
+
+App::DocumentObjectExecReturn *DrawViewCollection::execute(void)
+{
+    if (!keepUpdated()) {
+        return App::DocumentObject::StdReturn;
+    }
+
+    return DrawView::execute();
+}
+
 
 QRectF DrawViewCollection::getRect() const
 {

@@ -31,7 +31,6 @@ import PathScripts.PathUtil as PathUtil
 import PathScripts.PathUtils as PathUtils
 import copy
 import math
-import sys
 import traceback
 
 from PathScripts.PathDressupTagPreferences import HoldingTagPreferences
@@ -177,12 +176,12 @@ class Tag:
     def filterIntersections(self, pts, face):
         if type(face.Surface) == Part.Cone or type(face.Surface) == Part.Cylinder or type(face.Surface) == Part.Toroid:
             PathLog.track("it's a cone/cylinder, checking z")
-            return list(filter(lambda pt: pt.z >= self.bottom() and pt.z <= self.top(), pts))
+            return filter(lambda pt: pt.z >= self.bottom() and pt.z <= self.top(), pts)
         if type(face.Surface) == Part.Plane:
             PathLog.track("it's a plane, checking R")
             c = face.Edges[0].Curve
             if (type(c) == Part.Circle):
-                return list(filter(lambda pt: (pt - c.Center).Length <= c.Radius or PathGeom.isRoughly((pt - c.Center).Length, c.Radius), pts))
+                return filter(lambda pt: (pt - c.Center).Length <= c.Radius or PathGeom.isRoughly((pt - c.Center).Length, c.Radius), pts)
         print("==== we got a %s" % face.Surface)
 
     def isPointOnEdge(self, pt, edge):
@@ -326,14 +325,14 @@ class MapWireToTag:
         if not self.entryEdges:
             print("fill entryEdges ...")
             self.realEntry = sorted(self.edgePoints, key=lambda p: (p - self.entry).Length)[0]
-            self.entryEdges = list(filter(lambda e: PathGeom.edgeConnectsTo(e, self.realEntry), edges))
+            self.entryEdges = filter(lambda e: PathGeom.edgeConnectsTo(e, self.realEntry), edges)
             edges.append(Part.Edge(Part.LineSegment(self.entry, self.realEntry)))
         else:
             self.realEntry = None
         if not self.exitEdges:
             print("fill exitEdges ...")
             self.realExit = sorted(self.edgePoints, key=lambda p: (p - self.exit).Length)[0]
-            self.exitEdges = list(filter(lambda e: PathGeom.edgeConnectsTo(e, self.realExit), edges))
+            self.exitEdges = filter(lambda e: PathGeom.edgeConnectsTo(e, self.realExit), edges)
             edges.append(Part.Edge(Part.LineSegment(self.realExit, self.exit)))
         else:
             self.realExit = None
@@ -449,10 +448,7 @@ class MapWireToTag:
                 wire.add(edge)
 
         shell = wire.extrude(FreeCAD.Vector(0, 0, self.tag.height + 1))
-        nullFaces = list(filter(lambda f: PathGeom.isRoughly(f.Area, 0), shell.Faces))
-        if nullFaces:
-            return shell.removeShape(nullFaces)
-        return shell
+        return shell.removeShape(filter(lambda f: PathGeom.isRoughly(f.Area, 0), shell.Faces))
 
     def commandsForEdges(self):
         global failures
@@ -478,10 +474,7 @@ class MapWireToTag:
                 return commands
             except Exception as e:
                 PathLog.error("Exception during processing tag @(%.2f, %.2f) (%s) - disabling the tag" % (self.tag.x, self.tag.y, e.args[0]))
-                #if sys.version_info.major < 3:
-                #    traceback.print_exc(e)
-                #else:
-                #    traceback.print_exc()
+                #traceback.print_exc(e)
                 self.tag.enabled = False
                 commands = []
                 for e in self.edges:
@@ -552,11 +545,7 @@ class PathData:
             wire = Part.Wire(bottom)
             if wire.isClosed():
                 return wire
-        except Exception as e:
-            #if sys.version_info.major < 3:
-            #    traceback.print_exc(e)
-            #else:
-            #    traceback.print_exc()
+        except:
             return None
 
     def supportsTagGeneration(self):
@@ -836,7 +825,7 @@ class ObjectTagDressup:
         return Path.Path(commands)
 
     def problems(self):
-        return list(filter(lambda m: m.haveProblem, self.mappers))
+        return filter(lambda m: m.haveProblem, self.mappers)
 
     def createTagsPositionDisabled(self, obj, positionsIn, disabledIn):
         rawTags = []
@@ -914,10 +903,6 @@ class ObjectTagDressup:
             self.processTags(obj)
         except Exception as e:
             PathLog.error("processing tags failed clearing all tags ... '%s'" % (e.args[0]))
-            #if sys.version_info.major < 3:
-            #    traceback.print_exc(e)
-            #else:
-            #    traceback.print_exc()
             obj.Path = obj.Base.Path
 
         # update disabled in case there are some additional ones
@@ -956,10 +941,6 @@ class ObjectTagDressup:
             pathData = PathData(obj)
         except ValueError:
             PathLog.error(translate("Path_DressupTag", "Cannot insert holding tags for this path - please select a Profile path")+"\n")
-            #if sys.version_info.major < 3:
-            #    traceback.print_exc(e)
-            #else:
-            #    traceback.print_exc()
             return None
 
         self.toolRadius = PathDressup.toolController(obj.Base).Tool.Diameter / 2

@@ -34,11 +34,5 @@
 			</Documentation>
 			<Parameter Name="Type" Type="String" />
 		</Attribute>
-        <Attribute Name="Signature" ReadOnly="true">
-            <Documentation>
-                <UserDocu>Returns the signature.</UserDocu>
-            </Documentation>
-            <Parameter Name="Signature" Type="Tuple" />
-        </Attribute>
-    </PythonExport>
+	</PythonExport>
 </GenerateModel>

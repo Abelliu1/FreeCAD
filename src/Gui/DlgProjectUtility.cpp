@@ -122,7 +122,6 @@ DlgProjectUtility::DlgProjectUtility(QWidget* parent, Qt::WindowFlags fl)
 DlgProjectUtility::~DlgProjectUtility()
 {
   // no need to delete child widgets, Qt does it all for us
-    delete ui;
 }
 
 void DlgProjectUtility::on_extractButton_clicked()

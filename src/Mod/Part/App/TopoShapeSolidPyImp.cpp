@@ -281,7 +281,7 @@ PyObject* TopoShapeSolidPy::offsetFaces(PyObject *args)
     }
 
     bool paramOK = false;
-    if (PyArg_ParseTuple(args, "Od", &obj,&offset)) {
+    if (!paramOK && PyArg_ParseTuple(args, "Od", &obj,&offset)) {
         paramOK = true;
         Py::Sequence list(obj);
         for (Py::Sequence::iterator it = list.begin(); it != list.end(); ++it) {

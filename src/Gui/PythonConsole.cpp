@@ -468,7 +468,7 @@ PythonConsole::PythonConsole(QWidget *parent)
 #endif
     d->info = QString::fromLatin1("Python %1 on %2\n"
     "Type 'help', 'copyright', 'credits' or 'license' for more information.")
-    .arg(QString::fromLatin1(version), QString::fromLatin1(platform));
+    .arg(QString::fromLatin1(version)).arg(QString::fromLatin1(platform));
     d->output = d->info;
     printPrompt(PythonConsole::Complete);
 }
@@ -514,10 +514,8 @@ void PythonConsole::OnChange( Base::Subject<const char*> &rCaller,const char* sR
         QMap<QString, QColor>::ConstIterator it = d->colormap.find(QString::fromLatin1(sReason));
         if (it != d->colormap.end()) {
             QColor color = it.value();
-            unsigned int col = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
-            unsigned long value = static_cast<unsigned long>(col);
-            value = hPrefGrp->GetUnsigned(sReason, value);
-            col = static_cast<unsigned int>(value);
+            unsigned long col = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
+            col = hPrefGrp->GetUnsigned( sReason, col);
             color.setRgb((col>>24)&0xff, (col>>16)&0xff, (col>>8)&0xff);
             pythonSyntax->setColor(QString::fromLatin1(sReason), color);
         }
@@ -931,11 +929,10 @@ void PythonConsole::changeEvent(QEvent *e)
     else if (e->type() == QEvent::StyleChange) {
         QPalette pal = palette();
         QColor color = pal.windowText().color();
-        unsigned int text = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
-        unsigned long value = static_cast<unsigned long>(text);
+        unsigned long text = (color.red() << 24) | (color.green() << 16) | (color.blue() << 8);
         // if this parameter is not already set use the style's window text color
-        value = getWindowParameter()->GetUnsigned("Text", value);
-        getWindowParameter()->SetUnsigned("Text", value);
+        text = getWindowParameter()->GetUnsigned("Text", text);
+        getWindowParameter()->SetUnsigned("Text", text);
     }
     TextEdit::changeEvent(e);
 }
@@ -1027,34 +1024,29 @@ void PythonConsole::insertFromMimeData (const QMimeData * source)
         return;
     // First check on urls instead of text otherwise it may happen that a url
     // is handled as text
-    bool existingFile = false;
     if (source->hasUrls()) {
         QList<QUrl> uri = source->urls();
         for (QList<QUrl>::ConstIterator it = uri.begin(); it != uri.end(); ++it) {
             // get the file name and check the extension
             QFileInfo info((*it).toLocalFile());
             QString ext = info.suffix().toLower();
-            if (info.exists()) {
-                existingFile = true;
-                if (info.isFile() && (ext == QLatin1String("py") || ext == QLatin1String("fcmacro"))) {
-                    // load the file and read-in the source code
-                    QFile file(info.absoluteFilePath());
-                    if (file.open(QIODevice::ReadOnly)) {
-                        QTextStream str(&file);
-                        runSourceFromMimeData(str.readAll());
-                    }
-                    file.close();
+            if (info.exists() && info.isFile() && 
+                (ext == QLatin1String("py") || ext == QLatin1String("fcmacro"))) {
+                // load the file and read-in the source code
+                QFile file(info.absoluteFilePath());
+                if (file.open(QIODevice::ReadOnly)) {
+                    QTextStream str(&file);
+                    runSourceFromMimeData(str.readAll());
                 }
+                file.close();
             }
         }
-    }
 
-    // Some applications copy text into the clipboard with the formats
-    // 'text/plain' and 'text/uri-list'. In case the url is not an existing
-    // file we can handle it as normal text, then. See forum thread:
-    // https://forum.freecadweb.org/viewtopic.php?f=3&t=34618
-    if (source->hasText() && !existingFile) {
+        return;
+    }
+    if (source->hasText()) {
         runSourceFromMimeData(source->text());
+        return;
     }
 }
 

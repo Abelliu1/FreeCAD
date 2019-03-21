@@ -442,7 +442,7 @@ void QtColorPicker::setCurrentColor(const QColor &color)
 
     ColorPickerItem *item = popup->find(color);
     if (!item) {
-    insertColor(color, tr("Custom Color"));
+    insertColor(color, tr("Custom"));
     item = popup->find(color);
     }
 

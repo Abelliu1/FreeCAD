@@ -155,8 +155,9 @@ App::DocumentObjectExecReturn *FeaturePage::execute(void)
     ostringstream ofile;
     string tempendl = "--endOfLine--";
 
-    while (getline (file,line))
+    while (!file.eof())
     {
+        getline (file,line);
         // check if the marker in the template is found
         if(line.find("<!-- DrawingContent -->") == string::npos)
             // if not -  write through
@@ -258,7 +259,8 @@ std::vector<std::string> FeaturePage::getEditableTextsFromTemplate(void) const {
         }
         string tline, tfrag;
         ifstream tfile (tfi.filePath().c_str());
-        while (getline (tfile,tline)) {
+        while (!tfile.eof()) {
+            getline (tfile,tline);
             tfrag += tline;
             tfrag += "--endOfLine--";
         }

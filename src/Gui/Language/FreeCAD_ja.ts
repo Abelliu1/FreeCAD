@@ -160,7 +160,7 @@
     </message>
     <message>
       <source>Global Sensitivity:</source>
-      <translation>全体の感度:</translation>
+      <translation>グローバル感度：</translation>
     </message>
   </context>
   <context>
@@ -295,12 +295,13 @@
     </message>
     <message>
       <source>Press middle+left or middle+right button</source>
-      <translation>middle+leftまたは、middle+rightボタンを押してください。</translation>
+      <translation type="unfinished">Press middle+left or middle+right button</translation>
     </message>
     <message>
       <source>Scroll middle mouse button or keep middle button depressed
 while doing a left or right click and move the mouse up or down</source>
-      <translation>マウスホイールをスクロールまたはマウス中央ボタンを押したまま左右どちらかをクリックして、マウスを上下に移動</translation>
+      <translation type="unfinished">Scroll middle mouse button or keep middle button depressed
+while doing a left or right click and move the mouse up or down</translation>
     </message>
   </context>
   <context>
@@ -402,7 +403,7 @@ while doing a left or right click and move the mouse up or down</source>
     <name>Gui::Dialog::AboutDialog</name>
     <message>
       <source>Libraries</source>
-      <translation>ライブラリ</translation>
+      <translation>ライブラリー</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
@@ -850,20 +851,20 @@ while doing a left or right click and move the mouse up or down</source>
       <translation>ショートカットの複数回定義</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>このショートカット'%1'はすでに使われています。これは予期しない結果を引き起こす原因になる場合があります。</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>既に定義されたショートカット</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation>このショートカット'%1'はすでに使われています。これは予期しない結果を引き起こす原因になる場合があります。</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation>ショートカット '%1' は、'%2 ' に既に割り当てられています。</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation>上書きしますか？</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -1464,13 +1465,12 @@ Perhaps a file permission error?</source>
     </message>
     <message>
       <source>Duplicate Failed</source>
-      <translation>複製に失敗しました</translation>
+      <translation>複製失敗</translation>
     </message>
     <message>
       <source>Failed to duplicate to '%1'.
 Perhaps a file permission error?</source>
-      <translation>'%1' を複製に失敗しました。
-ファイル アクセス権のエラーかもしれません。</translation>
+      <translation>'%1' を複製できませんでした。 ファイルのパーミッションエラーですか？</translation>
     </message>
   </context>
   <context>
@@ -1872,7 +1872,7 @@ Specify another directory, please.</source>
     </message>
     <message>
       <source>Log messages:</source>
-      <translation>ログメッセージ:</translation>
+      <translation>ログ・メッセージ:</translation>
     </message>
     <message>
       <source>Warnings:</source>
@@ -2981,6 +2981,10 @@ Specify another directory, please.</source>
       <translation>有効なワークベンチを並び替え</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;ワークベンチの並べ替えを有効にする&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>上へ移動</translation>
     </message>
@@ -2995,10 +2999,6 @@ Specify another directory, please.</source>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>有効なワークベンチに全て追加</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation>&lt;p&gt;ワークベンチの並べ替えを有効にする&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -3092,7 +3092,7 @@ The 'Status' column shows whether the document could be recovered.</source>
     </message>
     <message>
       <source>When deleting all transient directories you won't be able to recover any files afterwards.</source>
-      <translation>全ての一時ディレクトリを削除すると、その後任意のファイルを回復できなくなります。</translation>
+      <translation type="unfinished">When deleting all transient directories you won't be able to recover any files afterwards.</translation>
     </message>
   </context>
   <context>
@@ -3467,11 +3467,11 @@ The 'Status' column shows whether the document could be recovered.</source>
     </message>
     <message>
       <source>Selected points</source>
-      <translation type="unfinished">Selected points</translation>
+      <translation>選択したポイント</translation>
     </message>
     <message>
       <source>Apply incremental changes</source>
-      <translation type="unfinished">Apply incremental changes</translation>
+      <translation>増分変更を適用</translation>
     </message>
     <message>
       <source>Please select 1, 2, or 3 points before clicking this button.  A point may be on a vertex, face, or edge.  If on a face or edge the point used will be the point at the mouse position along face or edge.  If 1 point is selected it will be used as the center of rotation.  If 2 points are selected the midpoint between them will be the center of rotation and a new custom axis will be created, if needed.  If 3 points are selected the first point becomes the center of rotation and lies on the vector that is normal to the plane defined by the 3 points.  Some distance and angle information is provided in the report view, which can be useful when aligning objects.  For your convenience when Shift + click is used the appropriate distance or angle is copied to the clipboard.</source>
@@ -4723,11 +4723,11 @@ Do you want to specify another directory?</source>
     </message>
     <message>
       <source>Search...</source>
-      <translation type="unfinished">Search...</translation>
+      <translation>検索...</translation>
     </message>
     <message>
       <source>Search for objects</source>
-      <translation type="unfinished">Search for objects</translation>
+      <translation>オブジェクトの検索</translation>
     </message>
   </context>
   <context>
@@ -5292,11 +5292,15 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Export failed</source>
-      <translation type="unfinished">Export failed</translation>
+      <translation>エクスポート失敗</translation>
     </message>
     <message>
       <source>Split</source>
       <translation>スプリット</translation>
+    </message>
+    <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
     </message>
     <message>
       <source>Translation:</source>
@@ -5308,11 +5312,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Toggle active part</source>
-      <translation type="unfinished">Toggle active part</translation>
+      <translation>アクティブなパーツを切り替え</translation>
     </message>
     <message>
       <source>Edit text</source>
-      <translation type="unfinished">Edit text</translation>
+      <translation>テキストを編集</translation>
     </message>
   </context>
   <context>
@@ -5704,8 +5708,8 @@ Be aware the point where you click matters.</source>
       <translation>選択したオブジェクトの編集モードを切り替える</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation type="unfinished">Activates or Deactivates the selected object's edit mode</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>エンターを押すか、選択されたオブジェクトの編集モードを抜けてください</translation>
     </message>
   </context>
   <context>
@@ -5841,11 +5845,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>FreeCAD Website</source>
-      <translation>FreeCAD ウェブサイト</translation>
+      <translation>FreeCADウェブサイト</translation>
     </message>
     <message>
       <source>The FreeCAD website</source>
-      <translation>FreeCAD ウェブサイト</translation>
+      <translation>FreeCADウェブサイト</translation>
     </message>
   </context>
   <context>
@@ -6746,7 +6750,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Creates a new view window for the active document</source>
-      <translation type="unfinished">Creates a new view window for the active document</translation>
+      <translation>作業中のドキュメントのための新しいビューウィンドウを作成</translation>
     </message>
   </context>
   <context>
@@ -6761,7 +6765,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Set to dimetric view</source>
-      <translation type="unfinished">Set to dimetric view</translation>
+      <translation>二等角投影ビューに設定</translation>
     </message>
   </context>
   <context>
@@ -6866,7 +6870,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Set to isometric view</source>
-      <translation type="unfinished">Set to isometric view</translation>
+      <translation>等角投影ビューに設定</translation>
     </message>
   </context>
   <context>
@@ -7061,7 +7065,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Set to trimetric view</source>
-      <translation type="unfinished">Set to trimetric view</translation>
+      <translation>斜方投影ビューに設定</translation>
     </message>
   </context>
   <context>
@@ -7188,11 +7192,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Collapse/Expand</source>
-      <translation type="unfinished">Collapse/Expand</translation>
+      <translation>折りたたみ/展開</translation>
     </message>
     <message>
       <source>Expand active document and collapse all others</source>
-      <translation type="unfinished">Expand active document and collapse all others</translation>
+      <translation>アクティブなドキュメントを展開し、他の全てを折りたたむ</translation>
     </message>
   </context>
   <context>
@@ -7203,11 +7207,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Multi Document</source>
-      <translation type="unfinished">Multi Document</translation>
+      <translation>マルチドキュメント</translation>
     </message>
     <message>
       <source>Display all documents in the tree view</source>
-      <translation type="unfinished">Display all documents in the tree view</translation>
+      <translation>全てのドキュメントをツリービューに表示</translation>
     </message>
   </context>
   <context>
@@ -7218,11 +7222,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Single Document</source>
-      <translation type="unfinished">Single Document</translation>
+      <translation>シングルドキュメント</translation>
     </message>
     <message>
       <source>Only display the active document in the tree view</source>
-      <translation type="unfinished">Only display the active document in the tree view</translation>
+      <translation>アクティブなドキュメントのみをツリービューに表示</translation>
     </message>
   </context>
   <context>
@@ -7233,11 +7237,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Document Tree</source>
-      <translation type="unfinished">Document Tree</translation>
+      <translation>ドキュメントツリー</translation>
     </message>
     <message>
       <source>Set visibility of inactive documents in tree view</source>
-      <translation type="unfinished">Set visibility of inactive documents in tree view</translation>
+      <translation>アクティブでないドキュメントのツリービューでの表示状態を設定</translation>
     </message>
   </context>
   <context>
@@ -7364,7 +7368,7 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
       <source>Delete Selection Issues</source>
-      <translation type="unfinished">Delete Selection Issues</translation>
+      <translation>選択されている問題を削除</translation>
     </message>
   </context>
   <context>
@@ -7475,40 +7479,40 @@ Do you want to duplicate them, too?</source>
     </message>
     <message>
       <source>Set NaviCube to Isometric mode</source>
-      <translation type="unfinished">Set NaviCube to Isometric mode</translation>
+      <translation>ナビキューブをアイソメトリックモードに設定</translation>
     </message>
   </context>
   <context>
     <name>ViewOrthographicCmd</name>
     <message>
       <source>Orthographic</source>
-      <translation type="unfinished">Orthographic</translation>
+      <translation>正射投影</translation>
     </message>
     <message>
       <source>Set View to Orthographic mode</source>
-      <translation type="unfinished">Set View to Orthographic mode</translation>
+      <translation>表示を正射投影モードに設定</translation>
     </message>
   </context>
   <context>
     <name>ViewPerspectiveCmd</name>
     <message>
       <source>Perspective</source>
-      <translation type="unfinished">Perspective</translation>
+      <translation>透視投影</translation>
     </message>
     <message>
       <source>Set View to Perspective mode</source>
-      <translation type="unfinished">Set View to Perspective mode</translation>
+      <translation>表示を透視投影モードに設定</translation>
     </message>
   </context>
   <context>
     <name>ViewZoomToFitCmd</name>
     <message>
       <source>Zoom to fit</source>
-      <translation type="unfinished">Zoom to fit</translation>
+      <translation>フィットするようズーム</translation>
     </message>
     <message>
       <source>Zoom so that model fills the view</source>
-      <translation type="unfinished">Zoom so that model fills the view</translation>
+      <translation>モデルがビュー全体に表示されるようズーム</translation>
     </message>
   </context>
   <context>

@@ -23,8 +23,6 @@
 
 import os
 
-import six
-
 import FreeCAD as App
 import FreeCADGui as Gui
 
@@ -53,7 +51,7 @@ class TaskPanel:
         form.sizeX = self.widget(QtGui.QDoubleSpinBox, "sizeX")
         form.sizeY = self.widget(QtGui.QDoubleSpinBox, "sizeY")
         form.dpi = self.widget(QtGui.QSpinBox, "dpi")
-        path = six.text_type(form.path.text())
+        path = unicode(form.path.text())
         size = (form.sizeX.value(), form.sizeY.value())
         dpi = form.dpi.value()
         Plot.save(path, size, dpi)

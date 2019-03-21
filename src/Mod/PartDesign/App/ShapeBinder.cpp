@@ -25,7 +25,6 @@
 #ifndef _PreComp_
 #include <cfloat>
 #include <boost/bind.hpp>
-#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #endif
 
@@ -76,20 +75,16 @@ App::DocumentObjectExecReturn* ShapeBinder::execute(void) {
         //if we have a link we rebuild the shape, but we change nothing if we are a simple copy
         if (obj) {
             Part::TopoShape shape = ShapeBinder::buildShapeFromReferences(obj, subs);
-            //now, shape is in object's CS, and includes local Placement of obj but nothing else.
+            Base::Placement placement(shape.getTransform());
+            Shape.setValue(shape);
 
             if (TraceSupport.getValue()) {
-                //compute the transform, and apply it to the shape.
-                Base::Placement sourceCS = //full placement of container of obj
-                        obj->globalPlacement() * obj->Placement.getValue().inverse();
-                Base::Placement targetCS = //full placement of container of this shapebinder
-                        this->globalPlacement() * this->Placement.getValue().inverse();
-                Base::Placement transform = targetCS.inverse() * sourceCS;
-                shape.setPlacement(transform * shape.getPlacement());
+                // this is the inverted global placement of the parent group ...
+                placement = this->globalPlacement() * Placement.getValue().inverse();
+                // multiplied with the global placement of the support shape
+                placement = placement.inverse() * obj->globalPlacement();
             }
-
-            this->Placement.setValue(shape.getTransform());
-            this->Shape.setValue(shape);
+            Placement.setValue(placement);
         }
     }
 
@@ -150,24 +145,24 @@ Part::TopoShape ShapeBinder::buildShapeFromReferences( Part::Feature* obj, std::
     if (subs.empty())
         return obj->Shape.getShape();
 
-    std::vector<TopoDS_Shape> shapes;
+    //if we use multiple subshapes we build a shape from them by fusing them together
+    Part::TopoShape base;
+    std::vector<TopoDS_Shape> operators;
     for (std::string sub : subs) {
-        shapes.push_back(obj->Shape.getShape().getSubShape(sub.c_str()));
+        if (base.isNull())
+            base = obj->Shape.getShape().getSubShape(sub.c_str());
+        else
+            operators.push_back(obj->Shape.getShape().getSubShape(sub.c_str()));
     }
 
-    if (shapes.size() == 1){
-        //single subshape. Return directly.
-        return shapes[0];
-    } else {
-        //multiple subshapes. Make a compound.
-        BRep_Builder builder;
-        TopoDS_Compound cmp;
-        builder.MakeCompound(cmp);
-        for(const TopoDS_Shape& sh : shapes){
-            builder.Add(cmp, sh);
-        }
-        return cmp;
+    try {
+        if (!operators.empty() && !base.isNull())
+            return base.fuse(operators);
     }
+    catch (...) {
+        return base;
+    }
+    return base;
 }
 
 void ShapeBinder::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)

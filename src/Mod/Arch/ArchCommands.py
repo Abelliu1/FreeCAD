@@ -1276,16 +1276,12 @@ def getExtrusionData(shape,sortmethod="area"):
 def printMessage( message ):
     FreeCAD.Console.PrintMessage( message )
     if FreeCAD.GuiUp :
-        if sys.version_info.major < 3:
-            message = message.decode("utf8")
-        reply = QtGui.QMessageBox.information( None , "" , message )
+        reply = QtGui.QMessageBox.information( None , "" , message.decode('utf8') )
 
 def printWarning( message ):
     FreeCAD.Console.PrintMessage( message )
     if FreeCAD.GuiUp :
-        if sys.version_info.major < 3:
-            message = message.decode("utf8")
-        reply = QtGui.QMessageBox.warning( None , "" , message )
+        reply = QtGui.QMessageBox.warning( None , "" , message.decode('utf8') )
 
 
 # command definitions ###############################################

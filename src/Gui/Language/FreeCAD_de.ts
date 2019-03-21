@@ -849,20 +849,18 @@ while doing a left or right click and move the mouse up or down</source>
       <translation>Mehrfach belegte Tastenkombination</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Die Tastenkombination '%1' ist mehr als einmal vergeben. Dies kann zu unerwartetem Verhalten führen.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Bereits belegte Tastenkombination</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation>Die Verknüpfung '%1' ist mehr als einmal definiert. Dies könnte zu unerwartetem Verhalten führen.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation>Die Verknüpfung '%1' ist bereits '%2' zugewiesen.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation>Möchten Sie es überschreiben?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation>Die Verknüpfung "%1" ist bereits "%2" zugewiesen. Möchten Sie sie überschreiben?</translation>
     </message>
   </context>
   <context>
@@ -1470,7 +1468,7 @@ Perhaps a file permission error?</source>
     <message>
       <source>Failed to duplicate to '%1'.
 Perhaps a file permission error?</source>
-      <translation>Fehler beim Kopieren nach '%1'. Vielleicht liegt ein Dateiberechtigungsfehler vor?</translation>
+      <translation>Fehler beim kopieren nach '%1'. Vielleicht ein Dateiberechtigungsfehler?</translation>
     </message>
   </context>
   <context>
@@ -2047,7 +2045,7 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     </message>
     <message>
       <source>Show navigation cube</source>
-      <translation>Navigationswürfel anzeigen</translation>
+      <translation>Navigationskubus anzeigen</translation>
     </message>
     <message>
       <source>Corner</source>
@@ -2091,7 +2089,7 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     </message>
     <message>
       <source>Marker size:</source>
-      <translation>Markergröße:</translation>
+      <translation>Größe der Hervorhebung:</translation>
     </message>
   </context>
   <context>
@@ -2309,7 +2307,7 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     </message>
     <message>
       <source>Save thumbnail into project file when saving document</source>
-      <translation>Beim Speichern des Dokumentes Miniaturansicht in Projektdatei speichern</translation>
+      <translation>Beim Speichern des Dokumentes Miniaturansicht in Projektdatei speichrn</translation>
     </message>
     <message>
       <source>Maximum number of backup files to keep when resaving document</source>
@@ -2884,7 +2882,7 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     </message>
     <message>
       <source>Object being edited</source>
-      <translation>Objekt in Bearbeitung</translation>
+      <translation>Das zu bearbeitende Objekt</translation>
     </message>
     <message>
       <source>Active container</source>
@@ -2983,6 +2981,10 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
       <translation>Sortiere die aktivierten Arbeitsbereiche</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Sortiere die aktivierten Arbeitsbereiche&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Nach oben verschieben</translation>
     </message>
@@ -2997,10 +2999,6 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Alle Werkbänke aktivieren</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation>&lt;p&gt;Sortiere die aktivierten Arbeitsbereiche&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -3463,7 +3461,7 @@ The 'Status' column shows whether the document could be recovered.</source>
     </message>
     <message>
       <source>Shift click for opposite direction</source>
-      <translation>Umschalttaste + Klick für entgegengesetzte Richtung</translation>
+      <translation>Umschalttaste + klick für entgegengesetzte Richtung</translation>
     </message>
     <message>
       <source>Selected points</source>
@@ -5307,6 +5305,10 @@ Beachten Sie, dass es auf den Punkt ankommt, auf den Sie klicken.</translation>
       <translation>Teilen</translation>
     </message>
     <message>
+      <source>%1.%2.%3</source>
+      <translation>%1.%2.%3</translation>
+    </message>
+    <message>
       <source>Translation:</source>
       <translation>Verschiebung:</translation>
     </message>
@@ -5712,8 +5714,8 @@ Beachten Sie, dass es auf den Punkt ankommt, auf den Sie klicken.</translation>
       <translation>Schaltet den Bearbeitungsmodus des ausgewählten Objekts um</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation>Aktiviert oder deaktiviert den Bearbeiten-Modus des ausgewählten Objekts</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Beginnt oder verlässt den Bearbeiten-Modus der ausgewählten Objekte</translation>
     </message>
   </context>
   <context>
@@ -7200,7 +7202,7 @@ Beachten Sie, dass es auf den Punkt ankommt, auf den Sie klicken.</translation>
     </message>
     <message>
       <source>Expand active document and collapse all others</source>
-      <translation>Erweitere alle aktiven Dokumente und reduziere die Anderen</translation>
+      <translation>Erweitere alle aktiven Dokumente und reduziere die anderen</translation>
     </message>
   </context>
   <context>
@@ -7215,7 +7217,7 @@ Beachten Sie, dass es auf den Punkt ankommt, auf den Sie klicken.</translation>
     </message>
     <message>
       <source>Display all documents in the tree view</source>
-      <translation>Zeige alle Dokumente in der Baumansicht an</translation>
+      <translation>Zeige alle Dokumente in der Baumansicht</translation>
     </message>
   </context>
   <context>

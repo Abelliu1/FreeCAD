@@ -52,7 +52,6 @@ public:
     bool isUnsetting(void) { return nowUnsetting; }
 
     int countChildren();
-    void lockChildren(void);
 
     virtual void onDocumentRestored();
     virtual App::DocumentObjectExecReturn *execute(void);

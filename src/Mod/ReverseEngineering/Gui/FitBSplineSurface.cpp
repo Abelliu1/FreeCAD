@@ -159,7 +159,8 @@ bool FitBSplineSurfaceWidget::accept()
         }
         QString command = QString::fromLatin1("%1.addObject(\"Part::Spline\", \"Spline\").Shape = "
             "ReverseEngineering.approxSurface(%2).toShape()")
-            .arg(document, argument)
+            .arg(document)
+            .arg(argument)
             ;
 
         Gui::WaitCursor wc;

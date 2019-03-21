@@ -26,7 +26,6 @@
 #include <QDockWidget>
 #include <QMessageBox>
 #include <QClipboard>
-#include <QMetaObject>
 
 #include "Placement.h"
 #include "ui_Placement.h"
@@ -83,7 +82,6 @@ public:
 
 Placement::Placement(QWidget* parent, Qt::WindowFlags fl)
   : Gui::LocationDialog(parent, fl)
-  , changeProperty(false)
 {
     selectionObjects = Gui::Selection().getSelectionEx();
 
@@ -140,28 +138,9 @@ void Placement::showDefaultButtons(bool ok)
     ui->applyButton->setVisible(ok);
 }
 
-void Placement::open()
-{
-    if (propertyName != "Placement") {
-        changeProperty = true;
-        openTransaction();
-    }
-}
-
 void Placement::slotActiveDocument(const Gui::Document& doc)
 {
     documents.insert(doc.getDocument()->getName());
-
-    if (changeProperty) {
-        QMetaObject::invokeMethod(this, "openTransaction", Qt::QueuedConnection);
-    }
-}
-
-void Placement::openTransaction()
-{
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
-    if (activeDoc)
-        activeDoc->openTransaction("Placement");
 }
 
 QWidget* Placement::getInvalidInput() const
@@ -180,27 +159,21 @@ void Placement::revertTransformation()
         Gui::Document* document = Application::Instance->getDocument(it->c_str());
         if (!document) continue;
 
-        if (!changeProperty) {
-            std::vector<App::DocumentObject*> obj = document->getDocument()->
-                getObjectsOfType(App::DocumentObject::getClassTypeId());
-            if (!obj.empty()) {
-                for (std::vector<App::DocumentObject*>::iterator it=obj.begin();it!=obj.end();++it) {
-                    std::map<std::string,App::Property*> props;
-                    (*it)->getPropertyMap(props);
-                    // search for the placement property
-                    std::map<std::string,App::Property*>::iterator jt;
-                    jt = std::find_if(props.begin(), props.end(), find_placement(this->propertyName));
-                    if (jt != props.end()) {
-                        App::PropertyPlacement* property = static_cast<App::PropertyPlacement*>(jt->second);
-                        Base::Placement cur = property->getValue();
-                        Gui::ViewProvider* vp = document->getViewProvider(*it);
-                        if (vp) vp->setTransformation(cur.toMatrix());
-                    }
+        std::vector<App::DocumentObject*> obj = document->getDocument()->
+            getObjectsOfType(App::DocumentObject::getClassTypeId());
+        if (!obj.empty()) {
+            for (std::vector<App::DocumentObject*>::iterator it=obj.begin();it!=obj.end();++it) {
+                std::map<std::string,App::Property*> props;
+                (*it)->getPropertyMap(props);
+                // search for the placement property
+                std::map<std::string,App::Property*>::iterator jt;
+                jt = std::find_if(props.begin(), props.end(), find_placement(this->propertyName));
+                if (jt != props.end()) {
+                    Base::Placement cur = static_cast<App::PropertyPlacement*>(jt->second)->getValue();
+                    Gui::ViewProvider* vp = document->getViewProvider(*it);
+                    if (vp) vp->setTransformation(cur.toMatrix());
                 }
             }
-        }
-        else {
-            document->abortCommand();
         }
     }
 }
@@ -221,20 +194,14 @@ void Placement::applyPlacement(const Base::Placement& p, bool incremental)
             std::map<std::string,App::Property*>::iterator jt;
             jt = std::find_if(props.begin(), props.end(), find_placement(this->propertyName));
             if (jt != props.end()) {
-                App::PropertyPlacement* property = static_cast<App::PropertyPlacement*>(jt->second);
-                Base::Placement cur = property->getValue();
+                Base::Placement cur = static_cast<App::PropertyPlacement*>(jt->second)->getValue();
                 if (incremental)
                     cur = p * cur;
                 else
                     cur = p;
 
-                if (!changeProperty) {
-                    Gui::ViewProvider* vp = document->getViewProvider(*it);
-                    if (vp) vp->setTransformation(cur.toMatrix());
-                }
-                else {
-                    property->setValue(cur);
-                }
+                Gui::ViewProvider* vp = document->getViewProvider(*it);
+                if (vp) vp->setTransformation(cur.toMatrix());
             }
         }
     }
@@ -248,60 +215,47 @@ void Placement::applyPlacement(const QString& data, bool incremental)
     Gui::Document* document = Application::Instance->activeDocument();
     if (!document) return;
 
-    // When directly changing the property we now only have to commit the transaction,
-    // do a recompute and open a new transaction
-    if (changeProperty) {
+    std::vector<App::DocumentObject*> sel = Gui::Selection().getObjectsOfType
+        (App::DocumentObject::getClassTypeId(), document->getDocument()->getName());
+    if (!sel.empty()) {
+        document->openCommand("Placement");
+        for (std::vector<App::DocumentObject*>::iterator it=sel.begin();it!=sel.end();++it) {
+            std::map<std::string,App::Property*> props;
+            (*it)->getPropertyMap(props);
+            // search for the placement property
+            std::map<std::string,App::Property*>::iterator jt;
+            jt = std::find_if(props.begin(), props.end(), find_placement(this->propertyName));
+            if (jt != props.end()) {
+                QString cmd;
+                if (incremental)
+                    cmd = QString::fromLatin1(
+                        "App.getDocument(\"%1\").%2.%3=%4.multiply(App.getDocument(\"%1\").%2.%3)")
+                        .arg(QLatin1String((*it)->getDocument()->getName()))
+                        .arg(QLatin1String((*it)->getNameInDocument()))
+                        .arg(QLatin1String(this->propertyName.c_str()))
+                        .arg(data);
+                else {
+                    cmd = QString::fromLatin1(
+                        "App.getDocument(\"%1\").%2.%3=%4")
+                        .arg(QLatin1String((*it)->getDocument()->getName()))
+                        .arg(QLatin1String((*it)->getNameInDocument()))
+                        .arg(QLatin1String(this->propertyName.c_str()))
+                        .arg(data);
+                }
+
+                Gui::Command::runCommand(Gui::Command::App, cmd.toLatin1());
+            }
+        }
+
         document->commitCommand();
         try {
             document->getDocument()->recompute();
         }
         catch (...) {
         }
-        document->openCommand("Placement");
     }
     else {
-        std::vector<App::DocumentObject*> sel = Gui::Selection().getObjectsOfType
-            (App::DocumentObject::getClassTypeId(), document->getDocument()->getName());
-        if (!sel.empty()) {
-            document->openCommand("Placement");
-            for (std::vector<App::DocumentObject*>::iterator it=sel.begin();it!=sel.end();++it) {
-                std::map<std::string,App::Property*> props;
-                (*it)->getPropertyMap(props);
-                // search for the placement property
-                std::map<std::string,App::Property*>::iterator jt;
-                jt = std::find_if(props.begin(), props.end(), find_placement(this->propertyName));
-                if (jt != props.end()) {
-                    QString cmd;
-                    if (incremental)
-                        cmd = QString::fromLatin1(
-                            "App.getDocument(\"%1\").%2.%3=%4.multiply(App.getDocument(\"%1\").%2.%3)")
-                            .arg(QLatin1String((*it)->getDocument()->getName()))
-                            .arg(QLatin1String((*it)->getNameInDocument()))
-                            .arg(QLatin1String(this->propertyName.c_str()))
-                            .arg(data);
-                    else {
-                        cmd = QString::fromLatin1(
-                            "App.getDocument(\"%1\").%2.%3=%4")
-                            .arg(QLatin1String((*it)->getDocument()->getName()))
-                            .arg(QLatin1String((*it)->getNameInDocument()))
-                            .arg(QLatin1String(this->propertyName.c_str()))
-                            .arg(data);
-                    }
-
-                    Gui::Command::runCommand(Gui::Command::App, cmd.toLatin1());
-                }
-            }
-
-            document->commitCommand();
-            try {
-                document->getDocument()->recompute();
-            }
-            catch (...) {
-            }
-        }
-        else {
-            Base::Console().Warning("No object selected.\n");
-        }
+        Base::Console().Warning("No object selected.\n");
     }
 }
 
@@ -399,8 +353,7 @@ void Placement::on_selectedVertex_clicked()
         Base::Vector3d axis;
         if (firstSelected==picked[0]){
             axis = Base::Vector3d(picked[1]-picked[0]);
-        }
-        else {
+        } else {
             axis = Base::Vector3d(picked[0]-picked[1]);
         }
         double length = axis.Length();
@@ -408,8 +361,7 @@ void Placement::on_selectedVertex_clicked()
         if (QApplication::keyboardModifiers() == Qt::ShiftModifier){ //copy to clipboard on Shift+click
             QLocale loc;
             QApplication::clipboard()->setText(loc.toString(length,'g',8));
-        }
-        else {
+        }else {
             Base::Console().Message("(Shift + click Selected points button to copy distance to clipboard)\n");
         }
         axis.Normalize();
@@ -419,8 +371,7 @@ void Placement::on_selectedVertex_clicked()
         ui->rotationInput->setCurrentIndex(0); //use rotation with axis instead of euler
         ui->stackedWidget->setCurrentIndex(0);
         success=true;
-    }
-    else if (picked.size() == 3){
+    } else if (picked.size() == 3){
         /* User selected 3 points, so we find the plane defined by those
          * and use the normal vector that contains the first point picked
          * as the axis of rotation.
@@ -430,12 +381,10 @@ void Placement::on_selectedVertex_clicked()
         if (picked[0] == firstSelected){
             a = picked[1];
             c = picked[2];
-        }
-        else if (picked[1]==firstSelected){
+        } else if (picked[1]==firstSelected){
             a = picked[0];
             c = picked[2];
-        }
-        else if (picked[2] == firstSelected){
+        } else if (picked[2] == firstSelected){
             a = picked[0];
             c = picked[1];
         }
@@ -467,8 +416,7 @@ void Placement::on_selectedVertex_clicked()
             QLocale loc;
             QApplication::clipboard()->setText(loc.toString(targetAngle,'g',8));
             Base::Console().Message("(Angle copied to clipboard, but you might need to use a negative (-) angle sometimes.)\n");
-        }
-        else {
+        } else {
             Base::Console().Message("(Shift + click Selected points button to copy angle to clipboard)\n");
         }
         rot.setValue(norm, angle);
@@ -511,8 +459,7 @@ void Placement::on_applyAxial_clicked()
     Qt::KeyboardModifiers km = QApplication::keyboardModifiers();
     if (km == Qt::ShiftModifier){ //go opposite direction on Shift+click
         newPos = Base::Vector3d(curPos.x-(axis.x*axPos),curPos.y-(axis.y*axPos),curPos.z-(axis.z*axPos));
-    }
-    else {
+    } else {
         newPos = Base::Vector3d(curPos.x+(axis.x*axPos),curPos.y+(axis.y*axPos),curPos.z+(axis.z*axPos));
     }
     ui->xPos->setValue(Base::Quantity(newPos.x,Base::Unit::Length));
@@ -823,11 +770,6 @@ TaskPlacement::TaskPlacement()
 TaskPlacement::~TaskPlacement()
 {
     // automatically deleted in the sub-class
-}
-
-void TaskPlacement::open()
-{
-    widget->open();
 }
 
 void TaskPlacement::setPropertyName(const QString& name)

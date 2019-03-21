@@ -323,8 +323,8 @@ const int texturewidth = 128;
 const int textureheight = 128;
 
 // Global variables
-double global_cr = 0.33;
-double global_ci = 0.43;
+double cr = 0.33;
+double ci = 0.43;
 
 // Global pointer
 //unsigned char * bitmap = new unsigned char[texturewidth*textureheight];
@@ -384,34 +384,32 @@ timersensorcallback(void * data, SoSensor *)
   SoTexture2 * texnode = (SoTexture2*) data;
 
   if (!direction) {
-    global_cr -= 0.0005;
-    global_ci += 0.0005;
+    cr -= 0.0005;
+    ci += 0.0005;
   }
   else {
-    global_cr += 0.0005;
-    global_ci -= 0.0005;
+    cr += 0.0005;
+    ci -= 0.0005;
   }
 
-  if (global_ci<0.30)
+  if (ci<0.30)
     direction = !direction;
-  else if (global_ci>0.83)
+  else if (ci>0.83)
     direction = !direction;
 
   SbVec2s size;
   int nc;
   unsigned char * image = texnode->image.startEditing(size, nc);
   // Generate a julia set to use as a texturemap
-  julia(global_cr, global_ci, 2.5, size[0], size[1], 4, image, 64);
+  julia(cr, ci, 2.5, size[0], size[1], 4, image, 64);
   texnode->image.finishEditing();
 }
 
 void AnimationTexture(SoSeparator * root)
 {
-  // Scene graph
-  if ( root == NULL ) return; // Shouldn't happen.
 
   // Generate a julia set to use as a texturemap
-  julia(global_cr, global_ci, 2.5, texturewidth, textureheight, 4, bitmap, 64);
+  julia(cr, ci, 2.5, texturewidth, textureheight, 4, bitmap, 64);
 
  
   SoTexture2 * texnode = texture();
@@ -427,6 +425,8 @@ void AnimationTexture(SoSeparator * root)
   texturetimer->setInterval(0.05);
   texturetimer->schedule();
 
+  // Scene graph
+  if ( root == NULL ) return; // Shouldn't happen.
   root->ref(); // prevent from being deleted because of the still running timer sensor
 //  SoSeparator * root = new SoSeparator;
 //  root->ref();
@@ -434,4 +434,6 @@ void AnimationTexture(SoSeparator * root)
   root->addChild(hints);
   root->addChild(texnode);
   root->addChild(new SoCube);
-}
+
+ }
+

@@ -252,7 +252,6 @@ protected:
     //@}
 
 private:
-    NavigationStyle(const NavigationStyle&);
     struct NavigationStyleP* pimpl;
     friend struct NavigationStyleP;
 };

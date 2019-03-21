@@ -46,22 +46,22 @@ public:
     ~QGIProjGroup() = default;
 
     enum {Type = QGraphicsItem::UserType + 113};
-    int type() const override { return Type;}
+    int type() const { return Type;}
 
     void alignTo(QGIProjGroup *, const QString &alignment);
 
-    virtual void updateView(bool update = false) override;
+    virtual void updateView(bool update = false);
     virtual void rotateView(void) override;
 
-    virtual void drawBorder(void) override;
+    virtual void drawBorder(void);
 
 protected:
-    virtual bool sceneEventFilter(QGraphicsItem* watched, QEvent *event) override;
-    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    virtual bool sceneEventFilter(QGraphicsItem* watched, QEvent *event);
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     // Mouse handling
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event ) override;
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event );
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
     QGIView * getAnchorQItem() const;
 
 private:

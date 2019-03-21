@@ -76,7 +76,6 @@ InputField::InputField(QWidget * parent)
     SaveSize(5)
 {
     setValidator(new InputValidator(this));
-    setFocusPolicy(Qt::WheelFocus);
     iconLabel = new QLabel(this);
     iconLabel->setCursor(Qt::ArrowCursor);
     QPixmap pixmap = getValidationIcon(":/icons/button_valid.svg", QSize(sizeHint().height(),sizeHint().height()));
@@ -432,11 +431,6 @@ void InputField::setValue(const double& value)
     setValue(Base::Quantity(value, actUnit));
 }
 
-double InputField::rawValue() const
-{
-    return this->actQuantity.getValue();
-}
-
 void InputField::setUnit(const Base::Unit& unit)
 {
     actUnit = unit;
@@ -656,24 +650,18 @@ void InputField::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Up:
         {
             double val = actUnitValue + StepSize;
-            if (val > Maximum)
-                val = Maximum;
-            double dFactor;
-            QString unitStr;
-            actQuantity.getUserString(dFactor, unitStr);
-            this->setText(QString::fromUtf8("%L1 %2").arg(val).arg(unitStr));
+            Base::Quantity quant = actQuantity;
+            quant.setValue(val);
+            this->setText(quant.getUserString());
             event->accept();
         }
         break;
     case Qt::Key_Down:
         {
             double val = actUnitValue - StepSize;
-            if (val < Minimum)
-                val = Minimum;
-            double dFactor;
-            QString unitStr;
-            actQuantity.getUserString(dFactor, unitStr);
-            this->setText(QString::fromUtf8("%L1 %2").arg(val).arg(unitStr));
+            Base::Quantity quant = actQuantity;
+            quant.setValue(val);
+            this->setText(quant.getUserString());
             event->accept();
         }
         break;
@@ -690,19 +678,16 @@ void InputField::wheelEvent (QWheelEvent * event)
         return;
     }
 
-    double factor = event->modifiers() & Qt::ControlModifier ? 10 : 1;
     double step = event->delta() > 0 ? StepSize : -StepSize;
-    double val = actUnitValue + factor * step;
+    double val = actUnitValue + step;
     if (val > Maximum)
         val = Maximum;
     else if (val < Minimum)
         val = Minimum;
 
-    double dFactor;
-    QString unitStr;
-    actQuantity.getUserString(dFactor, unitStr);
-
-    this->setText(QString::fromUtf8("%L1 %2").arg(val).arg(unitStr));
+    Base::Quantity quant = actQuantity;
+    quant.setValue(val);
+    this->setText(quant.getUserString());
     selectNumber();
     event->accept();
 }

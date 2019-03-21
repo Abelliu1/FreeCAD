@@ -157,10 +157,6 @@ inline StrXUTF8::StrXUTF8(const XMLCh* const toTranscode)
         str.append((const char*)outBuff, outputLength);
         offset += eaten;
         inputLength -= eaten;
-
-        //  Bail out if nothing more was produced
-        if (outputLength == 0)
-            break;
     }
 }
 
@@ -278,10 +274,6 @@ inline XUTF8Str::XUTF8Str(const char* const fromTranscode)
         str.append(outBuff, outputLength);
         offset += eaten;
         inputLength -= eaten;
-
-        //  Bail out if nothing more was produced
-        if (outputLength == 0)
-            break;
     }
 
     delete[] charSizes;

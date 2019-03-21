@@ -255,7 +255,6 @@ public:
     /** @name Topological operations */
     //@{
     void refine();
-    void removeSmallEdges(float);
     void optimizeTopology(float);
     void optimizeEdges();
     void splitEdges();

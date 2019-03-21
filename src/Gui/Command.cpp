@@ -625,12 +625,12 @@ void Command::applyCommandData(const char* context, Action* action)
     if (!accel.isEmpty()) {
         // show shortcut inside tooltip
         QString ttip = QString::fromLatin1("%1 (%2)")
-            .arg(action->toolTip(), accel);
+            .arg(action->toolTip()).arg(accel);
         action->setToolTip(ttip);
 
         // show shortcut inside status tip
         QString stip = QString::fromLatin1("(%1)\t%2")
-            .arg(accel, action->statusTip());
+            .arg(accel).arg(action->statusTip());
         action->setStatusTip(stip);
     }
 }
@@ -739,8 +739,6 @@ MacroCommand::~MacroCommand()
 {
     free(const_cast<char*>(sName));
     sName = 0;
-    free(const_cast<char*>(sScriptName));
-    sScriptName = 0;
 }
 
 void MacroCommand::activated(int iMsg)
@@ -794,12 +792,12 @@ Action * MacroCommand::createAction(void)
     if (!accel.isEmpty()) {
         // show shortcut inside tooltip
         QString ttip = QString::fromLatin1("%1 (%2)")
-            .arg(pcAction->toolTip(), accel);
+            .arg(pcAction->toolTip()).arg(accel);
         pcAction->setToolTip(ttip);
 
         // show shortcut inside status tip
         QString stip = QString::fromLatin1("(%1)\t%2")
-            .arg(accel, pcAction->statusTip());
+            .arg(accel).arg(pcAction->statusTip());
         pcAction->setStatusTip(stip);
     }
 

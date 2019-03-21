@@ -48,8 +48,7 @@ struct BaseExport QuantityFormat {
         Scientific = 2
     };
 
-    typedef int NumberOptions;
-    NumberOptions option;
+    NumberOption option;
     NumberFormat format;
     int precision;
     int denominator;

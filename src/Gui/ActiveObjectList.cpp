@@ -50,7 +50,7 @@ void Gui::ActiveObjectList::setObject(App::DocumentObject* obj, const char* name
                 <Gui::ViewProviderDocumentObject*>(doc->getViewProvider(act));
         doc->signalHighlightObject(*viewProvider, mode, false);
         if (autoExpand)
-            doc->signalExpandObject(*viewProvider, Gui::CollapseItem);
+            doc->signalExpandObject(*viewProvider, Gui::Collapse);
     }
 
     if (obj) {
@@ -59,7 +59,7 @@ void Gui::ActiveObjectList::setObject(App::DocumentObject* obj, const char* name
                 <Gui::ViewProviderDocumentObject*>(doc->getViewProvider(obj));
         doc->signalHighlightObject(*viewProvider, mode, true);
         if (autoExpand)
-            doc->signalExpandObject(*viewProvider, Gui::ExpandPath);
+            doc->signalExpandObject(*viewProvider, Gui::Expand);
         _ObjectMap[name] = obj;
     }
     else {

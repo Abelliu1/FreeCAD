@@ -14,12 +14,6 @@ include_directories(
     ${XercesC_INCLUDE_DIRS}
 )
 
-if(MSVC)
-    include_directories(
-        ${CMAKE_SOURCE_DIR}/src/3rdParty/OpenGL/api
-    )
-endif(MSVC)
-
 set(ImageGui_LIBS
     Image
     FreeCADGui

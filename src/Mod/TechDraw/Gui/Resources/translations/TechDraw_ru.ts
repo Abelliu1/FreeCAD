@@ -30,7 +30,7 @@
     <message>
       <location filename="../../Command.cpp" line="996"/>
       <source>Inserts a view of a Section Plane from Arch Workbench</source>
-      <translation>Вставить плоскость сечения из архитектурного верстака</translation>
+      <translation>Вставить плоскость сечения из архитектурного рабочего окружения</translation>
     </message>
   </context>
   <context>
@@ -98,7 +98,7 @@
     <message>
       <location filename="../../Command.cpp" line="943"/>
       <source>Insert a View of a Draft Workbench object</source>
-      <translation>Вставить объект верстака набросок (draft)</translation>
+      <translation>Вставить объект рабочего окружения набросок (draft)</translation>
     </message>
   </context>
   <context>
@@ -858,7 +858,7 @@
     <message>
       <location filename="../../DlgPrefsTechDraw2.ui" line="14"/>
       <source>TechDraw Dimensions</source>
-      <translation>Размеры верстака Технический чертёж</translation>
+      <translation>Размеры рабочего окружения Технический чертёж</translation>
     </message>
     <message>
       <location filename="../../DlgPrefsTechDraw2.ui" line="127"/>

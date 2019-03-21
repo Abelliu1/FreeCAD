@@ -39,13 +39,9 @@
 # include <Windows.h>
 # include <GL/gl.h>
 # include <GL/glu.h>
-# if defined(_MSC_VER) && _MSC_VER >= 1910
-# include <GL/glext.h>
-# endif
 #else
 # include <GL/gl.h>
 # include <GL/glu.h>
-# include <GL/glext.h>
 #endif
 
 #include "OpenGLImageBox.h"
@@ -302,10 +298,8 @@ void GLImageBox::getDisplayedImageAreaSize(int &dx, int &dy)
             dx = 0;
             dy = 0;
         }
-        else {
-            dx = ibrx - itlx + 1;
-            dy = ibry - itly + 1;
-        }
+        dx = ibrx - itlx + 1;
+        dy = ibry - itly + 1;
     }
 }
 

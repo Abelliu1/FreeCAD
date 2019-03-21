@@ -99,29 +99,24 @@ QStyleOptionViewItem PropertyEditor::viewOptions() const
     return option;
 }
 
-bool PropertyEditor::event(QEvent* event)
+void PropertyEditor::closeEditor (QWidget * editor, QAbstractItemDelegate::EndEditHint hint)
 {
-    if (event->type() == QEvent::ShortcutOverride) {
-        QKeyEvent * kevent = static_cast<QKeyEvent*>(event);
-        Qt::KeyboardModifiers ShiftKeypadModifier = Qt::ShiftModifier | Qt::KeypadModifier;
-        if (kevent->modifiers() == Qt::NoModifier ||
-            kevent->modifiers() == Qt::ShiftModifier ||
-            kevent->modifiers() == Qt::KeypadModifier ||
-            kevent->modifiers() == ShiftKeypadModifier) {
-            switch (kevent->key()) {
-            case Qt::Key_Delete:
-            case Qt::Key_Home:
-            case Qt::Key_End:
-            case Qt::Key_Backspace:
-            case Qt::Key_Left:
-            case Qt::Key_Right:
-                kevent->accept();
-            default:
-                break;
+    if (autoupdate) {
+        App::Document* doc = App::GetApplication().getActiveDocument();
+        if (doc) {
+            if (!doc->isTransactionEmpty()) {
+                doc->commitTransaction();
+                // Between opening and committing a transaction a recompute
+                // could already have been done
+                if (doc->isTouched())
+                    doc->recompute();
+            }
+            else {
+                doc->abortTransaction();
             }
         }
     }
-    return QTreeView::event(event);
+    QTreeView::closeEditor(editor, hint);
 }
 
 void PropertyEditor::commitData (QWidget * editor)
@@ -163,43 +158,6 @@ void PropertyEditor::onItemActivated ( const QModelIndex & index )
             doc->openTransaction(edit.toUtf8());
     }
     openPersistentEditor(model()->buddy(index));
-}
-
-void PropertyEditor::closeEditor (QWidget * editor, QAbstractItemDelegate::EndEditHint hint)
-{
-    if (autoupdate) {
-        App::Document* doc = App::GetApplication().getActiveDocument();
-        if (doc) {
-            if (!doc->isTransactionEmpty()) {
-                doc->commitTransaction();
-                // Between opening and committing a transaction a recompute
-                // could already have been done
-                if (doc->isTouched())
-                    doc->recompute();
-            }
-            else {
-                doc->abortTransaction();
-            }
-        }
-    }
-
-    QTreeView::closeEditor(editor, hint);
-
-    // If after closing the editor this widget is still in editing state
-    // then a new editor must have been created. So, a transaction must be
-    // opened, too.
-    if (autoupdate && this->state() == EditingState) {
-        App::Document* doc = App::GetApplication().getActiveDocument();
-        if (doc) {
-            QString edit;
-            QModelIndex index = currentIndex();
-            if (index.isValid()) {
-                PropertyItem* property = static_cast<PropertyItem*>(index.internalPointer());
-                edit = tr("Edit %1").arg(property->propertyName());
-            }
-            doc->openTransaction(edit.toUtf8());
-        }
-    }
 }
 
 void PropertyEditor::reset()

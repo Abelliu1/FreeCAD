@@ -403,7 +403,7 @@ while doing a left or right click and move the mouse up or down</translation>
     <name>Gui::Dialog::AboutDialog</name>
     <message>
       <source>Libraries</source>
-      <translation type="unfinished">Libraries</translation>
+      <translation>Biblioteken</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
@@ -850,20 +850,20 @@ while doing a left or right click and move the mouse up or down</translation>
       <translation>multipel definierad genväg</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Genvägen '%1' är definierad mer än en gång. Detta kan leda till oväntat beteende.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Genvägen är redan definierad</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation type="unfinished">The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation type="unfinished">Do you want to override it?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -1386,11 +1386,11 @@ while doing a left or right click and move the mouse up or down</translation>
     </message>
     <message>
       <source>Duplicate</source>
-      <translation type="unfinished">Duplicate</translation>
+      <translation>Duplicera</translation>
     </message>
     <message>
       <source>Addons...</source>
-      <translation type="unfinished">Addons...</translation>
+      <translation>Tillägg...</translation>
     </message>
   </context>
   <context>
@@ -1463,17 +1463,17 @@ Perhaps a file permission error?</translation>
     </message>
     <message>
       <source>Duplicate Macro</source>
-      <translation type="unfinished">Duplicate Macro</translation>
+      <translation>Duplicera makro</translation>
     </message>
     <message>
       <source>Duplicate Failed</source>
-      <translation type="unfinished">Duplicate Failed</translation>
+      <translation>Dublicering misslyckades</translation>
     </message>
     <message>
       <source>Failed to duplicate to '%1'.
 Perhaps a file permission error?</source>
-      <translation type="unfinished">Failed to duplicate to '%1'.
-Perhaps a file permission error?</translation>
+      <translation>Det gick inte att duplicera till '%1'.
+kanske saknas filrättigheter?</translation>
     </message>
   </context>
   <context>
@@ -2050,11 +2050,11 @@ Ange en annan katalog.</translation>
     </message>
     <message>
       <source>Show navigation cube</source>
-      <translation type="unfinished">Show navigation cube</translation>
+      <translation>Visa navigeringskub</translation>
     </message>
     <message>
       <source>Corner</source>
-      <translation type="unfinished">Corner</translation>
+      <translation>Hörn</translation>
     </message>
     <message>
       <source>Top left</source>
@@ -2109,27 +2109,27 @@ Ange en annan katalog.</translation>
     </message>
     <message>
       <source>5px</source>
-      <translation type="unfinished">5px</translation>
+      <translation>5px</translation>
     </message>
     <message>
       <source>7px</source>
-      <translation type="unfinished">7px</translation>
+      <translation>7px</translation>
     </message>
     <message>
       <source>9px</source>
-      <translation type="unfinished">9px</translation>
+      <translation>9px</translation>
     </message>
     <message>
       <source>11px</source>
-      <translation type="unfinished">11px</translation>
+      <translation>11px</translation>
     </message>
     <message>
       <source>13px</source>
-      <translation type="unfinished">13px</translation>
+      <translation>13px</translation>
     </message>
     <message>
       <source>15px</source>
-      <translation type="unfinished">15px</translation>
+      <translation>15px</translation>
     </message>
     <message>
       <source>Isometric</source>
@@ -2812,31 +2812,31 @@ Ange en annan katalog.</translation>
     </message>
     <message>
       <source>1/2"</source>
-      <translation type="unfinished">1/2"</translation>
+      <translation>1/2"</translation>
     </message>
     <message>
       <source>1/4"</source>
-      <translation type="unfinished">1/4"</translation>
+      <translation>1/4"</translation>
     </message>
     <message>
       <source>1/8"</source>
-      <translation type="unfinished">1/8"</translation>
+      <translation>1/8"</translation>
     </message>
     <message>
       <source>1/16"</source>
-      <translation type="unfinished">1/16"</translation>
+      <translation>1/16"</translation>
     </message>
     <message>
       <source>1/32"</source>
-      <translation type="unfinished">1/32"</translation>
+      <translation>1/32"</translation>
     </message>
     <message>
       <source>1/64"</source>
-      <translation type="unfinished">1/64"</translation>
+      <translation>1/64"</translation>
     </message>
     <message>
       <source>1/128"</source>
-      <translation type="unfinished">1/128"</translation>
+      <translation>1/128"</translation>
     </message>
   </context>
   <context>
@@ -2883,7 +2883,7 @@ Ange en annan katalog.</translation>
     </message>
     <message>
       <source>Tree View</source>
-      <translation type="unfinished">Tree View</translation>
+      <translation>Träd-vy</translation>
     </message>
     <message>
       <source>Object being edited</source>
@@ -2986,6 +2986,10 @@ Ange en annan katalog.</translation>
       <translation>Sortera aktiverade arbetsbänkar</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Sortera aktiverade arbetsbänkar&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Flytta upp</translation>
     </message>
@@ -3000,10 +3004,6 @@ Ange en annan katalog.</translation>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Lägg till alla till aktiverade arbetsbänkar</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation type="unfinished">&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -5312,6 +5312,10 @@ Tänk på att det har betydelse var du klickar.</translation>
       <translation type="unfinished">Split</translation>
     </message>
     <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
+    </message>
+    <message>
       <source>Translation:</source>
       <translation>Förflyttning:</translation>
     </message>
@@ -5717,8 +5721,8 @@ Tänk på att det har betydelse var du klickar.</translation>
       <translation>Växlar det markerade objektets redigeringsläge</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation type="unfinished">Activates or Deactivates the selected object's edit mode</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Går in i eller lämnar det markerade objektets redigeringsläge</translation>
     </message>
   </context>
   <context>
@@ -7432,11 +7436,11 @@ Tänk på att det har betydelse var du klickar.</translation>
     </message>
     <message>
       <source>No shading</source>
-      <translation>Utan skuggning</translation>
+      <translation type="unfinished">No shading</translation>
     </message>
     <message>
       <source>No shading mode</source>
-      <translation>Utan skuggning-läge</translation>
+      <translation type="unfinished">No shading mode</translation>
     </message>
   </context>
   <context>

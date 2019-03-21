@@ -110,7 +110,7 @@ CmdPartShapeFromMesh::CmdPartShapeFromMesh()
     sToolTipText  = QT_TR_NOOP("Create shape from selected mesh object");
     sWhatsThis    = "Part_ShapeFromMesh";
     sStatusTip    = sToolTipText;
-    sPixmap       = "Part_Shape_from_Mesh";
+    sPixmap       = "Part_Shape_from_Mesh.svg";
 }
 
 void CmdPartShapeFromMesh::activated(int iMsg)
@@ -174,7 +174,7 @@ CmdPartSimpleCopy::CmdPartSimpleCopy()
     sToolTipText  = QT_TR_NOOP("Create a simple non-parametric copy");
     sWhatsThis    = "Part_SimpleCopy";
     sStatusTip    = sToolTipText;
-    sPixmap       = "Tree_Part";
+    sPixmap       = "Tree_Part.svg";
 }
 
 void CmdPartSimpleCopy::activated(int iMsg)

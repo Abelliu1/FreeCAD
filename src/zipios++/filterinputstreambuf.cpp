@@ -9,7 +9,6 @@ FilterInputStreambuf::FilterInputStreambuf( streambuf *inbuf, bool del_inbuf )
   : _inbuf( inbuf),
     _del_inbuf( del_inbuf )
 {
-  _s_pos = 0;
   if ( _inbuf == NULL ) {
     // throw an exception
   }

@@ -160,7 +160,7 @@
     </message>
     <message>
       <source>Global Sensitivity:</source>
-      <translation type="unfinished">Global Sensitivity:</translation>
+      <translation>Độ nhạy toàn cầu:</translation>
     </message>
   </context>
   <context>
@@ -403,11 +403,11 @@ while doing a left or right click and move the mouse up or down</translation>
     <name>Gui::Dialog::AboutDialog</name>
     <message>
       <source>Libraries</source>
-      <translation type="unfinished">Libraries</translation>
+      <translation>Thư viện</translation>
     </message>
     <message>
       <source>This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</source>
-      <translation type="unfinished">This software uses open source components whose copyright and other proprietary rights belong to their respective owners:</translation>
+      <translation>Phần mềm này sử dụng thành phần mã nguồn mở có quyền tác giả và các quyền sở hữu thuộc về chủ sở hữu tương ứng:</translation>
     </message>
     <message>
       <source>License</source>
@@ -850,20 +850,20 @@ while doing a left or right click and move the mouse up or down</translation>
       <translation>Nhiều lối tắt được xác định</translation>
     </message>
     <message>
+      <source>The shortcut '%1' is defined more than once. This could result into unexpected behaviour.</source>
+      <translation>Phím tắt '% 1' được xác định nhiều hơn một lần. Điều này có thể dẫn đến hành vi không mong muốn.</translation>
+    </message>
+    <message>
       <source>Already defined shortcut</source>
       <translation>Phím tắt đã được định nghĩa rồi</translation>
     </message>
     <message>
-      <source>The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</source>
-      <translation type="unfinished">The shortcut '%1' is defined more than once. This could result in unexpected behaviour.</translation>
-    </message>
-    <message>
-      <source>The shortcut '%1' is already assigned to '%2'.</source>
-      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.</translation>
-    </message>
-    <message>
-      <source>Do you want to override it?</source>
-      <translation type="unfinished">Do you want to override it?</translation>
+      <source>The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</source>
+      <translation type="unfinished">The shortcut '%1' is already assigned to '%2'.
+
+Do you want to override it?</translation>
     </message>
   </context>
   <context>
@@ -2050,11 +2050,11 @@ Hãy chọn mục khác.</translation>
     </message>
     <message>
       <source>Show navigation cube</source>
-      <translation type="unfinished">Show navigation cube</translation>
+      <translation>Hiển thị khối điều hướng</translation>
     </message>
     <message>
       <source>Corner</source>
-      <translation type="unfinished">Corner</translation>
+      <translation>Góc</translation>
     </message>
     <message>
       <source>Top left</source>
@@ -2879,19 +2879,19 @@ Hãy chọn mục khác.</translation>
     </message>
     <message>
       <source>Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</source>
-      <translation type="unfinished">Sets the area of confusion for picking elements in 3D view. Larger value makes it easier to pick stuff, but will make some small features impossible to select.</translation>
+      <translation>Đặt giới hạn dung sai cho các mục đã chọn trong chế độ xem 3D. Giá trị lớn hơn giúp chọn dễ dàng hơn, nhưng lại không thể chọn được một số mục nhỏ.</translation>
     </message>
     <message>
       <source>Tree View</source>
-      <translation type="unfinished">Tree View</translation>
+      <translation>Chế độ xem hình cây</translation>
     </message>
     <message>
       <source>Object being edited</source>
-      <translation type="unfinished">Object being edited</translation>
+      <translation>Đối tượng đang được sửa</translation>
     </message>
     <message>
       <source>Active container</source>
-      <translation type="unfinished">Active container</translation>
+      <translation>Kích hoạt thùng chứa</translation>
     </message>
   </context>
   <context>
@@ -2986,6 +2986,10 @@ Hãy chọn mục khác.</translation>
       <translation>Sắp xếp bàn làm việc được bật</translation>
     </message>
     <message>
+      <source>&lt;b&gt;Sort enabled workbenches&lt;/p&gt;</source>
+      <translation>&lt;b&gt;Sắp xếp bàn làm việc được bật&lt;/p&gt;</translation>
+    </message>
+    <message>
       <source>Move up</source>
       <translation>Di chuyển lên</translation>
     </message>
@@ -3000,10 +3004,6 @@ Hãy chọn mục khác.</translation>
     <message>
       <source>Add all to enabled workbenches</source>
       <translation>Thêm tất cả vào workbenches được kích hoạt</translation>
-    </message>
-    <message>
-      <source>&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</source>
-      <translation type="unfinished">&lt;p&gt;Sort enabled workbenches&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -5306,11 +5306,15 @@ Hãy nhận biết điểm bạn nhấp vào là quan trọng.</translation>
     </message>
     <message>
       <source>Export failed</source>
-      <translation type="unfinished">Export failed</translation>
+      <translation>Xuất dữ liệu thất bại</translation>
     </message>
     <message>
       <source>Split</source>
       <translation type="unfinished">Split</translation>
+    </message>
+    <message>
+      <source>%1.%2.%3</source>
+      <translation type="unfinished">%1.%2.%3</translation>
     </message>
     <message>
       <source>Translation:</source>
@@ -5718,8 +5722,8 @@ Hãy nhận biết điểm bạn nhấp vào là quan trọng.</translation>
       <translation>Chuyển chế độ chỉnh sửa của đối tượng đã chọn</translation>
     </message>
     <message>
-      <source>Activates or Deactivates the selected object's edit mode</source>
-      <translation type="unfinished">Activates or Deactivates the selected object's edit mode</translation>
+      <source>Enters or leaves the selected object's edit mode</source>
+      <translation>Vào hoặc rời khỏi chế độ chỉnh sửa của đối tượng đã chọn</translation>
     </message>
   </context>
   <context>
@@ -6760,7 +6764,7 @@ Hãy nhận biết điểm bạn nhấp vào là quan trọng.</translation>
     </message>
     <message>
       <source>Creates a new view window for the active document</source>
-      <translation type="unfinished">Creates a new view window for the active document</translation>
+      <translation>Tạo cửa sổ xem mới cho tài liệu hiện hành</translation>
     </message>
   </context>
   <context>
@@ -7378,7 +7382,7 @@ Hãy nhận biết điểm bạn nhấp vào là quan trọng.</translation>
     </message>
     <message>
       <source>Delete Selection Issues</source>
-      <translation type="unfinished">Delete Selection Issues</translation>
+      <translation>Xóa các vấn đề về lựa chọn</translation>
     </message>
   </context>
   <context>
@@ -7490,40 +7494,40 @@ Bạn có muốn nhân bản chúng không?</translation>
     </message>
     <message>
       <source>Set NaviCube to Isometric mode</source>
-      <translation type="unfinished">Set NaviCube to Isometric mode</translation>
+      <translation>Đặt NaviCube thành chế độ Isometric</translation>
     </message>
   </context>
   <context>
     <name>ViewOrthographicCmd</name>
     <message>
       <source>Orthographic</source>
-      <translation type="unfinished">Orthographic</translation>
+      <translation>Trực quan</translation>
     </message>
     <message>
       <source>Set View to Orthographic mode</source>
-      <translation type="unfinished">Set View to Orthographic mode</translation>
+      <translation>Đặt chế độ xem trực quan</translation>
     </message>
   </context>
   <context>
     <name>ViewPerspectiveCmd</name>
     <message>
       <source>Perspective</source>
-      <translation type="unfinished">Perspective</translation>
+      <translation>Phối cảnh</translation>
     </message>
     <message>
       <source>Set View to Perspective mode</source>
-      <translation type="unfinished">Set View to Perspective mode</translation>
+      <translation>Đặt chế độ xem phối cảnh</translation>
     </message>
   </context>
   <context>
     <name>ViewZoomToFitCmd</name>
     <message>
       <source>Zoom to fit</source>
-      <translation type="unfinished">Zoom to fit</translation>
+      <translation>Tự động căn chỉnh tỉ lệ hình ảnh</translation>
     </message>
     <message>
       <source>Zoom so that model fills the view</source>
-      <translation type="unfinished">Zoom so that model fills the view</translation>
+      <translation>Thu phóng để mô hình vừa khít màn ảnh</translation>
     </message>
   </context>
   <context>

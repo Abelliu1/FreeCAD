@@ -286,17 +286,13 @@ void ViewProviderGeometryObject::setSelectable(bool selectable)
     for (int i=0;i<pathList.getLength();i++) {
         SoFCSelection *selNode = dynamic_cast<SoFCSelection*>(pathList[i]->getTail());
         if (selectable) {
-            if (selNode) {
-                selNode->selectionMode = SoFCSelection::SEL_ON;
-                selNode->highlightMode = SoFCSelection::AUTO;
-            }
+            selNode->selectionMode = SoFCSelection::SEL_ON;
+            selNode->highlightMode = SoFCSelection::AUTO;
         }
         else {
-            if (selNode) {
-                selNode->selectionMode = SoFCSelection::SEL_OFF;
-                selNode->highlightMode = SoFCSelection::OFF;
-                selNode->selected = SoFCSelection::NOTSELECTED;
-            }
+            selNode->selectionMode = SoFCSelection::SEL_OFF;
+            selNode->highlightMode = SoFCSelection::OFF;
+            selNode->selected = SoFCSelection::NOTSELECTED;
         }
     }
 }

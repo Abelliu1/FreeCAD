@@ -819,9 +819,7 @@ void BSplineParameterCorrection::Init()
 
 void BSplineParameterCorrection::SetUKnots(const std::vector<double>& afKnots)
 {
-    std::size_t numPoints = static_cast<std::size_t>(_usUCtrlpoints);
-    std::size_t order = static_cast<std::size_t>(_usUOrder);
-    if (afKnots.size() != (numPoints + order))
+    if (afKnots.size() != static_cast<std::size_t>(_usUCtrlpoints+_usUOrder))
         return;
 
     unsigned usUMax = _usUCtrlpoints-_usUOrder+1;
@@ -839,9 +837,7 @@ void BSplineParameterCorrection::SetUKnots(const std::vector<double>& afKnots)
 
 void BSplineParameterCorrection::SetVKnots(const std::vector<double>& afKnots)
 {
-    std::size_t numPoints = static_cast<std::size_t>(_usVCtrlpoints);
-    std::size_t order = static_cast<std::size_t>(_usVOrder);
-    if (afKnots.size() != (numPoints + order))
+    if (afKnots.size() != static_cast<std::size_t>(_usVCtrlpoints+_usVOrder))
         return;
 
     unsigned usVMax = _usVCtrlpoints-_usVOrder+1;
@@ -869,7 +865,7 @@ void BSplineParameterCorrection::DoParameterCorrection(int iIter)
         fMaxScalar = 1.0;
         fMaxDiff   = 0.0;
 
-        Handle(Geom_BSplineSurface) pclBSplineSurf = new Geom_BSplineSurface(_vCtrlPntsOfSurf,
+        Geom_BSplineSurface* pclBSplineSurf = new Geom_BSplineSurface(_vCtrlPntsOfSurf,
                                                     _vUKnots, _vVKnots, _vUMults, _vVMults, _usUOrder-1, _usVOrder-1);
 
         for (int ii=_pvcPoints->Lower();ii <=_pvcPoints->Upper();ii++) {

@@ -1380,11 +1380,12 @@ bool MeshInput::LoadInventor (std::istream &rstrIn)
     std::streambuf* buf = rstrIn.rdbuf();
     if (!buf)
         return false;
-
-    std::streamoff ulCurr;
-    ulCurr = buf->pubseekoff(0, std::ios::cur, std::ios::in);
-    ulSize = buf->pubseekoff(0, std::ios::end, std::ios::in);
-    buf->pubseekoff(ulCurr, std::ios::beg, std::ios::in);
+    if (buf) {
+        std::streamoff ulCurr;
+        ulCurr = buf->pubseekoff(0, std::ios::cur, std::ios::in);
+        ulSize = buf->pubseekoff(0, std::ios::end, std::ios::in);
+        buf->pubseekoff(ulCurr, std::ios::beg, std::ios::in);
+    }
 
     std::string line;
     MeshGeomFacet clFacet;

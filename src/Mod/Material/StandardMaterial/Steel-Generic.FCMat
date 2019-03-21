@@ -1,23 +1,17 @@
-; Steel-Generic
+; Standard Steel Material
 ; (c) 2013 Juergen Riegel (CC-BY 3.0)
-; information about the content of such cards can be found on the wiki:
-; https://www.freecadweb.org/wiki/Material
-; file created by FreeCAD0.18.16022 (Git)
+; information about the content of such cards you can find here:
+; http://www.freecadweb.org/wiki/index.php?title = Material
 
-[General]
+[FCMat]
 Name = Steel-Generic
 Description = This is a blend Steel material card. The values are at the low end of the spectrum. If you need a more precise material definition use the more specialised steel cards.
 Father = Metal
-
-[Mechanical]
-Density = 7900 kg/m^3
-PoissonRatio = 0.3
+ProductURL = http://en.wikipedia.org/wiki/Steel
+SpecificPrice = 1.5 Euro/Kg
 YoungsModulus = 200000 MPa
-
-[Thermal]
+PoissonRatio = 0.3
+Density = 7900 kg/m^3
 SpecificHeat = 500 J/kg/K
 ThermalConductivity = 50 W/m/K
 ThermalExpansionCoefficient = 0.000012 m/m/K
-
-[Cost]
-ProductURL = https://en.wikipedia.org/wiki/Steel

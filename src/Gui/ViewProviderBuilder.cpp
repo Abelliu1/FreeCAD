@@ -101,20 +101,21 @@ ViewProviderColorBuilder::~ViewProviderColorBuilder()
 {
 }
 
-void ViewProviderColorBuilder::buildNodes(const App::Property* prop, std::vector<SoNode*>& node) const
+void ViewProviderColorBuilder::buildNodes(const App::Property* prop, std::vector<SoNode*>&) const
 {
     const App::PropertyColorList* color = static_cast<const App::PropertyColorList*>(prop);
     const std::vector<App::Color>& val = color->getValues();
     unsigned long i=0;
 
     SoMaterial* material = new SoMaterial();
+    material->enableNotify(false);
+    material->diffuseColor.deleteValues(0);
     material->diffuseColor.setNum(val.size());
 
-    SbColor* colors = material->diffuseColor.startEditing();
     for (std::vector<App::Color>::const_iterator it = val.begin(); it != val.end(); ++it) {
-        colors[i].setValue(it->r, it->g, it->b);
-        i++;
+        material->diffuseColor.set1Value(i++, SbColor(it->r, it->g, it->b));
     }
-    material->diffuseColor.finishEditing();
-    node.push_back(material);
+
+    material->enableNotify(true);
+    material->touch();
 }
