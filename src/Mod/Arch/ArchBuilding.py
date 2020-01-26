@@ -1,9 +1,7 @@
 # -*- coding: utf8 -*-
 
 #***************************************************************************
-#*                                                                         *
-#*   Copyright (c) 2011                                                    *
-#*   Yorik van Havre <yorik@uncreated.net>                                 *
+#*   Copyright (c) 2011 Yorik van Havre <yorik@uncreated.net>              *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -270,7 +268,7 @@ class _Building(ArchFloor._Floor):
 
         ArchFloor._Floor.__init__(self,obj)
         self.setProperties(obj)
-        obj.IfcRole = "Building"
+        obj.IfcType = "Building"
 
     def setProperties(self,obj):
 

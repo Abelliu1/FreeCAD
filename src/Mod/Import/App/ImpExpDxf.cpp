@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) Yorik van Havre (yorik@uncreated.net) 2015              *
+ *   Copyright (c) 2015 Yorik van Havre (yorik@uncreated.net)              *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -606,7 +606,7 @@ void ImpExpDxfWrite::exportBSpline(BRepAdaptor_Curve& c)
     gp_Pnt s,ePt;
 
     Standard_Real tol3D = 0.001;
-    Standard_Integer maxDegree = 3, maxSegment = 100;
+    Standard_Integer maxDegree = 3, maxSegment = 200;
     Handle(BRepAdaptor_HCurve) hCurve = new BRepAdaptor_HCurve(c);
     Approx_Curve3d approx(hCurve, tol3D, GeomAbs_C0, maxSegment, maxDegree);
     if (approx.IsDone() && approx.HasResult()) {
@@ -758,7 +758,7 @@ void ImpExpDxfWrite::exportText(const char* text, Base::Vector3d position1, Base
 
 void ImpExpDxfWrite::exportLinearDim(Base::Vector3d textLocn, Base::Vector3d lineLocn, 
                                      Base::Vector3d extLine1Start, Base::Vector3d extLine2Start, 
-                                     char* dimText)
+                                     char* dimText, int type)
 {
     double text[3] = {0,0,0};
     text[0] = textLocn.x;
@@ -776,7 +776,7 @@ void ImpExpDxfWrite::exportLinearDim(Base::Vector3d textLocn, Base::Vector3d lin
     ext2[0] = extLine2Start.x;
     ext2[1] = extLine2Start.y;
     ext2[2] = extLine2Start.z;
-    writeLinearDim(text, line, ext1,ext2,dimText);
+    writeLinearDim(text, line, ext1,ext2,dimText, type);
 }
 
 void ImpExpDxfWrite::exportAngularDim(Base::Vector3d textLocn, Base::Vector3d lineLocn, 

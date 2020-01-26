@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jürgen Riegel (FreeCAD@juergen-riegel.net)         *
+ *   Copyright (c) 2013 Jürgen Riegel <FreeCAD@juergen-riegel.net>         *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -23,11 +23,13 @@
 
 #include "PreCompiled.h"
 #ifndef _PreComp_
+# include <Standard_math.hxx>
+
 # include <QString>
 # include <QSlider>
 #endif
 
-#include <Standard_math.hxx>
+
 #include "ui_TaskDriver.h"
 #include "TaskDriver.h"
 #include <Gui/Application.h>

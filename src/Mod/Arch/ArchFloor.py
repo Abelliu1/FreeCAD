@@ -1,7 +1,6 @@
 # -*- coding: utf8 -*-
 
 #***************************************************************************
-#*                                                                         *
 #*   Copyright (c) 2011 Yorik van Havre <yorik@uncreated.net>              *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
@@ -22,7 +21,7 @@
 #*                                                                         *
 #***************************************************************************
 
-import FreeCAD,Draft,ArchCommands, DraftVecUtils
+import FreeCAD,Draft,ArchCommands, DraftVecUtils, ArchIFC
 if FreeCAD.GuiUp:
     import FreeCADGui
     from PySide import QtCore, QtGui
@@ -74,9 +73,9 @@ class _CommandFloor:
     def GetResources(self):
 
         return {'Pixmap'  : 'Arch_Floor',
-                'MenuText': QT_TRANSLATE_NOOP("Arch_Floor","Floor"),
-                'Accel': "F, L",
-                'ToolTip': QT_TRANSLATE_NOOP("Arch_Floor","Creates a floor object including selected objects")}
+                'MenuText': QT_TRANSLATE_NOOP("Arch_Floor","Level"),
+                'Accel': "L, V",
+                'ToolTip': QT_TRANSLATE_NOOP("Arch_Floor","Creates a Building Part object that represents a level, including selected objects")}
 
     def IsActive(self):
 
@@ -121,7 +120,7 @@ Floor creation aborted.") + "\n"
             FreeCAD.ActiveDocument.recompute()
 
 
-class _Floor:
+class _Floor(ArchIFC.IfcProduct):
 
     "The Floor object"
 
@@ -130,10 +129,11 @@ class _Floor:
         obj.Proxy = self
         self.Object = obj
         _Floor.setProperties(self,obj)
-        self.IfcRole = "Building Storey"
+        self.IfcType = "Building Storey"
 
     def setProperties(self,obj):
 
+        ArchIFC.IfcProduct.setProperties(self, obj)
         pl = obj.PropertiesList
         if not "Height" in pl:
             obj.addProperty("App::PropertyLength","Height","Floor",QT_TRANSLATE_NOOP("App::Property","The height of this object"))
@@ -142,10 +142,6 @@ class _Floor:
         if not hasattr(obj,"Placement"):
             # obj can be a Part Feature and already has a placement
             obj.addProperty("App::PropertyPlacement","Placement","Base",QT_TRANSLATE_NOOP("App::Property","The placement of this object"))
-        if not "IfcRole" in pl:
-            obj.addProperty("App::PropertyEnumeration","IfcRole","Component",QT_TRANSLATE_NOOP("App::Property","The role of this object"))
-            import ArchComponent
-            obj.IfcRole = ArchComponent.IfcRoles
         self.Type = "Floor"
 
     def onDocumentRestored(self,obj):
@@ -161,6 +157,7 @@ class _Floor:
         return None
 
     def onChanged(self,obj,prop):
+        ArchIFC.IfcProduct.onChanged(self, obj, prop)
 
         if not hasattr(self,"Object"):
             # on restore, self.Object is not there anymore

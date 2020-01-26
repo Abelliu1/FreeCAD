@@ -11,7 +11,7 @@
 
 #include <iomanip>
 
-#include <src/Build/Version.h>
+#include <Build/Version.h>
 #include <Base/Console.h>
 #include <Base/FileInfo.h>
 #include <Base/Parameter.h>
@@ -31,10 +31,16 @@ Base::Vector3d toVector3d(const double* a)
 
 CDxfWrite::CDxfWrite(const char* filepath) :
 //TODO: these should probably be parms in config file
-m_entityHandle(0x300),
-m_layerHandle(0x30),
-m_blockHandle(0x210),
-m_blkRecordHandle(0x110),
+//handles:
+//boilerplate 0 - A00
+//used by dxf.cpp A01 - FFFE
+//ACAD HANDSEED  FFFF
+
+m_handle(0xA00),                       //room for 2560 handles in boilerplate files
+//m_entityHandle(0x300),               //don't need special ranges for handles
+//m_layerHandle(0x30),
+//m_blockHandle(0x210),
+//m_blkRecordHandle(0x110),
 m_polyOverride(false),
 m_layerName("none")
 {
@@ -435,40 +441,53 @@ std::string CDxfWrite::getPlateFile(std::string fileSpec)
     return outString.str();
 }
 
-std::string CDxfWrite::getEntityHandle(void)
+std::string CDxfWrite::getHandle(void)
 {
-    m_entityHandle++;
+    m_handle++;
     std::stringstream ss;
     ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
-    ss << m_entityHandle;
+    ss << m_handle;
     return ss.str();
+}
+
+std::string CDxfWrite::getEntityHandle(void)
+{
+    return getHandle();
+//    m_entityHandle++;
+//    std::stringstream ss;
+//    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
+//    ss << m_entityHandle;
+//    return ss.str();
 }
 
 std::string CDxfWrite::getLayerHandle(void)
 {
-    m_layerHandle++;
-    std::stringstream ss;
-    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
-    ss << m_layerHandle;
-    return ss.str();
+    return getHandle();
+//    m_layerHandle++;
+//    std::stringstream ss;
+//    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
+//    ss << m_layerHandle;
+//    return ss.str();
 }
 
 std::string CDxfWrite::getBlockHandle(void)
 {
-    m_blockHandle++;
-    std::stringstream ss;
-    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
-    ss << m_blockHandle;
-    return ss.str();
+    return getHandle();
+//    m_blockHandle++;
+//    std::stringstream ss;
+//    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
+//    ss << m_blockHandle;
+//    return ss.str();
 }
 
 std::string CDxfWrite::getBlkRecordHandle(void)
 {
-    m_blkRecordHandle++;
-    std::stringstream ss;
-    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
-    ss << m_blkRecordHandle;
-    return ss.str();
+    return getHandle();
+//    m_blkRecordHandle++;
+//    std::stringstream ss;
+//    ss << std::uppercase << std::hex << std::setfill('0') << std::setw(2);
+//    ss << m_blkRecordHandle;
+//    return ss.str();
 }
 
 void CDxfWrite::addBlockName(std::string b, std::string h) 
@@ -1040,9 +1059,12 @@ void CDxfWrite::putArrow(Base::Vector3d arrowPos, Base::Vector3d barb1Pos, Base:
 //***************************
 //writeLinearDim
 //added by Wandererfan 2018 (wandererfan@gmail.com) for FreeCAD project
+#define ALIGNED 0
+#define HORIZONTAL 1
+#define VERTICAL 2
 void CDxfWrite::writeLinearDim(const double* textMidPoint, const double* lineDefPoint,
                          const double* extLine1, const double* extLine2,
-                         const char* dimText)
+                         const char* dimText, int type)
 {
     (*m_ssEntity) << "  0"          << endl;
     (*m_ssEntity) << "DIMENSION"    << endl;
@@ -1074,8 +1096,15 @@ void CDxfWrite::writeLinearDim(const double* textMidPoint, const double* lineDef
     (*m_ssEntity) << textMidPoint[1]    << endl;
     (*m_ssEntity) << " 31"          << endl;
     (*m_ssEntity) << textMidPoint[2]    << endl;
-    (*m_ssEntity) << " 70"          << endl;
-    (*m_ssEntity) << 1              << endl;    // dimType1 = Aligned
+    if (type == ALIGNED) {
+        (*m_ssEntity) << " 70"          << endl;
+        (*m_ssEntity) << 1              << endl;    // dimType1 = Aligned
+    }
+    if ( (type == HORIZONTAL) ||
+         (type == VERTICAL) ) {
+        (*m_ssEntity) << " 70"          << endl;
+        (*m_ssEntity) << 32             << endl;  // dimType0 = Aligned + 32 (bit for unique block)?
+    }
 //    (*m_ssEntity) << " 71"          << endl;    // not R12
 //    (*m_ssEntity) << 1              << endl;    // attachPoint ??1 = topleft
     (*m_ssEntity) << "  1"          << endl;
@@ -1099,11 +1128,22 @@ void CDxfWrite::writeLinearDim(const double* textMidPoint, const double* lineDef
     (*m_ssEntity) << extLine2[1]    << endl;
     (*m_ssEntity) << " 34"          << endl;
     (*m_ssEntity) << extLine2[2]    << endl;
+    if (m_version > 12) {
+        if (type == VERTICAL) {
+            (*m_ssEntity) << " 50"          << endl;
+            (*m_ssEntity) << "90"     << endl;
+        }
+        if ( (type == HORIZONTAL) ||
+             (type == VERTICAL) ) {
+            (*m_ssEntity) << "100"          << endl;
+            (*m_ssEntity) << "AcDbRotatedDimension"     << endl;
+        }
+    }
 
     writeDimBlockPreamble();
     writeLinearDimBlock(textMidPoint,lineDefPoint,
                                         extLine1, extLine2,
-                                        dimText);
+                                        dimText, type);
     writeBlockTrailer();
 }
 
@@ -1400,7 +1440,7 @@ void CDxfWrite::writeBlockTrailer(void)
 //added by Wandererfan 2018 (wandererfan@gmail.com) for FreeCAD project
 void CDxfWrite::writeLinearDimBlock(const double* textMidPoint, const double* dimLine,
                          const double* e1Start, const double* e2Start,
-                         const char* dimText)
+                         const char* dimText, int type)
 {
     Base::Vector3d e1S(e1Start[0],e1Start[1],e1Start[2]);
     Base::Vector3d e2S(e2Start[0],e2Start[1],e2Start[2]);
@@ -1412,6 +1452,40 @@ void CDxfWrite::writeLinearDimBlock(const double* textMidPoint, const double* di
     Base::Vector3d X(1.0,0.0,0.0);
     double angle = para.GetAngle(X);
     angle = angle * 180.0 / M_PI;
+    if (type == ALIGNED) {
+        //NOP
+    } else if (type == HORIZONTAL) { 
+        double x = e1Start[0];
+        double y = dimLine[1];
+        e1E = Base::Vector3d(x, y, 0.0);
+        x = e2Start[0];
+        e2E = Base::Vector3d(x, y, 0.0);
+        perp = Base::Vector3d(0, -1, 0);     //down
+        para = Base::Vector3d(1, 0, 0);      //right
+        if (dimLine[1] > e1Start[1]) {
+            perp = Base::Vector3d(0, 1, 0);   //up 
+        }
+        if (e1Start[0] > e2Start[0]) {
+            para = Base::Vector3d(-1, 0, 0);  //left
+        }
+        angle = 0;
+    } else if (type == VERTICAL) {
+        double x = dimLine[0];
+        double y = e1Start[1];
+        e1E = Base::Vector3d(x, y, 0.0);
+        y = e2Start[1];
+        e2E = Base::Vector3d(x, y, 0.0);
+        perp = Base::Vector3d(1, 0, 0);
+        para = Base::Vector3d(0, 1, 0);
+        if (dimLine[0] < e1Start[0]) {
+            perp = Base::Vector3d(-1, 0, 0);
+        }
+        if (e1Start[1] > e2Start[1]) {
+            para = Base::Vector3d(0, -1, 0);
+        }
+        angle = 90;
+    }
+
     double arrowLen = 5.0;             //magic number
     double arrowWidth = arrowLen/6.0/2.0;   //magic number calc!
 

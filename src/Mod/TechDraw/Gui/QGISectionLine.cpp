@@ -40,6 +40,7 @@
 #include "QGISectionLine.h"
 
 using namespace TechDrawGui;
+using namespace TechDraw;
 
 QGISectionLine::QGISectionLine()
 {
@@ -78,39 +79,35 @@ void QGISectionLine::draw()
 void QGISectionLine::makeLine()
 {
     QPainterPath pp;
-    QPointF beginExtLineStart,beginExtLineEnd;             //ext line start pts for measure Start side and measure End side
-    QPointF endExtLineStart, endExtLineEnd;
-    QPointF offset(m_arrowDir.x,-m_arrowDir.y);
-    double arrowLen2 = 2.0 * Rez::guiX(QGIArrow::getPrefArrowSize());
+    QPointF beginExtLine1,beginExtLine2;   //ext line start pts for measure Start side and measure End side
+    QPointF endExtLine1, endExtLine2;
+    QPointF offsetDir(m_arrowDir.x,-m_arrowDir.y);
     int format = getPrefSectionFormat();
     if (format == 0) {                           //"ASME"
-        //draw from section line endpoint to just short of arrow tip
-        QPointF offsetBegin = m_extLen * offset;
-        beginExtLineStart = m_start;
-        beginExtLineEnd = m_end;
-        endExtLineStart = m_start + offsetBegin;
-        endExtLineEnd   = m_end + offsetBegin;
-        pp.moveTo(beginExtLineStart);
-        pp.lineTo(endExtLineStart);
-        pp.moveTo(beginExtLineEnd);
-        pp.lineTo(endExtLineEnd);
+        //draw from section line endpoint
+        QPointF offsetBegin = m_extLen * offsetDir;
+        beginExtLine1 = m_start;           //from
+        beginExtLine2 = m_end;             //to
+        endExtLine1 = m_start + offsetBegin;
+        endExtLine2   = m_end + offsetBegin;
+        pp.moveTo(beginExtLine1);
+        pp.lineTo(endExtLine1);
+        pp.moveTo(beginExtLine2);
+        pp.lineTo(endExtLine2);
     } else {                                     //"ISO"
-        //draw from extension line end to just short of section line
-        QPointF offsetBegin = arrowLen2 * offset;
-        QPointF offsetEnd   = (arrowLen2 - m_extLen) * offset;
-        beginExtLineStart = m_start - offsetBegin;
-        beginExtLineEnd = m_end - offsetBegin;
-        endExtLineStart = m_start - offsetEnd;
-        endExtLineEnd   = m_end - offsetEnd;
-        pp.moveTo(beginExtLineStart);
-        pp.lineTo(endExtLineStart);
-        pp.moveTo(beginExtLineEnd);
-        pp.lineTo(endExtLineEnd);
+        //draw from just short of section line away from section line
+        QPointF offsetBegin = Rez::guiX(QGIArrow::getOverlapAdjust(0,QGIArrow::getPrefArrowSize())) * offsetDir;
+        QPointF offsetEnd   = offsetBegin + (m_extLen * offsetDir);
+        beginExtLine1 = m_start - offsetBegin;
+        beginExtLine2 = m_end - offsetBegin;
+        endExtLine1 = m_start - offsetEnd;
+        endExtLine2   = m_end - offsetEnd;
+        pp.moveTo(beginExtLine1);
+        pp.lineTo(endExtLine1);
+        pp.moveTo(beginExtLine2);
+        pp.lineTo(endExtLine2);
     }
 
-//    pp.moveTo(beginExtLineStart);
-//    pp.lineTo(m_start);          //arrow line
-//    pp.moveTo(beginExtLineEnd);
     pp.moveTo(m_end);
     pp.lineTo(m_start);          //sectionLine
     m_line->setPath(pp);
@@ -125,6 +122,7 @@ void QGISectionLine::makeArrows()
         makeArrowsISO();
     }
 }
+
 //make Euro (ISO) Arrows
 void QGISectionLine::makeArrowsISO()
 {
@@ -135,12 +133,6 @@ void QGISectionLine::makeArrowsISO()
         angle = 2 * M_PI + angle;
     }
     arrowRotation = 360.0 - angle * (180.0/M_PI);   //convert to Qt rotation (clockwise degrees)
-
-    QPointF extLineStart,extLineEnd;
-    QPointF offset(m_arrowDir.x,-m_arrowDir.y);              //remember Y dir is flipped
-    offset = (m_extLen + (2.0 * QGIArrow::getPrefArrowSize())) * offset * -1.0;
-    extLineStart = m_start + offset;
-    extLineEnd = m_end + offset;
 
     m_arrow1->setStyle(0);
     m_arrow1->setSize(QGIArrow::getPrefArrowSize());
@@ -166,21 +158,22 @@ void QGISectionLine::makeArrowsTrad()
     }
     arrowRotation = 360.0 - angle * (180.0/M_PI);   //convert to Qt rotation (clockwise degrees)
 
-    QPointF extLineStart,extLineEnd;
-    QPointF offset(m_arrowDir.x,-m_arrowDir.y);              //remember Y dir is flipped
-    offset = (m_extLen + (2.0 * QGIArrow::getPrefArrowSize())) * offset;
-    extLineStart = m_start + offset;
-    extLineEnd = m_end + offset;
+    QPointF posArrow1,posArrow2;
+    QPointF offsetDir(m_arrowDir.x,-m_arrowDir.y);              //remember Y dir is flipped
+    double offsetLength = m_extLen + Rez::guiX(QGIArrow::getOverlapAdjust(0,QGIArrow::getPrefArrowSize()));
+    QPointF offsetVec = offsetLength * offsetDir;
+    posArrow1 = m_start + offsetVec;
+    posArrow2 = m_end + offsetVec;
 
     m_arrow1->setStyle(0);
     m_arrow1->setSize(QGIArrow::getPrefArrowSize());
-    m_arrow1->setPos(extLineStart);
+    m_arrow1->setPos(posArrow1);
     m_arrow1->draw();
     m_arrow1->setRotation(arrowRotation);                   //rotation = 0  ==>  ->  horizontal, pointing right
 
     m_arrow2->setStyle(0);
     m_arrow2->setSize(QGIArrow::getPrefArrowSize());
-    m_arrow2->setPos(extLineEnd);
+    m_arrow2->setPos(posArrow2);
     m_arrow2->draw();
     m_arrow2->setRotation(arrowRotation);
 }
@@ -203,35 +196,29 @@ void QGISectionLine::makeSymbolsTrad()
     extLineStart = m_start + offset;
     extLineEnd = m_end + offset;
     prepareGeometryChange();
-    m_symFont.setPointSize(m_symSize);
+    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
     m_symbol1->setFont(m_symFont);
     m_symbol1->setPlainText(QString::fromUtf8(m_symbol));
-    if (m_arrowDir.y < 0.0) {         //pointing down
-        extLineStart  += QPointF (0.0, m_symSize);  //move text down a bit
-    } else if (m_arrowDir.y >  0.0) {  //pointing up
-        extLineStart  -= QPointF (0.0, m_symSize);  //move text up a bit
+
+    QRectF symRect = m_symbol1->boundingRect();
+    double symWidth = symRect.width();
+    double symHeight = symRect.height();
+    double symbolFudge = 1.0;
+    double angle = atan2f(m_arrowDir.y,m_arrowDir.x);
+    if (angle < 0.0) {
+        angle = 2 * M_PI + angle;
     }
-    if (m_arrowDir.x < 0.0) {         //pointing left
-        extLineStart  -= QPointF (m_symSize, 0.0);  //move text left a bit
-    } else if (m_arrowDir.x >  0.0) {  //pointing rightup
-        extLineStart  += QPointF (m_symSize, 0.0);  //move text right a bit
-    }
+    Base::Vector3d adjustVector(cos(angle) * symWidth, sin(angle) * symHeight, 0.0);
+    adjustVector = (DrawUtil::invertY(adjustVector) / 2.0) * symbolFudge;
+    QPointF qAdjust(adjustVector.x, adjustVector.y);
+
+    extLineStart += qAdjust;
     m_symbol1->centerAt(extLineStart);
 
     m_symbol2->setFont(m_symFont);
     m_symbol2->setPlainText(QString::fromUtf8(m_symbol));
-    if (m_arrowDir.y < 0.0) {         //pointing down
-        extLineEnd  += QPointF (0.0, m_symSize);  //move text down a bit
-    } else if (m_arrowDir.y > 0.0) {  //pointing up
-        extLineEnd  -= QPointF (0.0, m_symSize);  //move text up a bit
-    }
-     if (m_arrowDir.x < 0.0) {         //pointing left
-        extLineEnd  -= QPointF (m_symSize, 0.0);  //move text left a bit
-    } else if (m_arrowDir.x >  0.0) {  //pointing rightup
-        extLineEnd  += QPointF (m_symSize, 0.0);  //move text right a bit
-    }
+    extLineEnd += qAdjust;
     m_symbol2->centerAt(extLineEnd);
-
 }
 
 void QGISectionLine::makeSymbolsISO()
@@ -246,7 +233,7 @@ void QGISectionLine::makeSymbolsISO()
     symPosEnd = m_end - offset;
 
     prepareGeometryChange();
-    m_symFont.setPointSize(m_symSize);
+    m_symFont.setPixelSize(QGIView::calculateFontPixelSize(m_symSize));
     m_symbol1->setFont(m_symFont);
     m_symbol1->setPlainText(QString::fromUtf8(m_symbol));
     m_symbol1->centerAt(symPosStart);
@@ -354,10 +341,12 @@ void QGISectionLine::setTools()
 
     m_line->setPen(m_pen);
 
-    m_arrow1->setPen(m_pen);
-    m_arrow2->setPen(m_pen);
-    m_arrow1->setBrush(m_brush);
-    m_arrow2->setBrush(m_brush);
+//    m_arrow1->setPen(m_pen);
+//    m_arrow2->setPen(m_pen);
+//    m_arrow1->setBrush(m_brush);
+//    m_arrow2->setBrush(m_brush);
+    m_arrow1->setPrettyNormal();
+    m_arrow2->setPrettyNormal();
 
     m_symbol1->setDefaultTextColor(m_colCurrent);
     m_symbol2->setDefaultTextColor(m_colCurrent);

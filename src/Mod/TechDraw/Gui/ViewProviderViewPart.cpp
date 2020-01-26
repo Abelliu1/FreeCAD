@@ -37,9 +37,13 @@
 #include <App/DocumentObject.h>
 
 #include <Mod/TechDraw/App/DrawViewDimension.h>
+#include <Mod/TechDraw/App/DrawViewBalloon.h>
+#include <Mod/TechDraw/App/DrawLeaderLine.h>
+#include <Mod/TechDraw/App/DrawRichAnno.h>
 #include <Mod/TechDraw/App/DrawViewMulti.h>
 #include <Mod/TechDraw/App/DrawHatch.h>
 #include <Mod/TechDraw/App/DrawGeomHatch.h>
+#include <Mod/TechDraw/App/DrawWeldSymbol.h>
 #include <Mod/TechDraw/App/LineGroup.h>
 
 #include<Mod/TechDraw/App/DrawPage.h>
@@ -79,17 +83,24 @@ ViewProviderViewPart::ViewProviderViewPart()
     ADD_PROPERTY_TYPE(ExtraWidth,(weight),group,App::Prop_None,"The thickness of LineGroup Extra lines, if enabled");
     delete lg;                            //Coverity CID 174664
 
+    hGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp")->
+                                                    GetGroup("Preferences")->GetGroup("Mod/TechDraw/Decorations");
+    double defScale = hGrp->GetFloat("CenterMarkScale",2.0);
+    bool   defShowCenters = hGrp->GetBool("ShowCenterMarks", true);
+
     //decorations
     ADD_PROPERTY_TYPE(HorizCenterLine ,(false),dgroup,App::Prop_None,"Show a horizontal centerline through view");
     ADD_PROPERTY_TYPE(VertCenterLine ,(false),dgroup,App::Prop_None,"Show a vertical centerline through view");
-    ADD_PROPERTY_TYPE(ArcCenterMarks ,(true),dgroup,App::Prop_None,"Center marks on/off");
-    ADD_PROPERTY_TYPE(CenterScale,(2.0),dgroup,App::Prop_None,"Center mark size adjustment, if enabled");
+    ADD_PROPERTY_TYPE(ArcCenterMarks ,(defShowCenters),dgroup,App::Prop_None,"Center marks on/off");
+    ADD_PROPERTY_TYPE(CenterScale,(defScale),dgroup,App::Prop_None,"Center mark size adjustment, if enabled");
 
     //properties that affect Section Line
     ADD_PROPERTY_TYPE(ShowSectionLine ,(true)    ,dgroup,App::Prop_None,"Show/hide section line if applicable");
     
     //properties that affect Detail Highlights
     ADD_PROPERTY_TYPE(HighlightAdjust,(0.0),hgroup,App::Prop_None,"Adjusts the rotation of the Detail highlight");
+
+    ADD_PROPERTY_TYPE(ShowAllEdges ,(false)    ,dgroup,App::Prop_None,"Temporarily show invisible lines");
 }
 
 ViewProviderViewPart::~ViewProviderViewPart()
@@ -154,8 +165,10 @@ std::vector<App::DocumentObject*> ViewProviderViewPart::claimChildren(void) cons
     // Collect any child Document Objects and put them in the right place in the Feature tree
     // valid children of a ViewPart are:
     //    - Dimensions
+    //    - Leaders
     //    - Hatches
     //    - GeomHatches
+    //    - Leaders
     std::vector<App::DocumentObject*> temp;
     const std::vector<App::DocumentObject *> &views = getViewPart()->getInList();
     try {
@@ -178,6 +191,12 @@ std::vector<App::DocumentObject*> ViewProviderViewPart::claimChildren(void) cons
               temp.push_back((*it));
           } else if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawGeomHatch::getClassTypeId())) {
               temp.push_back((*it));
+          } else if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawViewBalloon::getClassTypeId())) {
+              temp.push_back((*it));
+          } else if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawRichAnno::getClassTypeId())) {
+              temp.push_back((*it));
+          } else if ((*it)->getTypeId().isDerivedFrom(TechDraw::DrawLeaderLine::getClassTypeId())) {
+              temp.push_back((*it));
           }
       }
       return temp;
@@ -195,4 +214,34 @@ TechDraw::DrawViewPart* ViewProviderViewPart::getViewObject() const
 TechDraw::DrawViewPart* ViewProviderViewPart::getViewPart() const
 {
     return getViewObject();
+}
+
+void ViewProviderViewPart::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+// transforms properties that had been changed
+{
+    // property LineWidth had the App::PropertyFloat and was changed to App::PropertyLength
+    if (prop == &LineWidth && strcmp(TypeName, "App::PropertyFloat") == 0) {
+        App::PropertyFloat LineWidthProperty;
+        // restore the PropertyFloat to be able to set its value
+        LineWidthProperty.Restore(reader);
+        LineWidth.setValue(LineWidthProperty.getValue());
+    }
+    // property HiddenWidth had the App::PropertyFloat and was changed to App::PropertyLength
+    else if (prop == &HiddenWidth && strcmp(TypeName, "App::PropertyFloat") == 0) {
+        App::PropertyFloat HiddenWidthProperty;
+        HiddenWidthProperty.Restore(reader);
+        HiddenWidth.setValue(HiddenWidthProperty.getValue());
+    }
+    // property IsoWidth had the App::PropertyFloat and was changed to App::PropertyLength
+    else if (prop == &IsoWidth && strcmp(TypeName, "App::PropertyFloat") == 0) {
+        App::PropertyFloat IsoWidthProperty;
+        IsoWidthProperty.Restore(reader);
+        IsoWidth.setValue(IsoWidthProperty.getValue());
+    }
+    // property ExtraWidth had the App::PropertyFloat and was changed to App::PropertyLength
+    else if (prop == &ExtraWidth && strcmp(TypeName, "App::PropertyFloat") == 0) {
+        App::PropertyFloat  ExtraWidthProperty;
+        ExtraWidthProperty.Restore(reader);
+        ExtraWidth.setValue(ExtraWidthProperty.getValue());
+    }
 }

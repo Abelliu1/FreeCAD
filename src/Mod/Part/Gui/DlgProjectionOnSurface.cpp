@@ -21,6 +21,32 @@
  ***************************************************************************/
 
 #include "PreCompiled.h"
+
+#ifndef _PreComp_
+# include <TopoDS_Face.hxx>
+# include <TopExp.hxx>
+# include <TopExp_Explorer.hxx>
+# include <BRepProj_Projection.hxx>
+# include <TopoDS_Builder.hxx>
+# include <TopoDS_Edge.hxx>
+# include <ShapeAnalysis.hxx>
+# include <ShapeAnalysis_FreeBounds.hxx>
+# include <ShapeFix_Wire.hxx>
+# include <BRep_Tool.hxx>
+# include <BRepBuilderAPI_MakeWire.hxx>
+# include <Geom_TrimmedCurve.hxx>
+# include <GeomProjLib.hxx>
+# include <BRepBuilderAPI_MakeEdge.hxx>
+# include "ShapeFix_Edge.hxx"
+# include <BRepBuilderAPI_MakeFace.hxx>
+# include <ShapeFix_Face.hxx>
+# include <BRepCheck_Analyzer.hxx>
+# include <ShapeFix_Wireframe.hxx>
+# include <BRepPrimAPI_MakePrism.hxx>
+# include <gp_Ax1.hxx>
+# include <BRepBuilderAPI_Transform.hxx>
+#endif
+
 #include "DlgProjectionOnSurface.h"
 #include "ui_DlgProjectionOnSurface.h"
 
@@ -35,28 +61,9 @@
 
 #include "ViewProviderExt.h"
 
-#include <TopoDS_Face.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <BRepProj_Projection.hxx>
-#include <TopoDS_Builder.hxx>
-#include <TopoDS_Edge.hxx>
-#include <ShapeAnalysis.hxx>
-#include <ShapeAnalysis_FreeBounds.hxx>
-#include <ShapeFix_Wire.hxx>
-#include <BRep_Tool.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <GeomProjLib.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include "ShapeFix_Edge.hxx"
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <ShapeFix_Face.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <ShapeFix_Wireframe.hxx>
-#include <BRepPrimAPI_MakePrism.hxx>
-#include <gp_Ax1.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
+
+
+
 
 using namespace PartGui;
 
@@ -404,7 +411,7 @@ bool PartGui::DlgProjectionOnSurface::store_part_in_vector(SShapeStore& iCurrent
       }
     }
   }
-  
+
   if (currentType == TopAbs_FACE)
   {
     iCurrentShape.aFace = TopoDS::Face(iCurrentShape.inputShape);
@@ -535,7 +542,7 @@ TopoDS_Shape PartGui::DlgProjectionOnSurface::create_compound(const std::vector<
       }
     }
   }
-  return aCompound;
+  return TopoDS_Shape(std::move(aCompound));
 }
 
 void PartGui::DlgProjectionOnSurface::show_projected_shapes(const std::vector<SShapeStore>& iShapeStoreVec)
@@ -590,7 +597,7 @@ void PartGui::DlgProjectionOnSurface::higlight_object(Part::Feature* iCurrentObj
 
   TopoDS_Shape currentShape = subShape;
   if (subShape.IsNull()) currentShape = partenShape;
-  
+
   auto currentShapeType = currentShape.ShapeType();
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(partenShape, currentShapeType, anIndices);
@@ -668,7 +675,7 @@ void PartGui::DlgProjectionOnSurface::create_projection_face_from_wire(std::vect
       auto surface = BRep_Tool::Surface(itCurrentShape.surfaceToProject);
 
       //create a wire of all edges in parametric space on the surface of the face to projected
-      // --> othwerwise BRepBuilderAPI_MakeFace can not make a face from the wire!
+      // --> otherwise BRepBuilderAPI_MakeFace can not make a face from the wire!
       for (auto itWireVec : itCurrentShape.aProjectedWireVec)
       {
         std::vector<TopoDS_Shape> edgeVec;
@@ -764,7 +771,7 @@ TopoDS_Wire PartGui::DlgProjectionOnSurface::sort_and_heal_wire(const std::vecto
   Handle(TopTools_HSequenceOfShape) shapeList = new TopTools_HSequenceOfShape;
   Handle(TopTools_HSequenceOfShape) aWireHandle;
   Handle(TopTools_HSequenceOfShape) aWireWireHandle;
-  
+
   for (auto it : iEdgeVec)
   {
     shapeList->Append(it);
@@ -826,7 +833,7 @@ void PartGui::DlgProjectionOnSurface::store_wire_in_vector(const SShapeStore& iC
   if (iCurrentShape.inputShape.IsNull()) return;
   auto currentType = iCurrentShape.inputShape.ShapeType();
   if (currentType != TopAbs_EDGE) return;
-  
+
   std::vector<TopoDS_Wire> aWireVec;
   for (TopExp_Explorer aExplorer(iParentShape, TopAbs_WIRE); aExplorer.More(); aExplorer.Next())
   {
@@ -1045,5 +1052,3 @@ void TaskProjectionOnSurface::clicked(int id)
 }
 
 #include "moc_DlgProjectionOnSurface.cpp"
-
-

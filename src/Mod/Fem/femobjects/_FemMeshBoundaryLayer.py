@@ -1,5 +1,4 @@
 # ***************************************************************************
-# *                                                                         *
 # *   Copyright (c) 2016 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
@@ -36,18 +35,38 @@ class _FemMeshBoundaryLayer:
         self.Object = obj  # keep a ref to the DocObj for nonGui usage
         obj.Proxy = self  # link between App::DocumentObject to this object
 
-        obj.addProperty("App::PropertyInteger", "NumberOfLayers", "MeshBoundaryLayerProperties", "set number of inflation layers for this boundary")
+        obj.addProperty(
+            "App::PropertyInteger",
+            "NumberOfLayers",
+            "MeshBoundaryLayerProperties",
+            "set number of inflation layers for this boundary"
+        )
 
         obj.NumberOfLayers = 3
 
-        obj.addProperty("App::PropertyLength", "MinimumThickness", "MeshBoundaryLayerProperties", "set minimum thickness,usually the first inflation layer")
+        obj.addProperty(
+            "App::PropertyLength",
+            "MinimumThickness",
+            "MeshBoundaryLayerProperties",
+            "set minimum thickness,usually the first inflation layer"
+        )
         # default to zero, user must specify a proper value for this property
 
-        obj.addProperty("App::PropertyFloat", "GrowthRate", "MeshBoundaryLayerProperties", "set growth rate of inflation layers for smooth transition")
+        obj.addProperty(
+            "App::PropertyFloat",
+            "GrowthRate",
+            "MeshBoundaryLayerProperties",
+            "set growth rate of inflation layers for smooth transition"
+        )
 
         obj.GrowthRate = 1.5
 
-        obj.addProperty("App::PropertyLinkSubList", "References", "MeshBoundaryLayerShapes", "List of FEM mesh region shapes")
+        obj.addProperty(
+            "App::PropertyLinkSubList",
+            "References",
+            "MeshBoundaryLayerShapes",
+            "List of FEM mesh region shapes"
+        )
 
     def execute(self, obj):
         return

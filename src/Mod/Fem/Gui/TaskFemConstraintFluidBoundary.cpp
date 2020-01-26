@@ -1,6 +1,7 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
- *   Copyright (c) 2016 Qingfeng Xia <qingfeng.xia    iesensor.com>        *
+ *   Copyright (c) 2013 Jan Rheinländer                                    *
+ *                                   <jrheinlaender@users.sourceforge.net> *
+ *   Copyright (c) 2016 Qingfeng Xia <qingfeng.xia[at]iesensor.com>        *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -26,10 +27,12 @@
 
 #ifndef _PreComp_
 # include <sstream>
+
 # include <QRegExp>
 # include <QTextStream>
 # include <QMessageBox>
 # include <QAction>
+
 # include <Precision.hxx>
 # include <TopoDS.hxx>
 # include <TopoDS_Shape.hxx>
