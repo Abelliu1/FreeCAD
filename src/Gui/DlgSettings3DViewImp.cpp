@@ -102,6 +102,7 @@ void DlgSettings3DViewImp::saveSettings()
     ui->spinBoxZoomStep->onSave();
     ui->checkBoxDragAtCursor->onSave();
     ui->CheckBox_CornerCoordSystem->onSave();
+    ui->CheckBox_WbByTab->onSave();
     ui->CheckBox_ShowFPS->onSave();
     ui->CheckBox_useVBO->onSave();
     ui->CheckBox_NaviCube->onSave();
@@ -113,6 +114,7 @@ void DlgSettings3DViewImp::saveSettings()
     ui->radioPerspective->onSave();
     ui->radioOrthographic->onSave();
     ui->qspinNewDocScale->onSave();
+    ui->prefStepByTurn->onSave();
 
     QVariant camera = ui->comboNewDocView->itemData(ui->comboNewDocView->currentIndex(), Qt::UserRole);
     hGrp->SetASCII("NewDocumentCameraOrientation", (const char*)camera.toByteArray());
@@ -133,6 +135,7 @@ void DlgSettings3DViewImp::loadSettings()
     ui->spinBoxZoomStep->onRestore();
     ui->checkBoxDragAtCursor->onRestore();
     ui->CheckBox_CornerCoordSystem->onRestore();
+    ui->CheckBox_WbByTab->onRestore();
     ui->CheckBox_ShowFPS->onRestore();
     ui->CheckBox_useVBO->onRestore();
     ui->CheckBox_NaviCube->onRestore();
@@ -144,6 +147,7 @@ void DlgSettings3DViewImp::loadSettings()
     ui->radioPerspective->onRestore();
     ui->radioOrthographic->onRestore();
     ui->qspinNewDocScale->onRestore();
+    ui->prefStepByTurn->onRestore();
 
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
         ("User parameter:BaseApp/Preferences/View");

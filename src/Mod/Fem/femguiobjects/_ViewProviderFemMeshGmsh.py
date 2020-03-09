@@ -1,6 +1,8 @@
 # ***************************************************************************
 # *   Copyright (c) 2016 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
+# *   This file is part of the FreeCAD CAx development system.              *
+# *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
 # *   as published by the Free Software Foundation; either version 2 of     *
@@ -28,21 +30,26 @@ __url__ = "http://www.freecadweb.org"
 #  \brief FreeCAD FEM _ViewProviderFemMeshGmsh
 
 import sys
-import FreeCAD
-import FreeCADGui
-import FemGui
+import time
 
-# for the panel
-from femobjects import _FemMeshGmsh
 from PySide import QtCore
 from PySide import QtGui
 from PySide.QtCore import Qt
 from PySide.QtGui import QApplication
-import time
+
+import FreeCAD
+import FreeCADGui
+
+import FemGui
+# from . import ViewProviderFemConstraint
+from femobjects import _FemMeshGmsh
 
 
+# class _ViewProviderFemMeshGmsh(ViewProviderFemConstraint.ViewProxy):
 class _ViewProviderFemMeshGmsh:
-    "A View Provider for the FemMeshGmsh object"
+    """
+    A View Provider for the FemMeshGmsh object
+    """
 
     def __init__(self, vobj):
         vobj.Proxy = self
@@ -68,14 +75,25 @@ class _ViewProviderFemMeshGmsh:
         # show the mesh we like to edit
         self.ViewObject.show()
         # show task panel
-        taskd = _TaskPanelFemMeshGmsh(self.Object)
-        taskd.obj = vobj.Object
+        taskd = _TaskPanel(self.Object)
+        # taskd.obj = vobj.Object
         FreeCADGui.Control.showDialog(taskd)
         return True
 
+    """
+    def setEdit(self, vobj, mode=0):
+        ViewProviderFemConstraint.ViewProxy.setEdit(
+            self,
+            vobj,
+            mode,
+            _TaskPanel
+        )
+    """
+
+    # overwrite unsetEdit, hide mesh object on task panel exit
     def unsetEdit(self, vobj, mode):
         FreeCADGui.Control.closeDialog()
-        self.ViewObject.hide()  # hide the mesh after edit is finished
+        self.ViewObject.hide()
         return True
 
     def doubleClicked(self, vobj):
@@ -244,9 +262,11 @@ class _ViewProviderFemMeshGmsh:
         FreeCAD.ActiveDocument.recompute()
 
 
-class _TaskPanelFemMeshGmsh:
-    """The TaskPanel for editing References property of
-    FemMeshGmsh objects and creation of new FEM mesh"""
+class _TaskPanel:
+    """
+    The TaskPanel for editing References property of
+    FemMeshGmsh objects and creation of new FEM mesh
+    """
 
     def __init__(self, obj):
         self.mesh_obj = obj
@@ -361,7 +381,7 @@ class _TaskPanelFemMeshGmsh:
 
     def run_gmsh(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        part = self.obj.Part
+        part = self.mesh_obj.Part
         if self.mesh_obj.MeshRegionList:
             #  other part obj might not have a Proxy, thus an exception would be raised
             if part.Shape.ShapeType == "Compound" and hasattr(part, "Proxy"):
@@ -390,8 +410,8 @@ class _TaskPanelFemMeshGmsh:
         self.gmsh_runs = True
         self.console_log("We are going to start ...")
         self.get_active_analysis()
-        import femmesh.gmshtools as gmshtools
-        gmsh_mesh = gmshtools.GmshTools(self.obj, self.analysis)
+        from femmesh import gmshtools
+        gmsh_mesh = gmshtools.GmshTools(self.mesh_obj, self.analysis)
         self.console_log("Start Gmsh ...")
         error = ""
         try:
@@ -403,10 +423,12 @@ class _TaskPanelFemMeshGmsh:
                 .format(sys.exc_info()[0])
             )
         if error:
+            FreeCAD.Console.PrintMessage("Gmsh had warnings ...\n")
             FreeCAD.Console.PrintMessage("{}\n".format(error))
             self.console_log("Gmsh had warnings ...")
             self.console_log(error, "#FF0000")
         else:
+            FreeCAD.Console.PrintMessage("Clean run of Gmsh\n")
             self.console_log("Clean run of Gmsh")
         self.console_log("Gmsh done!")
         self.form.l_time.setText("Time: {0:4.1f}: ".format(time.time() - self.Start))

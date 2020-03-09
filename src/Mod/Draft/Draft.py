@@ -297,11 +297,13 @@ def makeDimension(p1,p2,p3=None,p4=None):
         l.append((p1,"Edge"+str(p2+1)))
         if p3 == "radius":
             #l.append((p1,"Center"))
-            obj.ViewObject.Override = "R $dim"
+            if FreeCAD.GuiUp:
+                obj.ViewObject.Override = "R $dim"
             obj.Diameter = False
         elif p3 == "diameter":
             #l.append((p1,"Diameter"))
-            obj.ViewObject.Override = "Ø $dim"
+            if FreeCAD.GuiUp:
+                obj.ViewObject.Override = "Ø $dim"
             obj.Diameter = True
         obj.LinkedGeometry = l
         obj.Support = p1
@@ -359,7 +361,7 @@ def makeAngularDimension(center,angles,p3,normal=None):
 
     return obj
 
-def makeWire(pointslist,closed=False,placement=None,face=None,support=None):
+def makeWire(pointslist,closed=False,placement=None,face=None,support=None,bs2wire=False):
     """makeWire(pointslist,[closed],[placement]): Creates a Wire object
     from the given list of vectors. If closed is True or first
     and last points are identical, the wire is closed. If face is
@@ -385,7 +387,8 @@ def makeWire(pointslist,closed=False,placement=None,face=None,support=None):
     if placement:
         typecheck([(placement,FreeCAD.Placement)], "makeWire")
         ipl = placement.inverse()
-        pointslist = [ipl.multVec(p) for p in pointslist]
+        if not bs2wire:
+            pointslist = [ipl.multVec(p) for p in pointslist]
     if len(pointslist) == 2: fname = "Line"
     else: fname = "Wire"
     obj = FreeCAD.ActiveDocument.addObject("Part::Part2DObjectPython",fname)
@@ -685,7 +688,7 @@ def makeBlock(objectslist):
         select(obj)
     return obj
 
-def makeArray(baseobject,arg1,arg2,arg3,arg4=None,arg5=None,arg6=None,name="Array",useLink=False):
+def makeArray(baseobject,arg1,arg2,arg3,arg4=None,arg5=None,arg6=None,name="Array",use_link=False):
     """makeArray(object,xvector,yvector,xnum,ynum,[name]) for rectangular array, or
     makeArray(object,xvector,yvector,zvector,xnum,ynum,znum,[name]) for rectangular array, or
     makeArray(object,center,totalangle,totalnum,[name]) for polar array, or
@@ -704,7 +707,7 @@ def makeArray(baseobject,arg1,arg2,arg3,arg4=None,arg5=None,arg6=None,name="Arra
     if not FreeCAD.ActiveDocument:
         FreeCAD.Console.PrintError("No active document. Aborting\n")
         return
-    if useLink:
+    if use_link:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name,_Array(None),None,True)
     else:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
@@ -739,7 +742,7 @@ def makeArray(baseobject,arg1,arg2,arg3,arg4=None,arg5=None,arg6=None,name="Arra
         obj.Angle = arg2
         obj.NumberPolar = arg3
     if gui:
-        if useLink:
+        if use_link:
             _ViewProviderDraftLink(obj.ViewObject)
         else:
             _ViewProviderDraftArray(obj.ViewObject)
@@ -750,8 +753,8 @@ def makeArray(baseobject,arg1,arg2,arg3,arg4=None,arg5=None,arg6=None,name="Arra
         select(obj)
     return obj
 
-def makePathArray(baseobject,pathobject,count,xlate=None,align=False,pathobjsubs=[],useLink=False):
-    """makePathArray(docobj,path,count,xlate,align,pathobjsubs,useLink): distribute
+def makePathArray(baseobject,pathobject,count,xlate=None,align=False,pathobjsubs=[],use_link=False):
+    """makePathArray(docobj,path,count,xlate,align,pathobjsubs,use_link): distribute
     count copies of a document baseobject along a pathobject or subobjects of a
     pathobject. Optionally translates each copy by FreeCAD.Vector xlate direction
     and distance to adjust for difference in shape centre vs shape reference point.
@@ -759,7 +762,7 @@ def makePathArray(baseobject,pathobject,count,xlate=None,align=False,pathobjsubs
     if not FreeCAD.ActiveDocument:
         FreeCAD.Console.PrintError("No active document. Aborting\n")
         return
-    if useLink:
+    if use_link:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","PathArray",_PathArray(None),None,True)
     else:
         obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython","PathArray")
@@ -777,7 +780,7 @@ def makePathArray(baseobject,pathobject,count,xlate=None,align=False,pathobjsubs
         obj.Xlate = xlate
     obj.Align = align
     if gui:
-        if useLink:
+        if use_link:
             _ViewProviderDraftLink(obj.ViewObject)
         else:
             _ViewProviderDraftArray(obj.ViewObject)
@@ -1037,10 +1040,14 @@ def move(objectslist,vector,copy=False):
     newgroups = {}
     objectslist = filterObjectsForModifiers(objectslist, copy)
     for obj in objectslist:
+        newobj = None
         # real_vector have been introduced to take into account
         # the possibility that object is inside an App::Part
-        v_minus_global = obj.getGlobalPlacement().inverse().Rotation.multVec(vector)
-        real_vector = obj.Placement.Rotation.multVec(v_minus_global)
+        if hasattr(obj, "getGlobalPlacement"):
+            v_minus_global = obj.getGlobalPlacement().inverse().Rotation.multVec(vector)
+            real_vector = obj.Placement.Rotation.multVec(v_minus_global)
+        else:
+            real_vector = vector
         if getType(obj) == "Point":
             v = Vector(obj.X,obj.Y,obj.Z)
             v = v.add(real_vector)
@@ -1051,6 +1058,8 @@ def move(objectslist,vector,copy=False):
             newobj.X = v.x
             newobj.Y = v.y
             newobj.Z = v.z
+        elif obj.isDerivedFrom("App::DocumentObjectGroup"):
+            pass
         elif hasattr(obj,'Shape'):
             if copy:
                 newobj = makeCopy(obj)
@@ -1100,7 +1109,8 @@ def move(objectslist,vector,copy=False):
             if "Placement" in obj.PropertiesList:
                 pla = obj.Placement
                 pla.move(real_vector)
-        newobjlist.append(newobj)
+        if newobj is not None:
+            newobjlist.append(newobj)
         if copy:
             for p in obj.InList:
                 if p.isDerivedFrom("App::DocumentObjectGroup") and (p in objectslist):
@@ -1228,12 +1238,18 @@ def rotate(objectslist,angle,center=Vector(0,0,0),axis=Vector(0,0,1),copy=False)
     newgroups = {}
     objectslist = filterObjectsForModifiers(objectslist, copy)
     for obj in objectslist:
+        newobj = None
         # real_center and real_axis are introduced to take into account
         # the possibility that object is inside an App::Part
-        ci = obj.getGlobalPlacement().inverse().multVec(center)
-        real_center = obj.Placement.multVec(ci)
-        ai = obj.getGlobalPlacement().inverse().Rotation.multVec(axis)
-        real_axis = obj.Placement.Rotation.multVec(ai)        
+        if hasattr(obj, "getGlobalPlacement"):
+            ci = obj.getGlobalPlacement().inverse().multVec(center)
+            real_center = obj.Placement.multVec(ci)
+            ai = obj.getGlobalPlacement().inverse().Rotation.multVec(axis)
+            real_axis = obj.Placement.Rotation.multVec(ai)
+        else:
+            real_center = center
+            real_axis = axis
+
         if copy:
             newobj = makeCopy(obj)
         else:
@@ -1262,6 +1278,8 @@ def rotate(objectslist,angle,center=Vector(0,0,0),axis=Vector(0,0,1),copy=False)
             newobj.X = v.x
             newobj.Y = v.y
             newobj.Z = v.z
+        elif obj.isDerivedFrom("App::DocumentObjectGroup"):
+            pass
         elif hasattr(obj,"Placement"):
             #FreeCAD.Console.PrintMessage("placement rotation\n")
             shape = Part.Shape()
@@ -1275,7 +1293,8 @@ def rotate(objectslist,angle,center=Vector(0,0,0),axis=Vector(0,0,1),copy=False)
             newobj.Shape = shape
         if copy:
             formatObject(newobj,obj)
-        newobjlist.append(newobj)
+        if newobj is not None:
+            newobjlist.append(newobj)
         if copy:
             for p in obj.InList:
                 if p.isDerivedFrom("App::DocumentObjectGroup") and (p in objectslist):
@@ -4154,7 +4173,7 @@ class _ViewProviderAngularDimension(_ViewProviderDraft):
             return ["2D","3D"][getParam("dimstyle",0)]
 
     def getIcon(self):
-        return ":/icons/Draft_Dimension_Tree.svg"
+        return ":/icons/Draft_DimensionAngular.svg"
 
     def __getstate__(self):
         return self.Object.ViewObject.DisplayMode
@@ -5127,7 +5146,7 @@ class _Shape2DView(_DraftObject):
 class _DraftLink(_DraftObject):
 
     def __init__(self,obj,tp):
-        self.useLink = False if obj else True
+        self.use_link = False if obj else True
         _DraftObject.__init__(self,obj,tp)
         if obj:
             self.attach(obj)
@@ -5139,11 +5158,11 @@ class _DraftLink(_DraftObject):
         if isinstance(state,dict):
             self.__dict__ = state
         else:
-            self.useLink = False
+            self.use_link = False
             _DraftObject.__setstate__(self,state)
 
     def attach(self,obj):
-        if self.useLink:
+        if self.use_link:
             obj.addExtension('App::LinkExtensionPython', None)
             self.linkSetup(obj)
 
@@ -5176,12 +5195,30 @@ class _DraftLink(_DraftObject):
         obj.configLinkProperty('LinkTransform','ColoredElements')
 
     def getViewProviderName(self,_obj):
-        if self.useLink:
+        if self.use_link:
             return 'Gui::ViewProviderLinkPython'
         return ''
 
+    def migrate_attributes(self, obj):
+        """Migrate old attribute names to new names if they exist.
+
+        This is done to comply with Python guidelines or fix small issues
+        in older code.
+        """
+        if hasattr(self, "useLink"):
+            # This is only needed for some models created in 0.19
+            # while it was in development. Afterwards,
+            # all models should use 'use_link' by default
+            # and this won't be run.
+            self.use_link = bool(self.useLink)
+            FreeCAD.Console.PrintWarning("Migrating 'useLink' to 'use_link', "
+                                         "{} ({})\n".format(obj.Label,
+                                                            obj.TypeId))
+            del self.useLink
+
     def onDocumentRestored(self, obj):
-        if self.useLink:
+        self.migrate_attributes(obj)
+        if self.use_link:
             self.linkSetup(obj)
         else:
             obj.setPropertyStatus('Shape','-Transient')
@@ -5195,7 +5232,7 @@ class _DraftLink(_DraftObject):
         import Part
         import DraftGeomUtils
 
-        if self.useLink:
+        if self.use_link:
             if not getattr(obj,'ExpandArray',True) or obj.Count != len(pls):
                 obj.setPropertyStatus('PlacementList','-Immutable')
                 obj.PlacementList = pls
@@ -5225,11 +5262,11 @@ class _DraftLink(_DraftObject):
                 if not DraftGeomUtils.isNull(pl):
                     obj.Placement = pl
 
-        if self.useLink:
+        if self.use_link:
             return False # return False to call LinkExtension::execute()
 
     def onChanged(self, obj, prop):
-        if not getattr(self,'useLink',False):
+        if not getattr(self,'use_link',False):
             return
         if prop == 'Fuse':
             if obj.Fuse:
@@ -5268,7 +5305,7 @@ class _Array(_DraftLink):
         obj.addProperty("App::PropertyInteger","Symmetry","Draft",QT_TRANSLATE_NOOP("App::Property","number of circles"))
         obj.addProperty("App::PropertyBool","Fuse","Draft",QT_TRANSLATE_NOOP("App::Property","Specifies if copies must be fused (slower)"))
         obj.Fuse = False
-        if self.useLink:
+        if self.use_link:
             obj.addProperty("App::PropertyInteger","Count","Draft",'')
             obj.addProperty("App::PropertyBool","ExpandArray","Draft",
                     QT_TRANSLATE_NOOP("App::Property","Show array element as children object"))
@@ -5349,7 +5386,7 @@ class _Array(_DraftLink):
             n = math.floor(c/tdist)
             n = int(math.floor(n/sym)*sym)
             if n == 0: continue
-            angle = 360/n
+            angle = 360.0/n
             for ycount in range(0, n):
                 npl = pl.copy()
                 trans = FreeCAD.Vector(direction).multiply(rc)
@@ -5402,7 +5439,7 @@ class _PathArray(_DraftLink):
         obj.Xlate = FreeCAD.Vector(0,0,0)
         obj.Align = False
 
-        if self.useLink:
+        if self.use_link:
             obj.addProperty("App::PropertyBool","ExpandArray","Draft",
                     QT_TRANSLATE_NOOP("App::Property","Show array element as children object"))
             obj.ExpandArray = False
@@ -6018,6 +6055,8 @@ class ViewProviderWorkingPlaneProxy:
         c = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Arch").GetUnsigned("ColorHelpers",674321151)
         vobj.LineColor = (float((c>>24)&0xFF)/255.0,float((c>>16)&0xFF)/255.0,float((c>>8)&0xFF)/255.0,0.0)
         vobj.Proxy = self
+        vobj.RestoreView = True
+        vobj.RestoreState = True
 
     def getIcon(self):
         import Draft_rc

@@ -1,6 +1,5 @@
 # ***************************************************************************
-# *   Copyright (c) 2018 FreeCAD Developers                                 *
-# *   Author: Bernd Hahnebach <bernd@bimstatik.org>                         *
+# *   Copyright (c) 2018 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
 # *   This file is part of the FreeCAD CAx development system.              *
 # *                                                                         *
@@ -230,8 +229,8 @@ def compare_stats(
         for s in loc_stat_types:
             statval = resulttools.get_stats(obj, s)
             stats.append(
-                "{}: ({:.10f}, {:.10f}, {:.10f})\n"
-                .format(s, statval[0], statval[1], statval[2])
+                "{}: ({:.10f}, {:.10f})\n"
+                .format(s, statval[0], statval[1])
             )
     else:
         fcc_print("Result object not found. Name: {}".format(res_obj_name))

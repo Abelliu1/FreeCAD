@@ -150,7 +150,7 @@ class DressupPathBoundary(object):
                                     commands.extend(self.boundaryCommands(obj, lastExit, pos, tc.VertFeed.Value))
                                     lastExit = None
                                 PathLog.track(e, flip)
-                                commands.extend(PathGeom.cmdsForEdge(e, flip, False))
+                                commands.extend(PathGeom.cmdsForEdge(e, flip, False,50,tc.HorizFeed.Value,tc.VertFeed.Value)) # add missing HorizFeed to G2 paths
                                 inside.remove(e)
                                 pos = newPos
                                 lastExit = newPos
@@ -163,7 +163,7 @@ class DressupPathBoundary(object):
                                     flip = PathGeom.pointsCoincide(pos, ptL)
                                     newPos = e.valueAt(e.FirstParameter) if flip else ptL
                                     # outside edges are never taken at this point (see swap of
-                                    # inside/oustide above) - so just move along ...
+                                    # inside/outside above) - so just move along ...
                                     outside.remove(e)
                                     pos = newPos
                                 else:

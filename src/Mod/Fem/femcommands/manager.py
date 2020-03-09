@@ -28,7 +28,7 @@ __url__ = "http://www.freecadweb.org"
 #  @{
 
 import FreeCAD
-import femtools.femutils as femutils
+from femtools import femutils
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -39,19 +39,28 @@ if FreeCAD.GuiUp:
 class CommandManager(object):
 
     def __init__(self):
-        self.resources = {
-            "Pixmap": "FemWorkbench",
-            "MenuText": QtCore.QT_TRANSLATE_NOOP("Fem_Command", "Default Fem Command MenuText"),
-            "Accel": "",
-            "ToolTip": QtCore.QT_TRANSLATE_NOOP("Fem_Command", "Default Fem Command ToolTip")
-        }
-        # FIXME add option description
+
+        self.command = "FEM" + self.__class__.__name__
+        self.pixmap = self.command
+        self.menuetext = self.__class__.__name__.lstrip("_")
+        self.accel = ""
+        self.tooltip = "Creates a {}".format(self.menuetext)
+        self.resources = None
+
         self.is_active = None
+        self.do_activated = None
         self.selobj = None
         self.selobj2 = None
         self.active_analysis = None
 
     def GetResources(self):
+        if self.resources is None:
+            self.resources = {
+                "Pixmap": self.pixmap,
+                "MenuText": QtCore.QT_TRANSLATE_NOOP(self.command, self.menuetext),
+                "Accel": self.accel,
+                "ToolTip": QtCore.QT_TRANSLATE_NOOP(self.command, self.tooltip)
+            }
         return self.resources
 
     def IsActive(self):
@@ -129,6 +138,17 @@ class CommandManager(object):
                 and not self.analysis_has_solver()
             )
         return active
+
+    def Activated(self):
+        if self.do_activated == "add_obj_on_gui_noset_edit":
+            self.add_obj_on_gui_noset_edit(self.__class__.__name__.lstrip("_"))
+        elif self.do_activated == "add_obj_on_gui_set_edit":
+            self.add_obj_on_gui_set_edit(self.__class__.__name__.lstrip("_"))
+        elif self.do_activated == "add_obj_on_gui_selobj_noset_edit":
+            self.add_obj_on_gui_selobj_noset_edit(self.__class__.__name__.lstrip("_"))
+        elif self.do_activated == "add_obj_on_gui_selobj_set_edit":
+            self.add_obj_on_gui_selobj_set_edit(self.__class__.__name__.lstrip("_"))
+        # in all other cases Activated is implemented it the command class
 
     def results_present(self):
         results = False

@@ -1196,7 +1196,7 @@ def calculatePlacement(shape):
     return pla
 
 
-def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, alignList=[], normal=None):  # offsetMode="BasewireMode" or None
+def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, alignList=[], normal=None, basewireOffset=0):  # offsetMode="BasewireMode" or None
     '''
     offsetWire(wire,vector,[bind]): offsets the given wire along the given
     vector. The vector will be applied at the first vertex of the wire. If bind
@@ -1216,6 +1216,8 @@ def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, a
         OffsetWire() is now aware of width and align per edge (Primarily for use with ArchWall based on Sketch object )
 
         'dvec' vector to offset is now derived (and can be ignored) in this function if widthList and alignList are provided - 'dvec' to be obsolete in future ?
+
+        'basewireOffset' corresponds to 'offset' in ArchWall which offset the basewire before creating the wall outline
     '''
 
     # Accept 'wire' as a list of edges (use the list directly), or previously as a wire or a face (Draft Wire with MakeFace True or False supported)
@@ -1225,7 +1227,7 @@ def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, a
     elif isinstance(wire, list):
         if isinstance(wire[0],Part.Edge):
             edges = wire.copy()
-            wire = Part.Wire( Part.__sortEdges__(edges) )			# How to avoid __sortEdges__ again?  Make getNormal direclty tackle edges ?
+            wire = Part.Wire( Part.__sortEdges__(edges) )			# How to avoid __sortEdges__ again?  Make getNormal directly tackle edges ?
     else:
         print ("Either Part.Wire or Part.Edges should be provided, returning None ")
         return None
@@ -1344,7 +1346,7 @@ def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, a
         if i == 0:
             if alignListC[0] == 'Center':
                 delta = DraftVecUtils.scaleTo(delta, delta.Length/2)
-            #No need to do anything for 'Left' and 'Rigtht' as orginal dvec have set both the direction and amount of offset correct
+            #No need to do anything for 'Left' and 'Rigtht' as original dvec have set both the direction and amount of offset correct
             #elif alignListC[i] == 'Left':  #elif alignListC[i] == 'Right':
         if i != 0:
             try:
@@ -1379,9 +1381,11 @@ def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, a
                     nedge = offset(curredge,delta,trim=True)
             else:
                 # if curAlign in ['Left', 'Right']: # elif curAlign == 'Center': # Both conditions same result..
+                if basewireOffset:  # ArchWall has an Offset properties for user to offset the basewire before creating the base profile of wall (not applicable to 'Center' align)
+                    delta = DraftVecUtils.scaleTo(delta, delta.Length+basewireOffset)
                 nedge = offset(curredge,delta,trim=True)
 
-            if curOrientation == "Reversed": # TODO arc alway in counter-clockwise directinon ... ( not necessarily 'reversed')
+            if curOrientation == "Reversed": # TODO arc always in counter-clockwise directinon ... ( not necessarily 'reversed')
                 if not isinstance(curredge.Curve,Part.Circle):  # need to test against Part.Circle, not Part.ArcOfCircle
                     # if not arc/circle, assume straight line, reverse it
                     nedge = Part.Edge(nedge.Vertexes[1],nedge.Vertexes[0])
@@ -1396,13 +1400,20 @@ def offsetWire(wire,dvec,bind=False,occ=False,widthList=None, offsetMode=None, a
         elif offsetMode in ["BasewireMode"]:
             if not ( (curOrientation == firstOrientation) != (curDir == firstDir) ):
                 if curAlign in ['Left', 'Right']:
-                    nedge = curredge
+                    if basewireOffset:  # ArchWall has an Offset properties for user to offset the basewire before creating the base profile of wall (not applicable to 'Center' align)
+                        delta = DraftVecUtils.scaleTo(delta, basewireOffset)
+                        nedge = offset(curredge,delta,trim=True)
+                    else:
+                        nedge = curredge
                 elif curAlign == 'Center':
                     delta = delta.negative()
                     nedge = offset(curredge,delta,trim=True)
             else:
                 if curAlign in ['Left', 'Right']:
+                    if basewireOffset:  # ArchWall has an Offset properties for user to offset the basewire before creating the base profile of wall (not applicable to 'Center' align)
+                        delta = DraftVecUtils.scaleTo(delta, delta.Length+basewireOffset)
                     nedge = offset(curredge,delta,trim=True)
+
                 elif curAlign == 'Center':
                     nedge = offset(curredge,delta,trim=True)
             if curOrientation == "Reversed":
@@ -2856,7 +2867,7 @@ def circleFrom3CircleTangents(circle1, circle2, circle3):
             # @todo Create 3 lines from the inner and 4 from the outer h. center.
             # @todo Calc. the 4 inversion poles of these lines for each circle.
             # @todo Calc. the radical center of the 3 circles.
-            # @todo Calc. the intersection points (max. 8) of 4 lines (trough each inversion pole and the radical center) with the circle.
+            # @todo Calc. the intersection points (max. 8) of 4 lines (through each inversion pole and the radical center) with the circle.
             #       This gives us all the tangent points.
         else:
             # Some circles are inside each other or an error has occurred.

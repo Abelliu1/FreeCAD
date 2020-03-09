@@ -25,7 +25,11 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
+# include <QMessageBox>
+# include <QTextStream>
 #endif
+
+#include <QMessageBox>
 
 /// Here the FreeCAD includes sorted by Base,App,Gui......
 #include <Base/Console.h>
@@ -59,6 +63,9 @@
 
 using namespace TechDrawGui;
 
+// there are only 5 line styles
+App::PropertyIntegerConstraint::Constraints ViewProviderLeader::LineStyleRange = { 0, 5, 1 };
+
 PROPERTY_SOURCE(TechDrawGui::ViewProviderLeader, TechDrawGui::ViewProviderDrawingView)
 
 //**************************************************************************
@@ -66,13 +73,15 @@ PROPERTY_SOURCE(TechDrawGui::ViewProviderLeader, TechDrawGui::ViewProviderDrawin
 
 ViewProviderLeader::ViewProviderLeader()
 {
-    sPixmap = "actions/techdraw-mline";
+    sPixmap = "actions/techdraw-LeaderLine";
 
     static const char *group = "Line Format";
 
-    ADD_PROPERTY_TYPE(LineWidth,(getDefLineWeight())    ,group,(App::PropertyType)(App::Prop_None),"Line weight");
-    ADD_PROPERTY_TYPE(LineStyle,(1)    ,group,(App::PropertyType)(App::Prop_None),"Line style");
+    ADD_PROPERTY_TYPE(LineWidth,(getDefLineWeight()),group,(App::PropertyType)(App::Prop_None),"Line width");
+    ADD_PROPERTY_TYPE(LineStyle,(1),group,(App::PropertyType)(App::Prop_None),"Line style index");
     ADD_PROPERTY_TYPE(Color,(getDefLineColor()),group,App::Prop_None,"The color of the Markup");
+
+    LineStyle.setConstraints(&LineStyleRange);
 }
 
 ViewProviderLeader::~ViewProviderLeader()
@@ -91,7 +100,6 @@ bool ViewProviderLeader::setEdit(int ModNum)
         if (Gui::Control().activeDialog())  {         //TaskPanel already open!
             return false;
         }
-        // clear the selection (convenience)
         Gui::Selection().clearSelection();
         Gui::Control().showDialog(new TaskDlgLeaderLine(this));
         return true;
@@ -204,4 +212,54 @@ App::Color ViewProviderLeader::getDefLineColor(void)
     return result;
 }
 
+void ViewProviderLeader::handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property *prop)
+// transforms properties that had been changed
+{
+    // property LineWidth had the App::PropertyFloat and was changed to App::PropertyLength
+    if (prop == &LineWidth && strcmp(TypeName, "App::PropertyFloat") == 0) {
+        App::PropertyFloat LineWidthProperty;
+        // restore the PropertyFloat to be able to set its value
+        LineWidthProperty.Restore(reader);
+        LineWidth.setValue(LineWidthProperty.getValue());
+    }
 
+    // property LineStyle had the App::PropertyInteger and was changed to App::PropertyIntegerConstraint
+    if (prop == &LineStyle && strcmp(TypeName, "App::PropertyInteger") == 0) {
+        App::PropertyInteger LineStyleProperty;
+        // restore the PropertyInteger to be able to set its value
+        LineStyleProperty.Restore(reader);
+        LineStyle.setValue(LineStyleProperty.getValue());
+    }
+}
+
+bool ViewProviderLeader::onDelete(const std::vector<std::string> &)
+{
+    // a leader line cannot be deleted if it has a child weld symbol
+
+    // get childs
+    auto childs = claimChildren();
+
+    if (!childs.empty()) {
+        QString bodyMessage;
+        QTextStream bodyMessageStream(&bodyMessage); 
+        bodyMessageStream << qApp->translate("Std_Delete",
+            "You cannot delete this leader line because\n it has a weld symbol that would become broken.");
+        QMessageBox::warning(Gui::getMainWindow(),
+            qApp->translate("Std_Delete", "Object dependencies"), bodyMessage,
+            QMessageBox::Ok);
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+bool ViewProviderLeader::canDelete(App::DocumentObject *obj) const
+{
+    // deletions of Leader line objects don't destroy anything
+    // thus we can pass this action
+    // that the parent view cannot be deleted is handled
+    // in its onDelete() function
+    Q_UNUSED(obj)
+    return true;
+}

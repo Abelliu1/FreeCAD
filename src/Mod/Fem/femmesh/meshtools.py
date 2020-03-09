@@ -52,7 +52,10 @@ def get_femnodes_by_femobj_with_references(
         node_set = get_femnodes_by_references(femmesh, femobj["Object"].References)
         # FreeCAD.Console.PrintMessage("node_set_nogroup: {}\n".format(node_set))
 
-    return node_set
+    # use set for node sets to be sure all nodes are unique
+    # use sorted to be sure the order is the same on different runs
+    # be aware a sorted set returns a list, because set are not sorted by default
+    return sorted(set(node_set))
 
 
 # ************************************************************************************************
@@ -283,6 +286,11 @@ def get_ccxelement_faces_from_binary_search(
 ):
     """get the CalculiX element face numbers
     """
+    # the forum topic discussion with ulrich1a and others ... Better mesh last instead of mesh first
+    # https://forum.freecadweb.org/viewtopic.php?f=18&t=17318#p137171
+    # https://forum.freecadweb.org/viewtopic.php?f=18&t=17318&start=60#p141484
+    # https://forum.freecadweb.org/viewtopic.php?f=18&t=17318&start=50#p141108
+    # https://forum.freecadweb.org/viewtopic.php?f=18&t=17318&start=40#p140371
     tet10_mask = {
         119: 1,
         411: 2,
@@ -724,15 +732,16 @@ def get_elset_short_name(
     obj,
     i
 ):
-    if hasattr(obj, "Proxy") and obj.Proxy.Type == "Fem::Material":
+    from femtools.femutils import is_of_type
+    if is_of_type(obj, "Fem::Material"):
         return "M" + str(i)
-    elif hasattr(obj, "Proxy") and obj.Proxy.Type == "Fem::FemElementGeometry1D":
+    elif is_of_type(obj, "Fem::ElementGeometry1D"):
         return "B" + str(i)
-    elif hasattr(obj, "Proxy") and obj.Proxy.Type == "Fem::FemElementRotation1D":
+    elif is_of_type(obj, "Fem::ElementRotation1D"):
         return "R" + str(i)
-    elif hasattr(obj, "Proxy") and obj.Proxy.Type == "Fem::FemElementFluid1D":
+    elif is_of_type(obj, "Fem::ElementFluid1D"):
         return "F" + str(i)
-    elif hasattr(obj, "Proxy") and obj.Proxy.Type == "Fem::FemElementGeometry2D":
+    elif is_of_type(obj, "Fem::ElementGeometry2D"):
         return "S" + str(i)
     else:
         FreeCAD.Console.PrintError(
@@ -1340,7 +1349,7 @@ def get_ref_facenodes_areas(
             node_area_table.append((face_table[mf][5], middle_node_area))
 
         elif femmesh_facetype == 8:  # 8 node femmesh face quad
-            # corner_node_area = -mesh_face_area / 12.0  (negativ!)
+            # corner_node_area = -mesh_face_area / 12.0  (negative!)
             # mid-side nodes = mesh_face_area / 3.0
             #  P4_________P7________P3
             #    |      / |  \      |
@@ -1410,11 +1419,13 @@ def build_mesh_faces_of_volume_elements(
         FreeCAD.Console.PrintLog("  --> {}\n".format(femelement_table[veID]))
         FreeCAD.Console.PrintLog("  --> {}\n".format(face_table[veID]))
         FreeCAD.Console.PrintLog("  --> {}\n".format(face_nodenumber_table[veID]))
+
     for veID in face_nodenumber_table:
+        FreeCAD.Console.PrintLog("VolElement: {}\n".format(veID))
         vol_node_ct = len(femelement_table[veID])
         face_node_indexs = sorted(face_nodenumber_table[veID])
-        # tetra10 --> tria6 face
         if vol_node_ct == 10:
+            FreeCAD.Console.PrintLog("  --> tetra10 --> tria6 face\n")
             # node order of face in tetra10 volume element
             if face_node_indexs == [1, 2, 3, 5, 6, 7]:
                 # node order of a tria6 face of tetra10
@@ -1431,8 +1442,8 @@ def build_mesh_faces_of_volume_elements(
                     "hexa20: face not found! {}\n"
                     .format(face_node_indexs)
                 )
-        # tetra4 --> tria3 face
         elif vol_node_ct == 4:
+            FreeCAD.Console.PrintLog("  --> tetra4 --> tria3 face\n")
             # node order of face in tetra4 volume element
             if face_node_indexs == [1, 2, 3]:
                 # node order of a tria3 face of tetra4
@@ -1449,7 +1460,8 @@ def build_mesh_faces_of_volume_elements(
                     "hexa20: face not found! {}\n"
                     .format(face_node_indexs)
                 )
-        elif vol_node_ct == 20:  # hexa20 --> quad8 face
+        elif vol_node_ct == 20:
+            FreeCAD.Console.PrintLog("  --> hexa20 --> quad8 face\n")
             # node order of face in hexa20 volume element
             if face_node_indexs == [1, 2, 3, 4, 9, 10, 11, 12]:
                 # node order of a quad8 face of hexa20
@@ -1470,8 +1482,8 @@ def build_mesh_faces_of_volume_elements(
                     "hexa20: face not found! {}\n"
                     .format(face_node_indexs)
                 )
-        elif vol_node_ct == 8:  # hexa8 --> quad4 face
-            face_node_indexs = sorted(face_nodenumber_table[veID])
+        elif vol_node_ct == 8:
+            FreeCAD.Console.PrintLog("  --> hexa8 --> quad4 face\n")
             # node order of face in hexa8 volume element
             if face_node_indexs == [1, 2, 3, 4]:
                 # node order of a quad8 face of hexa8
@@ -1492,8 +1504,8 @@ def build_mesh_faces_of_volume_elements(
                     "hexa20: face not found! {}\n"
                     .format(face_node_indexs)
                 )
-        # penta15 --> tria6 and quad8 faces
         elif vol_node_ct == 15:
+            FreeCAD.Console.PrintLog("  --> penta15 --> tria6 and quad8 faces\n")
             # node order of face in penta15 volume element
             if face_node_indexs == [1, 2, 3, 7, 8, 9]:
                 # node order of a tria6 face of penta15
@@ -1512,8 +1524,8 @@ def build_mesh_faces_of_volume_elements(
                     "penta15: face not found! {}\n"
                     .format(face_node_indexs)
                 )
-        # penta6 --> tria3 and quad4 faces
         elif vol_node_ct == 6:
+            FreeCAD.Console.PrintLog("  --> penta6 --> tria3 and quad4 faces\n")
             # node order of face in penta6 volume element
             if face_node_indexs == [1, 2, 3]:
                 # node order of a tria3 face of penta6
@@ -1542,10 +1554,11 @@ def build_mesh_faces_of_volume_elements(
         for i in node_numbers:
             # node_number starts with 1
             # index starts with 0 -->
-            # index = node number - 1i -= 1
+            # index = node number - 1
+            i -= 1
             face_nodes.append(femelement_table[veID][i])
         face_table[veID] = face_nodes  # reset the entry in face_table
-        # FreeCAD.Console.PrintMessage("  --> {}\n".format(face_table[veID]))
+        FreeCAD.Console.PrintLog("  --> {}\n".format(face_table[veID]))
     return face_table
 
 
@@ -1566,13 +1579,15 @@ def get_ref_shape_node_sum_geom_table(
 
 
 # ************************************************************************************************
-# ***** methods for retrieving faces for constraint pressure *************************************
+# ***** methods for retrieving element face sets *************************************************
+# ***** pressure faces ***************************************************************************
 def get_pressure_obj_faces(
     femmesh,
     femelement_table,
     femnodes_ele_table,
     femobj
 ):
+    # see get_ccxelement_faces_from_binary_search for more information
     if is_solid_femmesh(femmesh):
         # get the nodes
         # sorted and duplicates removed
@@ -1611,11 +1626,11 @@ def get_pressure_obj_faces(
     return pressure_faces
 
 
-# ************************************************************************************************
-# depreciated method for pressure faces for constraint pressure and finite solid element mesh
-# why did we switch to the get_ccxelement_faces_from_binary_search?
-# just performance?
-# TODO: Find the forum topic discussion with ulrich1a and post a link
+# ***** deprecated method for retrieving pressure faces *****************************************
+# for constraint pressure and finite solid element mesh
+# it was switched to the method get_ccxelement_faces_from_binary_search
+# because of performance and the support of all solid elements
+# see get_ccxelement_faces_from_binary_search for more information
 def get_pressure_obj_faces_depreciated(
     femmesh,
     femobj
@@ -1631,6 +1646,175 @@ def get_pressure_obj_faces_depreciated(
                     (elem_info_string, femmesh.getccxVolumesByFace(ref_shape))
                 )
     return pressure_faces
+
+
+# ***** contact faces ****************************************************************************
+def get_contact_obj_faces(
+    femmesh,
+    femelement_table,
+    femnodes_ele_table,
+    femobj
+):
+    # see comment on get_pressure_obj_faces_depreciated in the regard of getccxVolumesByFace()
+
+    # sets are needed for each of the references separated
+    # BTW constraint tie works the same way AFAIK
+    # TODO it might be useful to introduce a Reference_master and Reference_slave attribute
+
+    # groups makes no sense, since group would be needed for each contact face (master and slave)
+
+    # slave is DEP1 and master is IND1 in input file
+    # first element face or ref_shape is slave, second is master
+
+    # TODO above pre check in ccxtools
+    # TODO ref_shape_type should be Face
+
+    slave_faces, master_faces = [], []
+
+    contact_obj = femobj["Object"]
+    if len(contact_obj.References) == 1 and len(contact_obj.References[0][1]) == 2:
+        # [(<Part::PartFeature>, ('Face7', 'Face3'))]
+        # refs are merged because they are on the same doc obj
+        # but only one element face for each contact face (Gui, TaskPael contact)
+        ref_obj = contact_obj.References[0][0]
+        ref_ele = contact_obj.References[0][1]
+        slave_ref = (ref_obj, (ref_ele[0],))  # the comma is needed!
+        master_ref = (ref_obj, (ref_ele[1],))  # the comma is needed!
+    elif (
+        len(contact_obj.References) == 2
+        and len(contact_obj.References[0][1]) == 1
+        and len(contact_obj.References[1][1]) == 1
+    ):
+        # [(<Part::PartFeature>, ('Face3',)), (<Part::PartFeature>, ('Face7',))]
+        # refs are on different objects
+        # but only one element face for each contact face (Gui, TaskPael contact)
+        slave_ref = contact_obj.References[0]
+        master_ref = contact_obj.References[1]
+    else:
+        FreeCAD.Console.PrintError(
+            "Not valid (example: only master or slave defined) "
+            "or not supported reference shape elements, contact face combination "
+            "(example: multiple element faces per master or slave\n"
+        )
+
+    FreeCAD.Console.PrintLog("Slave: {}, {}\n".format(slave_ref[0].Name, slave_ref))
+    FreeCAD.Console.PrintLog("Master: {}, {}\n".format(master_ref[0].Name, master_ref))
+
+    if is_solid_femmesh(femmesh):
+        # get the nodes, sorted and duplicates removed
+        slaveface_nds = sorted(list(set(get_femnodes_by_refshape(femmesh, slave_ref))))
+        masterface_nds = sorted(list(set(get_femnodes_by_refshape(femmesh, master_ref))))
+        # FreeCAD.Console.PrintLog("slaveface_nds: {}\n".format(slaveface_nds))
+        # FreeCAD.Console.PrintLog("masterface_nds: {}\n".format(slaveface_nds))
+
+        # fill the bit_pattern_dict and search for the faces
+        slave_bit_pattern_dict = get_bit_pattern_dict(
+            femelement_table,
+            femnodes_ele_table,
+            slaveface_nds
+        )
+        master_bit_pattern_dict = get_bit_pattern_dict(
+            femelement_table,
+            femnodes_ele_table,
+            masterface_nds
+        )
+
+        # get the faces ids
+        slave_faces = get_ccxelement_faces_from_binary_search(slave_bit_pattern_dict)
+        master_faces = get_ccxelement_faces_from_binary_search(master_bit_pattern_dict)
+
+    elif is_face_femmesh(femmesh):
+        slave_ref_shape = slave_ref[0].Shape.getElement(slave_ref[1][0])
+        master_ref_shape = master_ref[0].Shape.getElement(master_ref[1][0])
+        # get the faces ids
+        slave_face_ids = femmesh.getFacesByFace(slave_ref_shape)
+        master_face_ids = femmesh.getFacesByFace(master_ref_shape)
+        # build slave_faces and master_faces
+        # face 2 for tria6 element
+        # is it face 2 for all shell elements
+        for fid in slave_face_ids:
+            slave_faces.append([fid, 2])
+        for fid in master_face_ids:
+            master_faces.append([fid, 2])
+
+    FreeCAD.Console.PrintLog("slave_faces: {}\n".format(slave_faces))
+    FreeCAD.Console.PrintLog("master_faces: {}\n".format(master_faces))
+    return [slave_faces, master_faces]
+
+
+# ***** tie faces ****************************************************************************
+def get_tie_obj_faces(
+    femmesh,
+    femelement_table,
+    femnodes_ele_table,
+    femobj
+):
+    # see comment get_contact_obj_faces
+    # solid mesh is same as contact, but face mesh is not allowed for tie
+    # TODO get rid of duplicate code for contact and tie
+
+    slave_faces, master_faces = [], []
+
+    tie_obj = femobj["Object"]
+    if len(tie_obj.References) == 1 and len(tie_obj.References[0][1]) == 2:
+        # [(<Part::PartFeature>, ('Face7', 'Face3'))]
+        # refs are merged because they are on the same doc obj
+        # but only one element face for each contact face (Gui, TaskPael tie)
+        ref_obj = tie_obj.References[0][0]
+        ref_ele = tie_obj.References[0][1]
+        slave_ref = (ref_obj, (ref_ele[0],))  # the comma is needed!
+        master_ref = (ref_obj, (ref_ele[1],))  # the comma is needed!
+    elif (
+        len(tie_obj.References) == 2
+        and len(tie_obj.References[0][1]) == 1
+        and len(tie_obj.References[1][1]) == 1
+    ):
+        # [(<Part::PartFeature>, ('Face3',)), (<Part::PartFeature>, ('Face7',))]
+        # refs are on different objects
+        # but only one element face for each contact face (Gui, TaskPael tie)
+        slave_ref = tie_obj.References[0]
+        master_ref = tie_obj.References[1]
+    else:
+        FreeCAD.Console.PrintError(
+            "Not valid (example: only master or slave defined) "
+            "or not supported reference shape elements, contact face combination "
+            "(example: multiple element faces per master or slave\n"
+        )
+
+    FreeCAD.Console.PrintLog("Slave: {}, {}\n".format(slave_ref[0].Name, slave_ref))
+    FreeCAD.Console.PrintLog("Master: {}, {}\n".format(master_ref[0].Name, master_ref))
+
+    if is_solid_femmesh(femmesh):
+        # get the nodes, sorted and duplicates removed
+        slaveface_nds = sorted(list(set(get_femnodes_by_refshape(femmesh, slave_ref))))
+        masterface_nds = sorted(list(set(get_femnodes_by_refshape(femmesh, master_ref))))
+        # FreeCAD.Console.PrintLog("slaveface_nds: {}\n".format(slaveface_nds))
+        # FreeCAD.Console.PrintLog("masterface_nds: {}\n".format(slaveface_nds))
+
+        # fill the bit_pattern_dict and search for the faces
+        slave_bit_pattern_dict = get_bit_pattern_dict(
+            femelement_table,
+            femnodes_ele_table,
+            slaveface_nds
+        )
+        master_bit_pattern_dict = get_bit_pattern_dict(
+            femelement_table,
+            femnodes_ele_table,
+            masterface_nds
+        )
+
+        # get the faces ids
+        slave_faces = get_ccxelement_faces_from_binary_search(slave_bit_pattern_dict)
+        master_faces = get_ccxelement_faces_from_binary_search(master_bit_pattern_dict)
+
+    elif is_face_femmesh(femmesh):
+        FreeCAD.Console.PrintError(
+            "Shell mesh is not allowed for constraint tie.\n"
+        )
+
+    FreeCAD.Console.PrintLog("slave_faces: {}\n".format(slave_faces))
+    FreeCAD.Console.PrintLog("master_faces: {}\n".format(master_faces))
+    return [slave_faces, master_faces]
 
 
 # ************************************************************************************************

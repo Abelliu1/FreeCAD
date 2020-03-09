@@ -37,11 +37,14 @@ SET(FemExamples_SRCS
     femexamples/__init__.py
     femexamples/boxanalysis.py
     femexamples/ccx_cantilever_std.py
-    femexamples/contact_shell_shell.py
+    femexamples/constraint_contact_shell_shell.py
+    femexamples/constraint_contact_solid_solid.py
+    femexamples/constraint_tie.py
     femexamples/manager.py
     femexamples/material_multiple_twoboxes.py
     femexamples/material_nl_platewithhole.py
     femexamples/rc_wall_2d.py
+    femexamples/thermomech_bimetall.py
     femexamples/thermomech_flow1d.py
     femexamples/thermomech_spine.py
 )
@@ -50,10 +53,14 @@ SET(FemExampleMeshes_SRCS
     femexamples/meshes/__init__.py
     femexamples/meshes/mesh_boxanalysis_tetra10.py
     femexamples/meshes/mesh_boxes_2_vertikal_tetra10.py
+    femexamples/meshes/mesh_canticcx_hexa20.py
     femexamples/meshes/mesh_canticcx_tetra10.py
+    femexamples/meshes/mesh_constraint_tie_tetra10.py
+    femexamples/meshes/mesh_contact_box_halfcylinder_tetra10.py
     femexamples/meshes/mesh_contact_tube_tube_tria3.py
     femexamples/meshes/mesh_rc_wall_2d_tria6.py
     femexamples/meshes/mesh_platewithhole_tetra10.py
+    femexamples/meshes/mesh_thermomech_bimetall_tetra10.py
     femexamples/meshes/mesh_thermomech_flow1d_seg3.py
     femexamples/meshes/mesh_thermomech_spine_tetra10.py
 )
@@ -163,8 +170,12 @@ SET(FemTestsFiles_SRCS
 
 SET(FemTestsCcx_SRCS
     femtest/data/ccx/__init__.py
-    femtest/data/ccx/contact_shell_shell.FCStd
-    femtest/data/ccx/contact_shell_shell.inp
+    femtest/data/ccx/canti_ccx_faceload_hexa20.inp
+    femtest/data/ccx/constraint_contact_shell_shell.FCStd
+    femtest/data/ccx/constraint_contact_shell_shell.inp
+    femtest/data/ccx/constraint_contact_solid_solid.FCStd
+    femtest/data/ccx/constraint_contact_solid_solid.inp
+    femtest/data/ccx/constraint_tie.inp
     femtest/data/ccx/cube_frequency.inp
     femtest/data/ccx/cube_frequency.dat
     femtest/data/ccx/cube_frequency.frd
@@ -189,6 +200,7 @@ SET(FemTestsCcx_SRCS
     femtest/data/ccx/Flow1D_thermomech_expected_values
     femtest/data/ccx/Flow1D_thermomech_inout_nodes.txt
     femtest/data/ccx/Flow1D_thermomech.FCStd
+    femtest/data/ccx/thermomech_bimetall.inp
 )
 
 SET(FemTestsElmer_SRCS
@@ -209,8 +221,13 @@ SET(FemTestsMesh_SRCS
 
 SET(FemTools_SRCS
     femtools/__init__.py
+    femtools/membertools.py
     femtools/ccxtools.py
+    femtools/checksanalysis.py
+    femtools/constants.py
+    femtools/errors.py
     femtools/femutils.py
+    femtools/tokrules.py
 )
 
 SET(FemObjectsScripts_SRCS
@@ -220,6 +237,7 @@ SET(FemObjectsScripts_SRCS
     femobjects/_FemConstraintFlowVelocity.py
     femobjects/_FemConstraintInitialFlowVelocity.py
     femobjects/_FemConstraintSelfWeight.py
+    femobjects/_FemConstraintTie.py
     femobjects/_FemElementFluid1D.py
     femobjects/_FemElementGeometry1D.py
     femobjects/_FemElementGeometry2D.py
@@ -303,6 +321,7 @@ SET(FemGuiScripts_SRCS
     femguiobjects/_ViewProviderFemConstraintFlowVelocity.py
     femguiobjects/_ViewProviderFemConstraintInitialFlowVelocity.py
     femguiobjects/_ViewProviderFemConstraintSelfWeight.py
+    femguiobjects/_ViewProviderFemConstraintTie.py
     femguiobjects/_ViewProviderFemElementFluid1D.py
     femguiobjects/_ViewProviderFemElementGeometry1D.py
     femguiobjects/_ViewProviderFemElementGeometry2D.py

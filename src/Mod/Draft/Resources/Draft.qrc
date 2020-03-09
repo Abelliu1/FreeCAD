@@ -24,6 +24,7 @@
         <file>icons/Draft_DelPoint.svg</file>
         <file>icons/Draft_Dimension.svg</file>
         <file>icons/Draft_Dimension_Tree.svg</file>
+        <file>icons/Draft_DimensionAngular.svg</file>
         <file>icons/Draft_Dot.svg</file>
         <file>icons/Draft_Downgrade.svg</file>
         <file>icons/Draft_Draft.svg</file>
@@ -151,6 +152,7 @@
         <file>ui/preferences-oca.ui</file>
         <file>ui/preferences-svg.ui</file>
         <file>ui/TaskPanel_CircularArray.ui</file>
+        <file>ui/TaskPanel_OrthoArray.ui</file>
         <file>ui/TaskPanel_PolarArray.ui</file>
         <file>ui/TaskSelectPlane.ui</file>
         <file>ui/TaskShapeString.ui</file>

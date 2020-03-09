@@ -1,7 +1,6 @@
 # ***************************************************************************
-# *   Copyright (c) 2015 - FreeCAD Developers                               *
-# *   Author: Przemo Firszt <przemo@firszt.eu>                              *
-# *   Author: Bernd Hahnebach <bernd@bimstatik.org>                         *
+# *   Copyright (c) 2015 Przemo Firszt <przemo@firszt.eu>                   *
+# *   Copyright (c) 2015 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
 # *   This file is part of the FreeCAD CAx development system.              *
 # *                                                                         *
@@ -23,13 +22,14 @@
 # *                                                                         *
 # ***************************************************************************/
 
-from femtools import ccxtools
-import FreeCAD
 import unittest
+from os.path import join
+
+
+import FreeCAD
+from femtools import ccxtools
 from . import support_utils as testtools
 from .support_utils import fcc_print
-
-from os.path import join
 
 
 class TestCcxTools(unittest.TestCase):
@@ -132,17 +132,82 @@ class TestCcxTools(unittest.TestCase):
         )
 
     # ********************************************************************************************
-    def test_static_contact_shell_shell(
+    def test_static_constraint_force_faceload_hexa20(
         self
     ):
         # set up
-        from femexamples.contact_shell_shell import setup
+        from femexamples.ccx_cantilever_std import setup_cantileverhexa20faceload as setup
         setup(self.active_doc, "ccxtools")
-        test_name = "contact shell shell"
-        base_name = "contact_shell_shell"
+        test_name = "canti ccx faceload hexa20"
+        base_name = "canti_ccx_faceload_hexa20"
         analysis_dir = testtools.get_unit_test_tmp_dir(
             self.temp_dir,
-            "FEM_ccx_contact_shell_shell",
+            ("FEM_" + base_name),
+        )
+        fcc_print(self.active_doc.Objects)
+        # test input file writing
+        self.input_file_writing_test(
+            test_name=test_name,
+            base_name=base_name,
+            analysis_dir=analysis_dir,
+        )
+
+    # ********************************************************************************************
+    def test_static_constraint_contact_shell_shell(
+        self
+    ):
+        # set up
+        from femexamples.constraint_contact_shell_shell import setup
+        setup(self.active_doc, "ccxtools")
+        test_name = "constraint contact shell shell"
+        base_name = "constraint_contact_shell_shell"
+        analysis_dir = testtools.get_unit_test_tmp_dir(
+            self.temp_dir,
+            "FEM_ccx_constraint_contact_shell_shell",
+        )
+
+        # test input file writing
+        self.input_file_writing_test(
+            test_name=test_name,
+            base_name=base_name,
+            analysis_dir=analysis_dir,
+        )
+
+    # ********************************************************************************************
+    def test_static_constraint_contact_solid_solid(
+        self
+    ):
+        # set up
+        from femexamples.constraint_contact_solid_solid import setup
+        setup(self.active_doc, "ccxtools")
+        test_name = "constraint contact solid solid"
+        base_name = "constraint_contact_solid_solid"
+        analysis_dir = testtools.get_unit_test_tmp_dir(
+            self.temp_dir,
+            "FEM_ccx_constraint_contact_solid_solid",
+        )
+
+        """
+        # test input file writing
+        self.input_file_writing_test(
+            test_name=test_name,
+            base_name=base_name,
+            analysis_dir=analysis_dir,
+        )
+        """
+
+    # ********************************************************************************************
+    def test_static_constraint_tie(
+        self
+    ):
+        # set up
+        from femexamples.constraint_tie import setup
+        setup(self.active_doc, "ccxtools")
+        test_name = "constraint tie"
+        base_name = "constraint_tie"
+        analysis_dir = testtools.get_unit_test_tmp_dir(
+            self.temp_dir,
+            "FEM_ccx_constraint_tie",
         )
 
         # test input file writing
@@ -185,6 +250,27 @@ class TestCcxTools(unittest.TestCase):
         analysis_dir = testtools.get_unit_test_tmp_dir(
             self.temp_dir,
             "FEM_ccx_matnonlinear"
+        )
+
+        # test input file writing
+        self.input_file_writing_test(
+            test_name=test_name,
+            base_name=base_name,
+            analysis_dir=analysis_dir,
+        )
+
+    # ********************************************************************************************
+    def test_thermomech_bimetall(
+        self
+    ):
+        # set up
+        from femexamples.thermomech_bimetall import setup
+        setup(self.active_doc, "ccxtools")
+        test_name = "thermomech bimetall"
+        base_name = "thermomech_bimetall"
+        analysis_dir = testtools.get_unit_test_tmp_dir(
+            self.temp_dir,
+            "FEM_ccx_thermomech_bimetall"
         )
 
         # test input file writing
@@ -313,7 +399,7 @@ class TestCcxTools(unittest.TestCase):
             # do not save and print End of tests
             return fea
 
-        save_fc_file = analysis_dir + base_name + ".FCStd"
+        save_fc_file = join(analysis_dir, base_name + ".FCStd")
         fcc_print(
             "Save FreeCAD file for {} to {}..."
             .format(test_name, save_fc_file)
@@ -390,10 +476,7 @@ class TestCcxTools(unittest.TestCase):
             "Invalid results read from .frd file"
         )
 
-        save_fc_file = join(
-            analysis_dir,
-            (base_name + ".FCStd")
-        )
+        save_fc_file = join(analysis_dir, base_name + ".FCStd")
         fcc_print(
             "Save FreeCAD file for {} to {}..."
             .format(test_name, save_fc_file)
@@ -413,9 +496,12 @@ class TestCcxTools(unittest.TestCase):
 # ************************************************************************************************
 def create_test_results():
 
-    import shutil
     import os
+    import shutil
+    import sys
+
     import FemGui
+    import Test
     import femresult.resulttools as resulttools
     from femtools import ccxtools
 
@@ -432,8 +518,6 @@ def create_test_results():
     Flow1D_thermomech_analysis_dir = temp_dir + "FEM_ccx_Flow1D_thermomech/"
 
     # run all unit tests from this module
-    import Test
-    import sys
     current_module = sys.modules[__name__]
     Test.runTestsFromModule(current_module)
 

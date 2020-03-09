@@ -1,6 +1,8 @@
 # ***************************************************************************
 # *   Copyright (c) 2017 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
+# *   This file is part of the FreeCAD CAx development system.              *
+# *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
 # *   as published by the Free Software Foundation; either version 2 of     *
@@ -26,11 +28,13 @@ __url__ = "http://www.freecadweb.org"
 ## \addtogroup FEM
 #  @{
 
-import FreeCAD
 import time
-import femmesh.meshtools as FemMeshTools
-import feminout.importZ88Mesh as importZ88Mesh
+
+import FreeCAD
+
 from .. import writerbase as FemInputWriter
+from feminout import importZ88Mesh
+from femmesh import meshtools as FemMeshTools
 
 
 class FemInputWriterZ88(FemInputWriter.FemInputWriter):
@@ -39,23 +43,7 @@ class FemInputWriterZ88(FemInputWriter.FemInputWriter):
         analysis_obj,
         solver_obj,
         mesh_obj,
-        matlin_obj,
-        matnonlin_obj,
-        fixed_obj,
-        displacement_obj,
-        contact_obj,
-        planerotation_obj,
-        transform_obj,
-        selfweight_obj,
-        force_obj,
-        pressure_obj,
-        temperature_obj,
-        heatflux_obj,
-        initialtemperature_obj,
-        beamsection_obj,
-        beamrotation_obj,
-        shellthickness_obj,
-        fluidsection_obj,
+        member,
         dir_name=None
     ):
         FemInputWriter.FemInputWriter.__init__(
@@ -63,23 +51,7 @@ class FemInputWriterZ88(FemInputWriter.FemInputWriter):
             analysis_obj,
             solver_obj,
             mesh_obj,
-            matlin_obj,
-            matnonlin_obj,
-            fixed_obj,
-            displacement_obj,
-            contact_obj,
-            planerotation_obj,
-            transform_obj,
-            selfweight_obj,
-            force_obj,
-            pressure_obj,
-            temperature_obj,
-            heatflux_obj,
-            initialtemperature_obj,
-            beamsection_obj,
-            beamrotation_obj,
-            shellthickness_obj,
-            fluidsection_obj,
+            member,
             dir_name
         )
         from os.path import join

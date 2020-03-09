@@ -22,6 +22,19 @@
 # ***************************************************************************
 
 
+# to run the example use:
+"""
+from femexamples import ccx_cantilever_std as canti
+
+canti.setup_cantileverbase()
+canti.setup_cantileverfaceload()
+canti.setup_cantilevernodeload()
+canti.setup_cantileverprescribeddisplacement()
+canti.setup_cantileverhexa20faceload()
+
+"""
+
+
 import FreeCAD
 import ObjectsFem
 import Fem
@@ -174,12 +187,21 @@ def setup_cantileverprescribeddisplacement(doc=None, solvertype="ccxtools"):
     return doc
 
 
-"""
-from femexamples import ccx_cantilever_std as canti
+def setup_cantileverhexa20faceload(doc=None, solvertype="ccxtools"):
+    doc = setup_cantileverfaceload(doc, solvertype)
 
-canti.setup_cantileverbase()
-canti.setup_cantileverfaceload()
-canti.setup_cantilevernodeload()
-canti.setup_cantileverprescribeddisplacement()
+    # load the hexa20 mesh
+    from .meshes.mesh_canticcx_hexa20 import create_nodes, create_elements
+    fem_mesh = Fem.FemMesh()
+    control = create_nodes(fem_mesh)
+    if not control:
+        FreeCAD.Console.PrintError("Error on creating nodes.\n")
+    control = create_elements(fem_mesh)
+    if not control:
+        FreeCAD.Console.PrintError("Error on creating elements.\n")
 
-"""
+    # overwrite mesh with the hexa20 mesh
+    doc.getObject(mesh_name).FemMesh = fem_mesh
+
+    doc.recompute()
+    return doc

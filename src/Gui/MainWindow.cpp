@@ -99,7 +99,7 @@
 #include "MenuManager.h"
 //#include "ToolBox.h"
 #include "ReportView.h"
-#include "CombiView.h"
+#include "ComboView.h"
 #include "PythonConsole.h"
 #include "TaskView/TaskView.h"
 #include "DAGView/DAGView.h"
@@ -381,17 +381,19 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     }
 #endif
 
+    bool treeView = false, propertyView = false;
     if (hiddenDockWindows.find("Std_TreeView") == std::string::npos) {
         //work through parameter.
         ParameterGrp::handle group = App::GetApplication().GetUserParameter().
                 GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("TreeView");
         bool enabled = group->GetBool("Enabled", true);
-        if(enabled != group->GetBool("Enabled", false)) {
+        if (enabled != group->GetBool("Enabled", false)) {
             enabled = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
                             ->GetGroup("MainWindow")->GetGroup("DockWindows")->GetBool("Std_TreeView",false);
         }
         group->SetBool("Enabled", enabled); //ensure entry exists.
         if (enabled) {
+            treeView = true;
             TreeDockWidget* tree = new TreeDockWidget(0, this);
             tree->setObjectName
                 (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Tree view")));
@@ -406,12 +408,13 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
         ParameterGrp::handle group = App::GetApplication().GetUserParameter().
                 GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("PropertyView");
         bool enabled = group->GetBool("Enabled", true);
-        if(enabled != group->GetBool("Enabled", false)) {
+        if (enabled != group->GetBool("Enabled", false)) {
             enabled = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
                             ->GetGroup("MainWindow")->GetGroup("DockWindows")->GetBool("Std_PropertyView",false);
         }
         group->SetBool("Enabled", enabled); //ensure entry exists.
         if (enabled) {
+            propertyView = true;
             PropertyDockView* pcPropView = new PropertyDockView(0, this);
             pcPropView->setObjectName
                 (QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Property view")));
@@ -430,11 +433,18 @@ MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags f)
     }
 
     // Combo view
-    if (hiddenDockWindows.find("Std_CombiView") == std::string::npos) {
-        CombiView* pcCombiView = new CombiView(0, this);
-        pcCombiView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
-        pcCombiView->setMinimumWidth(150);
-        pDockMgr->registerDockWindow("Std_CombiView", pcCombiView);
+    if (hiddenDockWindows.find("Std_ComboView") == std::string::npos) {
+        bool enable = !treeView || !propertyView;
+        if (!enable) {
+            ParameterGrp::handle group = App::GetApplication().GetUserParameter().
+                    GetGroup("BaseApp")->GetGroup("Preferences")->GetGroup("DockWindows")->GetGroup("ComboView");
+            enable = group->GetBool("Enabled", true);
+        }
+
+        ComboView* pcComboView = new ComboView(enable, 0, this);
+        pcComboView->setObjectName(QString::fromLatin1(QT_TRANSLATE_NOOP("QDockWidget","Combo View")));
+        pcComboView->setMinimumWidth(150);
+        pDockMgr->registerDockWindow("Std_ComboView", pcComboView);
     }
 
 #if QT_VERSION < 0x040500
@@ -690,6 +700,15 @@ void MainWindow::activatePreviousWindow ()
 
 void MainWindow::activateWorkbench(const QString& name)
 {
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
+    bool saveWB = hGrp->GetBool("SaveWBbyTab", false);
+    QMdiSubWindow* subWin = d->mdiArea->activeSubWindow();
+    if (subWin /*!= nullptr*/ && saveWB) {
+        QString currWb = subWin->property("ownWB").toString();
+        if (currWb.isEmpty() || currWb != name) {
+            subWin->setProperty("ownWB", name);
+        }
+    }
     // emit this signal
     workbenchActivated(name);
     updateActions(true);
@@ -1010,6 +1029,18 @@ void MainWindow::onWindowActivated(QMdiSubWindow* w)
     if (!w) return;
     MDIView* view = dynamic_cast<MDIView*>(w->widget());
 
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/View");
+    bool saveWB = hGrp->GetBool("SaveWBbyTab", false);
+    if (saveWB) {
+        QString currWb = w->property("ownWB").toString();
+        if (! currWb.isEmpty()) {
+            this->activateWorkbench(currWb);
+        }
+        else {
+            w->setProperty("ownWB", QString::fromStdString(WorkbenchManager::instance()->active()->name()));
+        }
+    }
+    
     // Even if windowActivated() signal is emitted mdi doesn't need to be a top-level window.
     // This happens e.g. if two windows are top-level and one of them gets docked again.
     // QWorkspace emits the signal then even though the other window is in front.

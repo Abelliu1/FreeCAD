@@ -81,7 +81,11 @@ public:
     void handleXYLock(void) override;
 
     double prefKinkLength(void) const;
+    int prefShape(void) const;
+    int prefEnd(void) const;
+    void setOrigin(Base::Vector3d newOrigin);
 
+    Base::Vector3d getOriginOffset() const;
 
 protected:
     void onChanged(const App::Property* prop) override;
