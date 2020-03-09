@@ -5,13 +5,32 @@ endif(APPLE)
 if (UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
     pkg_search_module(OPENSSL REQUIRED openssl)
+elseif(WIN32 AND LIBPACK_FOUND)
+    MESSAGE("HUHU")
+    SET( OPENSSL_INCLUDE_DIR ${FREECAD_LIBPACK_DIR}/include)
+    SET( OPENSSL_LIBRARIES 
+      ${FREECAD_LIBPACK_DIR}/lib/openssl.lib
+      ${FREECAD_LIBPACK_DIR}/lib/libssl.lib
+      ${FREECAD_LIBPACK_DIR}/lib/libcrypto.lib)
+    SET( OPENSSL_FOUND True)
 else()
     find_package(OPENSSL REQUIRED)
-endif(UNIX)
+endif(UNIX AND NOT APPLE)
 if(OPENSSL_FOUND)
     message(STATUS "openssl-${OPENSSL_VERSION} has been found\n")
 endif(OPENSSL_FOUND)
+
+IF(WIN32)
+    SET( CURL_FOUND True)
+    SET( CURL_INCLUDE_DIR ${FREECAD_LIBPACK_DIR}/include)
+    SET( CURL_LIBRARIES 
+      ${FREECAD_LIBPACK_DIR}/lib/libcurl.lib)
+    
+ELSE()
     find_package(CURL REQUIRED)
+ENDIF(WIN32)
+
+
 if(CURL_FOUND)
     message(STATUS "CURL has been found\n")
 endif(CURL_FOUND)
