@@ -48,7 +48,7 @@
            </font>
           </property>
           <property name="toolTip">
-           <string>Character to use to indicate Diameter dimension</string>
+           <string>Character used to indicate diameter dimensions</string>
           </property>
           <property name="text">
            <string>⌀</string>
@@ -66,6 +66,9 @@
         </item>
         <item row="3" column="2">
          <widget class="Gui::PrefSpinBox" name="sbAltDecimals">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -73,7 +76,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Number of decimal places if not using Global Decimals</string>
+           <string>Number of decimals if 'Use Global Decimals' is not used</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -98,7 +101,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Use system setting for decimal places.</string>
+           <string>Use system setting for number of decimals</string>
           </property>
           <property name="text">
            <string>Use Global Decimals</string>
@@ -135,13 +138,10 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Preferred arrowhead style</string>
+           <string>Arrowhead style</string>
           </property>
           <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <property name="maxVisibleItems">
-           <number>5</number>
+           <number>-1</number>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>ArrowStyle</cstring>
@@ -149,75 +149,6 @@
           <property name="prefPath" stdset="0">
            <cstring>Mod/TechDraw/Dimensions</cstring>
           </property>
-          <item>
-           <property name="text">
-            <string>0 - Filled Triangle</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowfilled.svg</normalon>
-            </iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1 - Open Arrowhead</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowopen.svg</normalon>
-            </iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2 - Tick</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowtick.svg</normalon>
-            </iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>3 - Dot</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowdot.svg</normalon>
-            </iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>4 - Open Circle</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowopendot.svg</normalon>
-            </iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>5 - Fork</string>
-           </property>
-           <property name="icon">
-            <iconset resource="Resources/TechDraw.qrc">
-             <normaloff>:/icons/arrowfork.svg</normaloff>:/icons/arrowfork.svg</iconset>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>6 - Pyramid</string>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normalon>:/icons/arrowpyramid.svg</normalon>
-            </iconset>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="3" column="0">
@@ -229,6 +160,9 @@
         </item>
         <item row="4" column="2">
          <widget class="Gui::PrefLineEdit" name="leformatSpec">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -236,7 +170,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Custom format for Dimension text</string>
+           <string>Custom format for dimension text</string>
           </property>
           <property name="text">
            <string>%.2f</string>
@@ -284,7 +218,7 @@
          </widget>
         </item>
         <item row="5" column="2">
-         <widget class="Gui::PrefUnitSpinBox" name="plsb_FontSize">
+         <widget class="Gui::PrefUnitSpinBox" name="plsb_FontSize" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -292,9 +226,9 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Dimension font size</string>
+           <string>Dimension text font size</string>
           </property>
-          <property name="value">
+          <property name="value" stdset="0">
            <double>4.000000000000000</double>
           </property>
           <property name="prefEntry" stdset="0">
@@ -306,7 +240,7 @@
          </widget>
         </item>
         <item row="8" column="2">
-         <widget class="Gui::PrefUnitSpinBox" name="plsb_ArrowSize">
+         <widget class="Gui::PrefUnitSpinBox" name="plsb_ArrowSize" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -314,9 +248,9 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Dimension arrowhead size</string>
+           <string>Arrowhead size</string>
           </property>
-          <property name="value">
+          <property name="value" stdset="0">
            <double>5.000000000000000</double>
           </property>
           <property name="prefEntry" stdset="0">
@@ -348,7 +282,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Preferred standard and style of drawing dimensional values</string>
+           <string>Standard to be used for dimensional values</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>StandardAndStyle</cstring>
@@ -407,7 +341,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Append unit to Dimension text</string>
+           <string>Append unit to dimension values</string>
           </property>
           <property name="text">
            <string>Show Units</string>
@@ -472,7 +406,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Shape of balloon &quot;bubble&quot;.</string>
+           <string>Shape of balloon annotations</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>BalloonShape</cstring>
@@ -566,7 +500,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Line type for centerlines</string>
+           <string>Type for centerlines</string>
           </property>
           <property name="currentIndex">
            <number>2</number>
@@ -581,30 +515,54 @@
            <property name="text">
             <string>NeverShow</string>
            </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/arrownone.svg</normaloff>:/icons/arrownone.svg</iconset>
+           </property>
           </item>
           <item>
            <property name="text">
             <string>Continuous</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/continuous-line.svg</normaloff>:/icons/continuous-line.svg</iconset>
            </property>
           </item>
           <item>
            <property name="text">
             <string>Dash</string>
            </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/dash-line.svg</normaloff>:/icons/dash-line.svg</iconset>
+           </property>
           </item>
           <item>
            <property name="text">
             <string>Dot</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/dot-line.svg</normaloff>:/icons/dot-line.svg</iconset>
            </property>
           </item>
           <item>
            <property name="text">
             <string>DashDot</string>
            </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/dashDot-line.svg</normaloff>:/icons/dashDot-line.svg</iconset>
+           </property>
           </item>
           <item>
            <property name="text">
             <string>DashDotDot</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/dashDotDot-line.svg</normaloff>:/icons/dashDotDot-line.svg</iconset>
            </property>
           </item>
          </widget>
@@ -617,7 +575,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Balloon Leader Arrow</string>
+           <string>Balloon Leader End</string>
           </property>
          </widget>
         </item>
@@ -630,7 +588,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Type of arrowhead on leader</string>
+           <string>Style for balloon leader line ends</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>BalloonArrow</cstring>
@@ -638,46 +596,6 @@
           <property name="prefPath" stdset="0">
            <cstring>Mod/TechDraw/Decorations</cstring>
           </property>
-          <item>
-           <property name="text">
-            <string>Filled Triangle</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Open Arrow</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hash Mark</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Dot</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Open Circle</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Fork</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pyramid</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>None</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="2" column="2">
@@ -689,7 +607,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Name of entry in LineGroup CSV file</string>
+           <string>Default name in LineGroup CSV file</string>
           </property>
           <property name="text">
            <string notr="true">FC 0.70mm</string>
@@ -712,6 +630,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Style for section lines</string>
           </property>
           <property name="currentIndex">
            <number>2</number>
@@ -774,6 +695,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Length of balloon leader line kink</string>
+          </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
@@ -797,10 +721,10 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Keep pyramid leader line end in vertical or horizontal position.</string>
+           <string>Keep pyramid leader line end in vertical or horizontal position</string>
           </property>
           <property name="text">
-           <string>Balloon Pyramid Ortho</string>
+           <string>Balloon Pyramid Vertical</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -820,6 +744,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Standard to be used to draw section lines</string>
           </property>
           <property name="currentIndex">
            <number>1</number>
@@ -864,7 +791,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Round or Square outline in Detail view</string>
+           <string>Outline shape for detail views</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>MattingStyle</cstring>
@@ -934,7 +861,7 @@
            </font>
           </property>
           <property name="toolTip">
-           <string>Show arc center marks in Views.</string>
+           <string>Show arc center marks in views</string>
           </property>
           <property name="text">
            <string>Show Center Marks</string>
@@ -956,7 +883,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Show arc centers on printed output</string>
+           <string>Show arc centers in printed output</string>
           </property>
           <property name="text">
            <string>Print Center Marks</string>
@@ -1022,7 +949,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
-           <string>Projection Group &quot;Angle&quot;</string>
+           <string>Projection Group Angle</string>
           </property>
          </widget>
         </item>
@@ -1035,7 +962,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Use First or Third Angle mutli-view convention.</string>
+           <string>Use first- or third-angle mutliview projection convention</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>ProjectionAngle</cstring>
@@ -1071,7 +998,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Style for hidden lines.</string>
+           <string>Style for hidden lines</string>
           </property>
           <property name="prefEntry" stdset="0">
            <cstring>HiddenLine</cstring>
@@ -1083,10 +1010,18 @@
            <property name="text">
             <string>Continuous</string>
            </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/continuous-line.svg</normaloff>:/icons/continuous-line.svg</iconset>
+           </property>
           </item>
           <item>
            <property name="text">
             <string>Dashed</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Resources/TechDraw.qrc">
+             <normaloff>:/icons/dash-line.svg</normaloff>:/icons/dash-line.svg</iconset>
            </property>
           </item>
          </widget>
@@ -1170,5 +1105,22 @@
  <resources>
   <include location="Resources/TechDraw.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbGlobalDecimals</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sbAltDecimals</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>338</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

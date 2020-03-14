@@ -807,8 +807,8 @@ int QGIViewDimension::compareAngleStraightness(double straightAngle, double left
 
 double QGIViewDimension::getIsoStandardLinePlacement(double labelAngle)
 {
-    // According to ISO 129-1 Standard Figure 23, the bordering angle is 2/3 PI, resp. -1/3 PI
-    return labelAngle < -M_PI/3.0 || labelAngle > +2.0*M_PI/3.0
+    // According to ISO 129-1 Standard Figure 23, the bordering angle is 1/2 PI, resp. -1/2 PI
+    return labelAngle < -M_PI/2.0 || labelAngle > +M_PI/2.0
            ? +1.0 : -1.0;
 }
 
@@ -1198,8 +1198,12 @@ void QGIViewDimension::drawArrows(int count, const Base::Vector2d positions[], d
         arrow->setSize(QGIArrow::getPrefArrowSize());
         arrow->setFlipped(flipped);
 
-        arrow->draw();
-        arrow->show();
+        if (QGIArrow::getPrefArrowStyle() != 0) { // if not "None"
+            arrow->draw();
+            arrow->show();
+        }
+        else
+            arrow->hide();
     }
 }
 

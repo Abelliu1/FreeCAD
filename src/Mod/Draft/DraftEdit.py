@@ -253,10 +253,17 @@ class Edit():
                                 "Part", "Part::Line", "Part::Box"]
 
     def GetResources(self):
+        
+        tooltip = ("Edits the active object.\n"
+                   "Press E or ALT+LeftClick to display context menu\n"
+                   "on supported nodes and on supported objects.")
+                  
         return {'Pixmap': 'Draft_Edit',
                 'Accel': "D, E",
                 'MenuText': QtCore.QT_TRANSLATE_NOOP("Draft_Edit", "Edit"),
-                'ToolTip': QtCore.QT_TRANSLATE_NOOP("Draft_Edit", "Edits the active object")}
+                'ToolTip': QtCore.QT_TRANSLATE_NOOP("Draft_Edit", tooltip)
+                }
+
 
     #---------------------------------------------------------------------------
     # MAIN FUNCTIONS
@@ -439,30 +446,6 @@ class Edit():
             event.getButton() == event.BUTTON1
             ):#left click
             if not event.wasAltDown():
-                if self.ui.addButton.isChecked():
-                    self.addPoint(event)
-                    return
-                if self.ui.delButton.isChecked():
-                    self.delPoint(event)
-                    return
-                if Draft.getType(self.obj) == "BezCurve" and (self.ui.sharpButton.isChecked()
-                                        or self.ui.tangentButton.isChecked() or
-                                        self.ui.symmetricButton.isChecked()):
-                    pos = event.getPosition()
-                    node = self.getEditNode(pos)
-                    ep = self.getEditNodeIndex(node)
-                    if ep is None:
-                        return
-                    doc = App.getDocument(str(node.documentName.getValue()))
-                    self.obj = doc.getObject(str(node.objectName.getValue()))
-                    if self.obj is None:
-                        return
-                    if self.ui.sharpButton.isChecked():
-                        return self.smoothBezPoint(self.obj, ep, 'Sharp')
-                    elif self.ui.tangentButton.isChecked():
-                        return self.smoothBezPoint(self.obj, ep, 'Tangent')
-                    elif self.ui.symmetricButton.isChecked():
-                        return self.smoothBezPoint(self.obj, ep, 'Symmetric')
                 if self.editing is None:
                     self.startEditing(event)
                 else:
