@@ -29,6 +29,8 @@ if FreeCAD.GuiUp:
     from PySide import QtCore, QtGui
     from DraftTools import translate
     from PySide.QtCore import QT_TRANSLATE_NOOP
+    import ArchPrecast
+    import draftguitools.gui_trackers as DraftTrackers
 else:
     # \cond
     def translate(ctxt,txt):
@@ -247,7 +249,7 @@ class _CommandStructure:
         # interactive mode
         if hasattr(FreeCAD,"DraftWorkingPlane"):
             FreeCAD.DraftWorkingPlane.setup()
-        import DraftTrackers,ArchPrecast
+
         self.points = []
         self.tracker = DraftTrackers.boxTracker()
         self.tracker.width(self.Width)
@@ -816,7 +818,7 @@ class _Structure(ArchComponent.Component):
                         extrusion = obj.Tool.Shape.copy()
             else:
                 if obj.Normal.Length:
-                    normal = Vector(obj.Normal)
+                    normal = Vector(obj.Normal).normalize()
                     if isinstance(placement,list):
                         normal = placement[0].inverse().Rotation.multVec(normal)
                     else:
@@ -848,6 +850,7 @@ class _Structure(ArchComponent.Component):
             extdata = self.getExtrusionData(obj)
             if extdata and not isinstance(extdata[0],list):
                 nodes = extdata[0]
+                ev = extdata[2].Rotation.multVec(extdata[1])
                 nodes.Placement = nodes.Placement.multiply(extdata[2])
                 if IfcType not in ["Slab"]:
                     if obj.Tool:
@@ -855,7 +858,7 @@ class _Structure(ArchComponent.Component):
                     elif extdata[1].Length > 0:
                         if hasattr(nodes,"CenterOfMass"):
                             import Part
-                            nodes = Part.LineSegment(nodes.CenterOfMass,nodes.CenterOfMass.add(extdata[1])).toShape()
+                            nodes = Part.LineSegment(nodes.CenterOfMass,nodes.CenterOfMass.add(ev)).toShape()
             offset = FreeCAD.Vector()
             if hasattr(obj,"NodesOffset"):
                 offset = FreeCAD.Vector(0,0,obj.NodesOffset.Value)

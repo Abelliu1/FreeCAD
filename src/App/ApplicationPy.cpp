@@ -106,9 +106,9 @@ PyMethodDef Application::Methods[] = {
      "* If no module is given it will be determined by the file extension.\n"
      "* If more than one module can load a file the first one one will be taken.\n"
      "* If no module exists to load the file an exception will be raised."},
-    {"open",   (PyCFunction) Application::sOpenDocument, METH_VARARGS|METH_KEYWORDS,
+    {"open",   reinterpret_cast<PyCFunction>(reinterpret_cast<void (*) (void)>( Application::sOpenDocument )), METH_VARARGS|METH_KEYWORDS,
      "See openDocument(string)"},
-    {"openDocument",   (PyCFunction) Application::sOpenDocument, METH_VARARGS|METH_KEYWORDS,
+    {"openDocument",   reinterpret_cast<PyCFunction>(reinterpret_cast<void (*) (void)>( Application::sOpenDocument )), METH_VARARGS|METH_KEYWORDS,
      "openDocument(filepath,hidden=False) -> object\n"
      "Create a document and load the project file into the document.\n\n"
      "filepath: file path to an existing file. If the file doesn't exist\n"
@@ -118,12 +118,13 @@ PyMethodDef Application::Methods[] = {
 //  {"saveDocument",   (PyCFunction) Application::sSaveDocument, METH_VARARGS,
 //   "saveDocument(string) -- Save the document to a file."},
 //  {"saveDocumentAs", (PyCFunction) Application::sSaveDocumentAs, METH_VARARGS},
-    {"newDocument",    (PyCFunction) Application::sNewDocument, METH_VARARGS|METH_KEYWORDS,
-     "newDocument(name, label=None, hidden=False) -> object\n"
+    {"newDocument",    reinterpret_cast<PyCFunction>(reinterpret_cast<void (*) (void)>( Application::sNewDocument )), METH_VARARGS|METH_KEYWORDS,
+     "newDocument(name, label=None, hidden=False, temp=False) -> object\n"
      "Create a new document with a given name.\n\n"
      "name: unique document name which is checked automatically.\n"
      "label: optional user changeable label for the document.\n"
-     "hidden: whether to hide document 3D view."},
+     "hidden: whether to hide document 3D view.\n"
+     "temp: mark the document as temporary so that it will not be saved"},
     {"closeDocument",  (PyCFunction) Application::sCloseDocument, METH_VARARGS,
      "closeDocument(string) -> None\n\n"
      "Close the document with a given name."},
@@ -223,8 +224,8 @@ PyObject* Application::sLoadFile(PyObject * /*self*/, PyObject *args)
         Py_Return;
     }
     catch (const Base::Exception& e) {
-        PyErr_SetString(PyExc_IOError, e.what());
-        return 0;
+        e.setPyException();
+        return nullptr;
     }
     catch (const std::exception& e) {
         // might be subclass from zipios
@@ -269,13 +270,16 @@ PyObject* Application::sNewDocument(PyObject * /*self*/, PyObject *args, PyObjec
     char *docName = 0;
     char *usrName = 0;
     PyObject *hidden = Py_False;
-    static char *kwlist[] = {"name","label","hidden",0};
-    if (!PyArg_ParseTupleAndKeywords(args, kwd, "|etetO", kwlist,
-                "utf-8", &docName, "utf-8", &usrName, &hidden))
+    PyObject *temp = Py_False;
+    static char *kwlist[] = {"name","label","hidden","temp",0};
+    if (!PyArg_ParseTupleAndKeywords(args, kwd, "|etetOO", kwlist,
+                "utf-8", &docName, "utf-8", &usrName, &hidden, &temp))
         return NULL;
 
     PY_TRY {
-        App::Document* doc = GetApplication().newDocument(docName, usrName,!PyObject_IsTrue(hidden));
+        App::Document* doc = GetApplication().newDocument(docName, usrName,
+                                                          !PyObject_IsTrue(hidden),
+                                                          PyObject_IsTrue(temp));
         PyMem_Free(docName);
         PyMem_Free(usrName);
         return doc->getPyObject();

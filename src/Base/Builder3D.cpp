@@ -272,7 +272,7 @@ void Builder3D::addSingleTriangle(Vector3f pt0, Vector3f pt1, Vector3f pt2, bool
 void Builder3D::addTransformation(const Base::Matrix4D& transform)
 {
   Base::Vector3f cAxis, cBase;
-  float fAngle, fTranslation;
+  float fAngle = 0.0f, fTranslation = 0.0f;
   transform.toAxisAngle(cBase, cAxis,fAngle,fTranslation);
   cBase.x = static_cast<float>(transform[0][3]);
   cBase.y = static_cast<float>(transform[1][3]);
@@ -856,6 +856,13 @@ void InventorBuilder::addCylinder(float radius, float height)
            << Base::blanks(indent) << "}\n";
 }
 
+void InventorBuilder::addSphere(float radius)
+{
+    result << Base::blanks(indent) << "Sphere {\n"
+           << Base::blanks(indent) << "  radius " << radius << "\n"
+           << Base::blanks(indent) << "}\n";
+}
+
 void InventorBuilder::addBoundingBox(const Vector3f& pt1, const Vector3f& pt2, short lineWidth,
                                      float color_r,float color_g,float color_b)
 {
@@ -896,7 +903,7 @@ void InventorBuilder::addBoundingBox(const Vector3f& pt1, const Vector3f& pt2, s
 void InventorBuilder::addTransformation(const Matrix4D& transform)
 {
     Vector3f cAxis, cBase;
-    float fAngle, fTranslation;
+    float fAngle = 0.0f, fTranslation = 0.0f;
     transform.toAxisAngle(cBase, cAxis,fAngle,fTranslation);
     cBase.x = static_cast<float>(transform[0][3]);
     cBase.y = static_cast<float>(transform[1][3]);

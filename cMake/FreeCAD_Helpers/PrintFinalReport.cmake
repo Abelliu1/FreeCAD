@@ -35,7 +35,7 @@ macro(PrintFinalReport)
 
     message(STATUS "PyCXX:               [${PYCXX_INCLUDE_DIR}]")
 
-    message(STATUS "OCC:                 ${OCC_VERSION_STRING} [${OCC_LIBRARIES}]")
+    message(STATUS "OCC:                 ${OCC_VERSION_STRING} [${OCC_LIBRARIES}] [${OCC_LIBRARY_DIR}] [${OCC_INCLUDE_DIR}]")
 
     if(BUILD_SMESH)
         if(FREECAD_USE_EXTERNAL_SMESH)
@@ -51,7 +51,7 @@ macro(PrintFinalReport)
     endif(BUILD_SMESH)
 
     if(DEFINED NETGEN_FOUND)
-        message(STATUS "NETGEN:              ${NETGEN_VERSION} [${NETGEN_DEFINITIONS}] [${NETGEN_CXX_FLAGS}] [${NGLIB_INCLUDE_DIR}] [${NGLIB_LIBRARIES}] [${NETGEN_INCLUDE_DIRS}]")
+        message(STATUS "NETGEN:              ${NETGEN_VERSION_MAJOR}.${NETGEN_VERSION_MINOR}.${NETGEN_VERSION_PATCH} (${NETGEN_VERSION}) [${NETGEN_DEFINITIONS}] [${NETGEN_CXX_FLAGS}] [${NGLIB_INCLUDE_DIR}] [${NGLIB_LIBRARIES}] [${NETGEN_INCLUDE_DIRS}]")
     else(DEFINED NETGEN_FOUND)
         message(STATUS "NETGEN:              not enabled")
     endif(DEFINED NETGEN_FOUND)

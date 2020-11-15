@@ -45,6 +45,41 @@ def removeFromPath(module_name):
 	else:
 		Wrn(module_name + " not found in sys.path\n")
 
+def setupSearchPaths(PathExtension):
+	# DLL resolution in Python 3.8 on Windows has changed
+	if sys.platform == 'win32' and hasattr(os, "add_dll_directory"):
+		if "FREECAD_LIBPACK_BIN" in os.environ:
+			os.add_dll_directory(os.environ["FREECAD_LIBPACK_BIN"])
+		for path in PathExtension:
+			os.add_dll_directory(path)
+
+	PathEnvironment = PathExtension.pop(0) + os.pathsep
+	for path in PathExtension:
+		try:
+			PathEnvironment += path + os.pathsep
+		except UnicodeDecodeError:
+			Wrn('Filter invalid module path: u{}\n'.format(repr(path)))
+
+	# new paths must be prepended to avoid to load a wrong version of a library
+	try:
+		os.environ["PATH"] = PathEnvironment + os.environ["PATH"]
+	except UnicodeDecodeError:
+		# See #0002238. FIXME: check again once ported to Python 3.x
+		Log('UnicodeDecodeError was raised when concatenating unicode string with PATH. Try to remove non-ascii paths...\n')
+		path = os.environ["PATH"].split(os.pathsep)
+		cleanpath=[]
+		for i in path:
+			if test_ascii(i):
+				cleanpath.append(i)
+		os.environ["PATH"] = PathEnvironment + os.pathsep.join(cleanpath)
+		Log('done\n')
+	except UnicodeEncodeError:
+		Log('UnicodeEncodeError was raised when concatenating unicode string with PATH. Try to replace non-ascii chars...\n')
+		os.environ["PATH"] = PathEnvironment.encode(errors='replace') + os.environ["PATH"]
+		Log('done\n')
+	except KeyError:
+		os.environ["PATH"] = PathEnvironment
+
 FreeCAD._importFromFreeCAD = removeFromPath
 
 
@@ -185,32 +220,7 @@ def InitApplications():
 	Log("Using "+ModDir+" as module path!\n")
 	# In certain cases the PathExtension list can contain invalid strings. We concatenate them to a single string
 	# but check that the output is a valid string
-	PathEnvironment = PathExtension.pop(0) + os.pathsep
-	for path in PathExtension:
-		try:
-			PathEnvironment += path + os.pathsep
-		except UnicodeDecodeError:
-			Wrn('Filter invalid module path: u{}\n'.format(repr(path)))
-
-	# new paths must be prepended to avoid to load a wrong version of a library
-	try:
-		os.environ["PATH"] = PathEnvironment + os.environ["PATH"]
-	except UnicodeDecodeError:
-		# See #0002238. FIXME: check again once ported to Python 3.x
-		Log('UnicodeDecodeError was raised when concatenating unicode string with PATH. Try to remove non-ascii paths...\n')
-		path = os.environ["PATH"].split(os.pathsep)
-		cleanpath=[]
-		for i in path:
-			if test_ascii(i):
-				cleanpath.append(i)
-		os.environ["PATH"] = PathEnvironment + os.pathsep.join(cleanpath)
-		Log('done\n')
-	except UnicodeEncodeError:
-		Log('UnicodeEncodeError was raised when concatenating unicode string with PATH. Try to replace non-ascii chars...\n')
-		os.environ["PATH"] = PathEnvironment.encode(errors='replace') + os.environ["PATH"]
-		Log('done\n')
-	except KeyError:
-		os.environ["PATH"] = PathEnvironment
+	setupSearchPaths(PathExtension)
 	path = os.environ["PATH"].split(os.pathsep)
 	Log("System path after init:\n")
 	for i in path:
@@ -816,12 +826,34 @@ App.Units.Power         = App.Units.Unit(2,1,-3)
 App.Units.SpecificEnergy               = App.Units.Unit(2,0,-2)
 App.Units.ThermalConductivity          = App.Units.Unit(1,1,-3,0,-1)
 App.Units.ThermalExpansionCoefficient  = App.Units.Unit(0,0,0,0,-1)
+App.Units.VolumetricThermalExpansionCoefficient  = App.Units.Unit(0,0,0,0,-1)
 App.Units.SpecificHeat                 = App.Units.Unit(2,0,-2,0,-1)
 App.Units.ThermalTransferCoefficient   = App.Units.Unit(0,1,-3,0,-1)
 App.Units.HeatFlux                     = App.Units.Unit(0,1,-3,0,0)
 App.Units.DynamicViscosity             = App.Units.Unit(-1,1,-1)
 App.Units.KinematicViscosity           = App.Units.Unit(2,0,-1)
 App.Units.VacuumPermittivity           = App.Units.Unit(-3,-1,4,2)
+
+# Add an enum for the different unit schemes
+if sys.version_info.major < 3:
+    IntEnum = object
+else:
+    from enum import IntEnum
+
+# The values must match with that of the
+# C++ enum class UnitSystem
+class Scheme(IntEnum):
+    SI1 = 0
+    SI2 = 1
+    Imperial1 = 2
+    ImperialDecimal = 3
+    Centimeters = 4
+    ImperialBuilding = 5
+    MmMin = 6
+    ImperialCivil = 7
+    FemMilliMeterNewton = 8
+
+App.Units.Scheme = Scheme
 
 # clean up namespace
 del(InitApplications)

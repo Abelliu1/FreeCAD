@@ -83,6 +83,7 @@ public:
 
 protected Q_SLOTS:
     void editingFinished();
+    void aliasChanged(const QString& text);
     void currentChanged( const QModelIndex & current, const QModelIndex & previous );
     void columnResized(int col, int oldSize, int newSize);
     void rowResized(int row, int oldSize, int newSize);
@@ -91,6 +92,7 @@ protected Q_SLOTS:
     void modelUpdated(const QModelIndex & topLeft, const QModelIndex & bottomRight);
 protected:
     void updateContentLine();
+    void updateAliasLine();
     void setCurrentCell(QString str);
     void keyPressEvent(QKeyEvent *event);
     void resizeColumn(int col, int newSize);

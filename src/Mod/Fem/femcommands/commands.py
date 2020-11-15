@@ -1,6 +1,8 @@
 # ***************************************************************************
 # *   Copyright (c) 2016 Bernd Hahnebach <bernd@bimstatik.org>              *
 # *                                                                         *
+# *   This file is part of the FreeCAD CAx development system.              *
+# *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
 # *   as published by the Free Software Foundation; either version 2 of     *
@@ -19,10 +21,19 @@
 # *                                                                         *
 # ***************************************************************************
 
+__title__ = "FreeCAD FEM command definitions"
+__author__ = "Bernd Hahnebach"
+__url__ = "http://www.freecadweb.org"
+
+## @package commands
+#  \ingroup FEM
+#  \brief FreeCAD FEM command definitions
 
 import FreeCAD
 import FreeCADGui
+
 from .manager import CommandManager
+from femtools.femutils import is_of_type
 
 
 # Python command definitions
@@ -39,7 +50,7 @@ class _Analysis(CommandManager):
     def __init__(self):
         super(_Analysis, self).__init__()
         self.menuetext = "Analysis container"
-        self.accel = "N, A"
+        self.accel = "S, A"
         self.tooltip = "Creates an analysis container with standard solver CalculiX"
         self.is_active = "with_document"
 
@@ -68,8 +79,11 @@ class _ClippingPlaneAdd(CommandManager):
         self.is_active = "with_document"
 
     def Activated(self):
-        from femtools import femutils
-        overalboundbox = femutils.getBoundBoxOfAllDocumentShapes(FreeCAD.ActiveDocument)
+        from pivy import coin
+        from femtools.femutils import getBoundBoxOfAllDocumentShapes
+        from femtools.femutils import getSelectedFace
+
+        overalboundbox = getBoundBoxOfAllDocumentShapes(FreeCAD.ActiveDocument)
         # print(overalboundbox)
         min_bb_length = (min(set([
             overalboundbox.XLength,
@@ -78,7 +92,7 @@ class _ClippingPlaneAdd(CommandManager):
         ])))
         dbox = min_bb_length * 0.2
 
-        aFace = femutils.getSelectedFace(FreeCADGui.Selection.getSelectionEx())
+        aFace = getSelectedFace(FreeCADGui.Selection.getSelectionEx())
         if aFace:
             f_CoM = aFace.CenterOfMass
             f_uvCoM = aFace.Surface.parameter(f_CoM)  # u,v at CoM for normalAt calculation
@@ -87,7 +101,6 @@ class _ClippingPlaneAdd(CommandManager):
             f_CoM = FreeCAD.Vector(0, 0, 0)
             f_normal = FreeCAD.Vector(0, 0, 1)
 
-        from pivy import coin
         coin_normal_vector = coin.SbVec3f(-f_normal.x, -f_normal.y, -f_normal.z)
         coin_bound_box = coin.SbBox3f(
             f_CoM.x - dbox, f_CoM.y - dbox,
@@ -118,6 +131,19 @@ class _ClippingPlaneRemoveAll(CommandManager):
         FreeCADGui.doCommand("sg = Gui.ActiveDocument.ActiveView.getSceneGraph()")
         FreeCADGui.doCommand("nodes = sg.getChildren()")
         FreeCADGui.doCommand(line1 + line2 + line3)
+
+
+class _ConstantVacuumPermittivity(CommandManager):
+    "The FEM_ConstantVacuumPermittivity command definition"
+
+    def __init__(self):
+        super(_ConstantVacuumPermittivity, self).__init__()
+        self.pixmap = "fem-solver-analysis-thermomechanical.svg"
+        self.menuetext = "Constant vacuum permittivity"
+        self.tooltip = "Creates a FEM constant vacuum permittivity to overwrite standard value"
+        self.is_active = "with_document"
+        self.is_active = "with_analysis"
+        self.do_activated = "add_obj_on_gui_noset_edit"
 
 
 class _ConstraintBodyHeatSource(CommandManager):
@@ -165,13 +191,23 @@ class _ConstraintInitialFlowVelocity(CommandManager):
         self.do_activated = "add_obj_on_gui_set_edit"
 
 
+class _ConstraintSectionPrint(CommandManager):
+    "The FEM_ConstraintSectionPrint command definition"
+
+    def __init__(self):
+        super(_ConstraintSectionPrint, self).__init__()
+        self.menuetext = "Constraint sectionprint"
+        self.tooltip = "Creates a FEM constraint sectionprint"
+        self.is_active = "with_analysis"
+        self.do_activated = "add_obj_on_gui_set_edit"
+
+
 class _ConstraintSelfWeight(CommandManager):
     "The FEM_ConstraintSelfWeight command definition"
 
     def __init__(self):
         super(_ConstraintSelfWeight, self).__init__()
         self.menuetext = "Constraint self weight"
-        self.accel = "C, W"
         self.tooltip = "Creates a FEM constraint self weight"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_noset_edit"
@@ -183,7 +219,6 @@ class _ConstraintTie(CommandManager):
     def __init__(self):
         super(_ConstraintTie, self).__init__()
         self.menuetext = "Constraint tie"
-        self.accel = "C, T"
         self.tooltip = "Creates a FEM constraint tie"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -195,7 +230,6 @@ class _ElementFluid1D(CommandManager):
     def __init__(self):
         super(_ElementFluid1D, self).__init__()
         self.menuetext = "Fluid section for 1D flow"
-        self.accel = "C, B"
         self.tooltip = "Creates a FEM fluid section for 1D flow"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -207,7 +241,6 @@ class _ElementGeometry1D(CommandManager):
     def __init__(self):
         super(_ElementGeometry1D, self).__init__()
         self.menuetext = "Beam cross section"
-        self.accel = "C, B"
         self.tooltip = "Creates a FEM beam cross section"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -219,7 +252,6 @@ class _ElementGeometry2D(CommandManager):
     def __init__(self):
         super(_ElementGeometry2D, self).__init__()
         self.menuetext = "Shell plate thickness"
-        self.accel = "C, S"
         self.tooltip = "Creates a FEM shell plate thickness"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -231,7 +263,6 @@ class _ElementRotation1D(CommandManager):
     def __init__(self):
         super(_ElementRotation1D, self).__init__()
         self.menuetext = "Beam rotation"
-        self.accel = "C, R"
         self.tooltip = "Creates a FEM beam rotation"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_noset_edit"
@@ -270,13 +301,24 @@ class _EquationFlow(CommandManager):
         self.do_activated = "add_obj_on_gui_selobj_noset_edit"
 
 
-class _EquationFluxsolver(CommandManager):
-    "The FEM_EquationFluxsolver command definition"
+class _EquationFlux(CommandManager):
+    "The FEM_EquationFlux command definition"
 
     def __init__(self):
-        super(_EquationFluxsolver, self).__init__()
-        self.menuetext = "Fluxsolver equation"
-        self.tooltip = "Creates a FEM equation for fluxsolver"
+        super(_EquationFlux, self).__init__()
+        self.menuetext = "Flux equation"
+        self.tooltip = "Creates a FEM equation for flux"
+        self.is_active = "with_solver_elmer"
+        self.do_activated = "add_obj_on_gui_selobj_noset_edit"
+
+
+class _EquationElectricforce(CommandManager):
+    "The FEM_EquationElectricforce command definition"
+
+    def __init__(self):
+        super(_EquationElectricforce, self).__init__()
+        self.menuetext = "Electricforce equation"
+        self.tooltip = "Creates a FEM equation for electric forces"
         self.is_active = "with_solver_elmer"
         self.do_activated = "add_obj_on_gui_selobj_noset_edit"
 
@@ -286,10 +328,25 @@ class _EquationHeat(CommandManager):
 
     def __init__(self):
         super(_EquationHeat, self).__init__()
-        self.menuetext = "Fluxsolver heat"
+        self.menuetext = "Heat equation"
         self.tooltip = "Creates a FEM equation for heat"
         self.is_active = "with_solver_elmer"
         self.do_activated = "add_obj_on_gui_selobj_noset_edit"
+
+
+class _Examples(CommandManager):
+    "The FEM_Examples command definition"
+
+    def __init__(self):
+        super(_Examples, self).__init__()
+        self.pixmap = "preferences-fem"
+        self.menuetext = "Open FEM examples"
+        self.tooltip = "Open FEM examples"
+        self.is_active = "always"
+
+    def Activated(self):
+        FreeCADGui.addModule("femexamples.examplesgui")
+        FreeCADGui.doCommand("femexamples.examplesgui.show_examplegui()")
 
 
 class _MaterialEditor(CommandManager):
@@ -313,7 +370,6 @@ class _MaterialFluid(CommandManager):
     def __init__(self):
         super(_MaterialFluid, self).__init__()
         self.menuetext = "Material for fluid"
-        self.accel = "M M"
         self.tooltip = "Creates a FEM material for fluid"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -325,7 +381,6 @@ class _MaterialMechanicalNonlinear(CommandManager):
     def __init__(self):
         super(_MaterialMechanicalNonlinear, self).__init__()
         self.menuetext = "Nonlinear mechanical material"
-        self.accel = "C, W"
         self.tooltip = "Creates a nonlinear mechanical material"
         self.is_active = "with_material_solid"
 
@@ -333,10 +388,7 @@ class _MaterialMechanicalNonlinear(CommandManager):
         # test if there is a nonlinear material which has the selected material as base material
         for o in self.selobj.Document.Objects:
             if (
-                hasattr(o, "Proxy")
-                and o.Proxy is not None
-                and hasattr(o.Proxy, "Type")
-                and o.Proxy.Type == "Fem::MaterialMechanicalNonlinear"
+                is_of_type(o, "Fem::MaterialMechanicalNonlinear")
                 and o.LinearBaseMaterial == self.selobj
             ):
                 FreeCAD.Console.PrintError(
@@ -373,12 +425,10 @@ class _MaterialMechanicalNonlinear(CommandManager):
                     break
         # set solver attribute for nonlinearity for ccxtools
         # CalculiX solver or new frame work CalculiX solver
-        if solver_object \
-                and hasattr(solver_object, "Proxy") \
-                and (
-                    solver_object.Proxy.Type == "Fem::FemSolverCalculixCcxTools"
-                    or solver_object.Proxy.Type == "Fem::FemSolverObjectCalculix"
-                ):
+        if solver_object and (
+            is_of_type(solver_object, "Fem::SolverCcxTools")
+            or is_of_type(solver_object, "Fem::SolverCalculix")
+        ):
             FreeCAD.Console.PrintMessage(
                 "Set MaterialNonlinearity and GeometricalNonlinearity to nonlinear for {}\n"
                 .format(solver_object.Label)
@@ -395,7 +445,6 @@ class _MaterialReinforced(CommandManager):
     def __init__(self):
         super(_MaterialReinforced, self).__init__()
         self.menuetext = "Reinforced material (concrete)"
-        self.accel = "M, M"
         self.tooltip = "Creates a material for reinforced matrix material such as concrete"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -407,7 +456,7 @@ class _MaterialSolid(CommandManager):
     def __init__(self):
         super(_MaterialSolid, self).__init__()
         self.menuetext = "Material for solid"
-        self.accel = "M, M"
+        self.accel = "M, S"
         self.tooltip = "Creates a FEM material for solid"
         self.is_active = "with_analysis"
         self.do_activated = "add_obj_on_gui_set_edit"
@@ -460,7 +509,6 @@ class _MeshBoundaryLayer(CommandManager):
     def __init__(self):
         super(_MeshBoundaryLayer, self).__init__()
         self.menuetext = "FEM mesh boundary layer"
-        self.accel = "M, B"
         self.tooltip = "Creates a FEM mesh boundary layer"
         self.is_active = "with_gmsh_femmesh"
         self.do_activated = "add_obj_on_gui_selobj_set_edit"
@@ -552,9 +600,7 @@ class _MeshGroup(CommandManager):
 
     def __init__(self):
         super(_MeshGroup, self).__init__()
-        self.pixmap = "fem-femmesh-from-shape"
         self.menuetext = "FEM mesh group"
-        self.accel = "M, G"
         self.tooltip = "Creates a FEM mesh group"
         self.is_active = "with_gmsh_femmesh"
         self.do_activated = "add_obj_on_gui_selobj_set_edit"
@@ -605,7 +651,6 @@ class _MeshRegion(CommandManager):
     def __init__(self):
         super(_MeshRegion, self).__init__()
         self.menuetext = "FEM mesh region"
-        self.accel = "M, R"
         self.tooltip = "Creates a FEM mesh region"
         self.is_active = "with_gmsh_femmesh"
         self.do_activated = "add_obj_on_gui_selobj_set_edit"
@@ -617,7 +662,7 @@ class _ResultShow(CommandManager):
     def __init__(self):
         super(_ResultShow, self).__init__()
         self.menuetext = "Show result"
-        self.accel = "S, R"
+        self.accel = "R, S"
         self.tooltip = "Shows and visualizes selected result data"
         self.is_active = "with_selresult"
 
@@ -631,7 +676,7 @@ class _ResultsPurge(CommandManager):
     def __init__(self):
         super(_ResultsPurge, self).__init__()
         self.menuetext = "Purge results"
-        self.accel = "S, S"
+        self.accel = "R, P"
         self.tooltip = "Purges all results from active analysis"
         self.is_active = "with_results"
 
@@ -654,7 +699,7 @@ class _SolverCxxtools(CommandManager):
     def Activated(self):
         has_nonlinear_material_obj = False
         for m in self.active_analysis.Group:
-            if hasattr(m, "Proxy") and m.Proxy.Type == "Fem::MaterialMechanicalNonlinear":
+            if is_of_type(m, "Fem::MaterialMechanicalNonlinear"):
                 has_nonlinear_material_obj = True
         FreeCAD.ActiveDocument.openTransaction("Create SolverCalculix")
         FreeCADGui.addModule("ObjectsFem")
@@ -695,7 +740,7 @@ class _SolverControl(CommandManager):
     def __init__(self):
         super(_SolverControl, self).__init__()
         self.menuetext = "Solver job control"
-        self.accel = "S, C"
+        self.accel = "S, T"
         self.tooltip = "Changes solver attributes and runs the calculations for the selected solver"
         self.is_active = "with_solver"
 
@@ -721,7 +766,7 @@ class _SolverRun(CommandManager):
     def __init__(self):
         super(_SolverRun, self).__init__()
         self.menuetext = "Run solver calculations"
-        self.accel = "R, C"
+        self.accel = "S, R"
         self.tooltip = "Runs the calculations for the selected solver"
         self.is_active = "with_solver"
 
@@ -737,7 +782,7 @@ class _SolverZ88(CommandManager):
 
     def __init__(self):
         super(_SolverZ88, self).__init__()
-        self.pixmap = "FEM_SolverStandard"
+        self.pixmap = "FEM_SolverZ88.svg"
         self.menuetext = "Solver Z88"
         self.accel = "S, Z"
         self.tooltip = "Creates a FEM solver Z88"
@@ -759,6 +804,10 @@ FreeCADGui.addCommand(
     _ClippingPlaneRemoveAll()
 )
 FreeCADGui.addCommand(
+    "FEM_ConstantVacuumPermittivity",
+    _ConstantVacuumPermittivity()
+)
+FreeCADGui.addCommand(
     "FEM_ConstraintBodyHeatSource",
     _ConstraintBodyHeatSource()
 )
@@ -773,6 +822,10 @@ FreeCADGui.addCommand(
 FreeCADGui.addCommand(
     "FEM_ConstraintInitialFlowVelocity",
     _ConstraintInitialFlowVelocity()
+)
+FreeCADGui.addCommand(
+    "FEM_ConstraintSectionPrint",
+    _ConstraintSectionPrint()
 )
 FreeCADGui.addCommand(
     "FEM_ConstraintSelfWeight",
@@ -811,12 +864,20 @@ FreeCADGui.addCommand(
     _EquationFlow()
 )
 FreeCADGui.addCommand(
-    "FEM_EquationFluxsolver",
-    _EquationFluxsolver()
+    "FEM_EquationFlux",
+    _EquationFlux()
+)
+FreeCADGui.addCommand(
+    "FEM_EquationElectricforce",
+    _EquationElectricforce()
 )
 FreeCADGui.addCommand(
     "FEM_EquationHeat",
     _EquationHeat()
+)
+FreeCADGui.addCommand(
+    "FEM_Examples",
+    _Examples()
 )
 FreeCADGui.addCommand(
     "FEM_MaterialEditor",

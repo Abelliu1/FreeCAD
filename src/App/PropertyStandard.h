@@ -153,13 +153,20 @@ public:
      * \endcode
      */
     void setEnums(const char** plEnums);
+    
+    /** setting the enumaration string as vector of strings
+     * This makes the enumeration custom.
+     */
+    void setEnums(const std::vector<std::string> &Enums);
+    
     /** set the enum by a string
-     * is slower the setValue(long). Use long if possible
+     * is slower than setValue(long). Use long if possible
      */
     void setValue(const char* value);
+    
     /** set directly the enum value
      * In DEBUG checks for boundaries.
-     * Is faster then using setValue(const char*).
+     * Is faster than using setValue(const char*).
      */
     void setValue(long);
 

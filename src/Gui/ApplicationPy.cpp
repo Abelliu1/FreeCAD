@@ -38,6 +38,7 @@
 #include <xercesc/util/TranscodingException.hpp>
 #include <boost/regex.hpp>
 
+#include "Action.h"
 #include "Application.h"
 #include "BitmapFactory.h"
 #include "Command.h"
@@ -138,15 +139,6 @@ PyMethodDef Application::Methods[] = {
   {"runCommand",              (PyCFunction) Application::sRunCommand, METH_VARARGS,
    "runCommand(string) -> None\n\n"
    "Run command with name"},
-  {"isCommandActive",         (PyCFunction) Application::sIsCommandActive, METH_VARARGS,
-   "isCommandActive(string) -> Bool\n\n"
-   "Test if a command is active"},
-  {"listCommands",               (PyCFunction) Application::sListCommands, METH_VARARGS,
-   "listCommands() -> list of strings\n\n"
-   "Returns a list of all commands known to FreeCAD."},
-  {"updateCommands",        (PyCFunction) Application::sUpdateCommands, METH_VARARGS,
-   "updateCommands\n\n"
-   "Update all command active status"},
   {"SendMsgToActiveView",     (PyCFunction) Application::sSendActiveView, METH_VARARGS,
    "deprecated -- use class View"},
   {"sendMsgToFocusView",     (PyCFunction) Application::sSendFocusView, METH_VARARGS,
@@ -591,8 +583,13 @@ PyObject* Application::sExport(PyObject * /*self*/, PyObject *args)
         QFileInfo fi;
         fi.setFile(fileName);
         QString ext = fi.suffix().toLower();
-        if (ext == QLatin1String("iv") || ext == QLatin1String("wrl") ||
-            ext == QLatin1String("vrml") || ext == QLatin1String("wrz")) {
+        if (ext == QLatin1String("iv") ||
+            ext == QLatin1String("wrl") ||
+            ext == QLatin1String("vrml") ||
+            ext == QLatin1String("wrz") ||
+            ext == QLatin1String("x3d") ||
+            ext == QLatin1String("x3dz") ||
+            ext == QLatin1String("xhtml")) {
 
             // build up the graph
             SoSeparator* sep = new SoSeparator();
@@ -910,9 +907,9 @@ PyObject* Application::sAddWorkbenchHandler(PyObject * /*self*/, PyObject *args)
         if (PyObject_IsSubclass(object.ptr(), baseclass.ptr()) == 1) {
             // create an instance of this class
             name = object.getAttr(std::string("__name__"));
-            Py::Tuple args;
+            Py::Tuple arg;
             Py::Callable creation(object);
-            object = creation.apply(args);
+            object = creation.apply(arg);
         }
         else if (PyObject_IsInstance(object.ptr(), baseclass.ptr()) == 1) {
             // extract the class name of the instance
@@ -1246,50 +1243,6 @@ PyObject* Application::sRunCommand(PyObject * /*self*/, PyObject *args)
         PyErr_Format(Base::BaseExceptionFreeCADError, "No such command '%s'", pName);
         return 0;
     }
-}
-
-PyObject* Application::sIsCommandActive(PyObject * /*self*/, PyObject *args)
-{
-    char* pName;
-    if (!PyArg_ParseTuple(args, "s", &pName))
-        return NULL;
-
-    Command* cmd = Application::Instance->commandManager().getCommandByName(pName);
-    if (!cmd) {
-        PyErr_Format(Base::BaseExceptionFreeCADError, "No such command '%s'", pName);
-        return 0;
-    }
-    PY_TRY {
-        return Py::new_reference_to(Py::Boolean(cmd->isActive()));
-    }PY_CATCH;
-}
-
-PyObject* Application::sUpdateCommands(PyObject * /*self*/, PyObject *args)
-{
-    if (!PyArg_ParseTuple(args, ""))
-        return NULL;
-
-    getMainWindow()->updateActions();
-    Py_Return;
-}
-
-PyObject* Application::sListCommands(PyObject * /*self*/, PyObject *args)
-{
-    if (!PyArg_ParseTuple(args, ""))
-        return NULL;
-
-    std::vector <Command*> cmds = Application::Instance->commandManager().getAllCommands();
-    PyObject* pyList = PyList_New(cmds.size());
-    int i=0;
-    for ( std::vector<Command*>::iterator it = cmds.begin(); it != cmds.end(); ++it ) {
-#if PY_MAJOR_VERSION >= 3
-        PyObject* str = PyUnicode_FromString((*it)->getName());
-#else
-        PyObject* str = PyString_FromString((*it)->getName());
-#endif
-        PyList_SetItem(pyList, i++, str);
-    }
-    return pyList;
 }
 
 PyObject* Application::sDoCommand(PyObject * /*self*/, PyObject *args)

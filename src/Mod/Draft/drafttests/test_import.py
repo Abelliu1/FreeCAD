@@ -1,5 +1,3 @@
-"""Unit test for the Draft module, import tests.
-"""
 # ***************************************************************************
 # *   Copyright (c) 2013 Yorik van Havre <yorik@uncreated.net>              *
 # *   Copyright (c) 2019 Eliud Cabrera Castillo <e.cabrera-castillo@tum.de> *
@@ -23,39 +21,52 @@
 # *   USA                                                                   *
 # *                                                                         *
 # ***************************************************************************
+"""Unit tests for the Draft Workbench, import tests."""
+## @package test_import
+# \ingroup drafttests
+# \brief Unit tests for the Draft Workbench, import tests.
 
+## \addtogroup drafttests
+# @{
 import unittest
-from .auxiliary import _draw_header
-from .auxiliary import _import_test
+
+import drafttests.auxiliary as aux
 
 
 class DraftImport(unittest.TestCase):
     """Import the Draft modules."""
-    # No document is needed to test 'import Draft' or other modules
-    # thus 'setUp' just draws a line, and 'tearDown' isn't defined.
+
     def setUp(self):
-        _draw_header()
+        """Draw the header.
+
+        This is executed before every test.
+        No document is needed to test the import of modules so no document
+        is created, and `tearDown` isn't defined.
+        """
+        aux.draw_header()
 
     def test_import_draft(self):
         """Import the Draft module."""
         module = "Draft"
-        imported = _import_test(module)
+        imported = aux.import_test(module)
         self.assertTrue(imported, "Problem importing '{}'".format(module))
 
     def test_import_draft_geomutils(self):
         """Import Draft geometrical utilities."""
         module = "DraftGeomUtils"
-        imported = _import_test(module)
+        imported = aux.import_test(module)
         self.assertTrue(imported, "Problem importing '{}'".format(module))
 
     def test_import_draft_vecutils(self):
         """Import Draft vector utilities."""
         module = "DraftVecUtils"
-        imported = _import_test(module)
+        imported = aux.import_test(module)
         self.assertTrue(imported, "Problem importing '{}'".format(module))
 
     def test_import_draft_svg(self):
         """Import Draft SVG utilities."""
-        module = "getSVG"
-        imported = _import_test(module)
+        module = "draftfunctions.svg"
+        imported = aux.import_test(module)
         self.assertTrue(imported, "Problem importing '{}'".format(module))
+
+## @}

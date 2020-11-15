@@ -38,6 +38,7 @@
 # include <Inventor/actions/SoGetMatrixAction.h>
 # include <Inventor/actions/SoSearchAction.h>
 # include <Inventor/actions/SoGetBoundingBoxAction.h>
+# include <boost_bind_bind.hpp>
 #endif
 
 /// Here the FreeCAD includes sorted by Base,App,Gui......
@@ -61,7 +62,6 @@
 #include "ViewProviderLink.h"
 #include "ViewParams.h"
 
-#include <boost/bind.hpp>
 
 FC_LOG_LEVEL_INIT("ViewProvider",true,true)
 
@@ -647,6 +647,13 @@ bool ViewProvider::mouseButtonPressed(int button, bool pressed,
     (void)cursorPos;
     (void)viewer;
     return false;
+}
+
+void ViewProvider::setupContextMenu(QMenu* menu, QObject* receiver, const char* method)
+{
+    auto vector = getExtensionsDerivedFromType<Gui::ViewProviderExtension>();
+    for (Gui::ViewProviderExtension* ext : vector)
+        ext->extensionSetupContextMenu(menu, receiver, method);
 }
 
 bool ViewProvider::onDelete(const vector< string >& subNames)

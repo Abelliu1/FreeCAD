@@ -135,6 +135,8 @@ public:
 
     virtual std::string getFormatedValue(int partial = 0);
     virtual double getDimValue();
+    QStringList getPrefixSuffixSpec(QString fSpec);
+
     virtual DrawViewPart* getViewPart() const;
     virtual QRectF getRect() const override { return QRectF(0,0,1,1);}          //pretend dimensions always fit!
     static int getRefType1(const std::string s);
@@ -156,11 +158,12 @@ public:
     pointPair getArrowPositions(void);
     void saveArrowPositions(const Base::Vector2d positions[]);
 
+    bool showUnits() const;
+    bool useDecimals() const;
+
 protected:
     virtual void onChanged(const App::Property* prop) override;
     virtual void onDocumentRestored() override;
-    bool showUnits() const;
-    bool useDecimals() const;
     std::string getPrefix() const;
     std::string getDefaultFormatSpec() const;
     virtual pointPair getPointsOneEdge();

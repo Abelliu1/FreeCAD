@@ -148,7 +148,9 @@ public:
     /** Returns true whether warnings are reported. */ 
     bool isWarning() const;
     /** Returns true whether log messages are reported. */ 
-    bool isLogging() const;
+    bool isLogMessage() const;
+    /** Returns true whether normal messages are reported. */
+    bool isNormalMessage() const;
 
 protected:
     /** For internal use only */
@@ -166,9 +168,17 @@ public Q_SLOTS:
     /** Toggles the report of warnings. */
     void onToggleWarning();
     /** Toggles the report of log messages. */
-    void onToggleLogging();
-    /** Toggles whether to show report view on warnings or errors */
-    void onToggleShowReportViewOnWarningOrError();
+    void onToggleLogMessage();
+    /** Toggles the report of normal messages. */
+    void onToggleNormalMessage();
+    /** Toggles whether to show report view on warnings*/
+    void onToggleShowReportViewOnWarning();
+    /** Toggles whether to show report view on errors*/
+    void onToggleShowReportViewOnError();
+    /** Toggles whether to show report view on normal messages*/
+    void onToggleShowReportViewOnNormalMessage();
+    /** Toggles whether to show report view on log messages*/
+    void onToggleShowReportViewOnLogMessage();
     /** Toggles the redirection of Python stdout. */
     void onToggleRedirectPythonStdout();
     /** Toggles the redirection of Python stderr. */
@@ -180,6 +190,7 @@ private:
     class Data;
     Data* d;
     bool gotoEnd;
+    bool blockStart;
     ReportHighlighter* reportHl; /**< Syntax highlighter */
     int messageSize;
     ParameterGrp::handle _prefs; 
@@ -200,6 +211,7 @@ public:
 
 protected:
     QPointer <ReportOutput> reportView;
+    void showReportView(void);
 };
 
 } // namespace DockWnd

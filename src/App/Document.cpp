@@ -82,7 +82,7 @@ recompute path. Also, it enables more complicated dependencies beyond trees.
 #include <boost/graph/visitors.hpp>
 #endif //USE_OLD_DAG
 
-#include <boost/bind.hpp>
+#include <boost_bind_bind.hpp>
 #include <boost/regex.hpp>
 #include <unordered_set>
 #include <unordered_map>
@@ -178,10 +178,12 @@ struct DocumentP
     bool rollback;
     bool undoing; ///< document in the middle of undo or redo
     bool committing;
+    bool opentransaction;
     std::bitset<32> StatusBits;
     int iUndoMode;
     unsigned int UndoMemSize;
     unsigned int UndoMaxStackSize;
+    std::string programVersion;
 #ifdef USE_OLD_DAG
     DependencyList DepList;
     std::map<DocumentObject*,Vertex> VertexObjectList;
@@ -204,6 +206,7 @@ struct DocumentP
         rollback = false;
         undoing = false;
         committing = false;
+        opentransaction = false;
         StatusBits.set((size_t)Document::Closable, true);
         StatusBits.set((size_t)Document::KeepTrailingDigits, true);
         StatusBits.set((size_t)Document::Restoring, false);
@@ -626,7 +629,10 @@ void Document::exportGraphviz(std::ostream& out) const
                 //first build up the coordinate system subgraphs
                 for (auto objectIt : d->objectArray) {
                     // do not require an empty inlist (#0003465: Groups breaking dependency graph)
-                    if (objectIt->hasExtension(GeoFeatureGroupExtension::getExtensionClassTypeId()))
+                    // App::Origin now has the GeoFeatureGroupExtension but it should not move its
+                    // group symbol outside its parent
+                    if (!objectIt->isDerivedFrom(Origin::getClassTypeId()) &&
+                         objectIt->hasExtension(GeoFeatureGroupExtension::getExtensionClassTypeId()))
                         recursiveCSSubgraphs(objectIt, nullptr);
                 }
             }
@@ -804,6 +810,12 @@ void Document::exportGraphviz(std::ostream& out) const
             }
         }
 
+#if defined(__clang__)
+#elif defined (__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
         void markCycles() {
             bool changed = true;
             std::unordered_set<Vertex> in_use;
@@ -868,6 +880,11 @@ void Document::exportGraphviz(std::ostream& out) const
             for (auto ei = out_edges.begin(), ei_end = out_edges.end(); ei != ei_end; ++ei)
                 edgeAttrMap[ei->second]["color"] = "red";
         }
+
+#if defined(__clang__)
+#elif defined (__GNUC__)
+# pragma GCC diagnostic pop
+#endif
 
         void markOutOfScopeLinks() {
             const boost::property_map<Graph, boost::edge_attribute_t>::type& edgeAttrMap = boost::get(boost::edge_attribute, DepList);
@@ -949,6 +966,7 @@ bool Document::undo(int id)
         d->activeUndoTransaction = new Transaction(mUndoTransactions.back()->getID());
         d->activeUndoTransaction->Name = mUndoTransactions.back()->Name;
 
+        {
         Base::FlagToggler<bool> flag(d->undoing);
         // applying the undo
         mUndoTransactions.back()->apply(*this,false);
@@ -962,7 +980,17 @@ bool Document::undo(int id)
         delete mUndoTransactions.back();
         mUndoTransactions.pop_back();
 
-        signalUndo(*this);
+        }
+
+        for(auto & obj:d->objectArray) {
+            if(obj->testStatus(ObjectStatus::PendingTransactionUpdate)) {
+                obj->onUndoRedoFinished();
+                obj->setStatus(ObjectStatus::PendingTransactionUpdate,false);
+            }
+        }
+
+        signalUndo(*this); // now signal the undo
+
         return true;
     }
 
@@ -990,6 +1018,7 @@ bool Document::redo(int id)
         d->activeUndoTransaction->Name = mRedoTransactions.back()->Name;
 
         // do the redo
+        {
         Base::FlagToggler<bool> flag(d->undoing);
         mRedoTransactions.back()->apply(*this,true);
 
@@ -1000,6 +1029,14 @@ bool Document::redo(int id)
         mRedoMap.erase(mRedoTransactions.back()->getID());
         delete mRedoTransactions.back();
         mRedoTransactions.pop_back();
+        }
+
+        for(auto & obj:d->objectArray) {
+            if(obj->testStatus(ObjectStatus::PendingTransactionUpdate)) {
+                obj->onUndoRedoFinished();
+                obj->setStatus(ObjectStatus::PendingTransactionUpdate,false);
+            }
+        }
 
         signalRedo(*this);
         return true;
@@ -1010,7 +1047,7 @@ bool Document::redo(int id)
 
 void Document::addOrRemovePropertyOfObject(TransactionalObject* obj, Property *prop, bool add)
 {
-    if (!prop || !obj) 
+    if (!prop || !obj || !obj->isAttachedToDocument()) 
         return;
     if(d->iUndoMode && !isPerformingTransaction() && !d->activeUndoTransaction) {
         if(!testStatus(Restoring) || testStatus(Importing)) {
@@ -1066,6 +1103,14 @@ int Document::_openTransaction(const char* name, int id)
     }
 
     if (d->iUndoMode) {
+        // Avoid recursive calls that is possible while
+        // clearing the redo transactions and will cause
+        // a double deletion of some transaction and thus
+        // a segmentation fault
+        if (d->opentransaction)
+            return 0;
+        Base::FlagToggler<> flag(d->opentransaction);
+
         if(id && mUndoMap.find(id)!=mUndoMap.end())
             throw Base::RuntimeError("invalid transaction id");
         if (d->activeUndoTransaction)
@@ -1117,12 +1162,8 @@ void Document::_checkTransaction(DocumentObject* pcDelObj, const Property *What,
                 const char *name = GetApplication().getActiveTransaction(&tid);
                 if(name && tid>0) {
                     bool ignore = false;
-                    if(What) {
-                        auto parent = What->getContainer();
-                        auto parentObj = Base::freecad_dynamic_cast<DocumentObject>(parent);
-                        if(!parentObj || What->testStatus(Property::NoModify))
-                            ignore = true;
-                    }
+                    if(What && What->testStatus(Property::NoModify))
+                        ignore = true;
                     if(FC_LOG_INSTANCE.isEnabled(FC_LOGLEVEL_LOG)) {
                         if(What) 
                             FC_LOG((ignore?"ignore":"auto") << " transaction (" 
@@ -1177,11 +1218,16 @@ void Document::commitTransaction() {
 
 void Document::_commitTransaction(bool notify)
 {
-    if(isPerformingTransaction() || d->committing) {
+    if (isPerformingTransaction()) {
         if (FC_LOG_INSTANCE.isEnabled(FC_LOGLEVEL_LOG))
             FC_WARN("Cannot commit transaction while transacting");
         return;
     }
+    else if (d->committing) {
+        // for a recursive call return without printing a warning
+        return;
+    }
+
     if (d->activeUndoTransaction) {
         Base::FlagToggler<> flag(d->committing);
         Application::TransactionSignaller signaller(false,true);
@@ -1196,7 +1242,8 @@ void Document::_commitTransaction(bool notify)
         }
         signalCommitTransaction(*this);
 
-        if(notify)
+        // closeActiveTransaction() may call again _commitTransaction()
+        if (notify)
             GetApplication().closeActiveTransaction(false,id);
     }
 }
@@ -1348,7 +1395,8 @@ int Document::getAvailableUndos(int id) const
                 return i;
         }
         auto rit = mUndoTransactions.rbegin();
-        for(;rit!=mUndoTransactions.rend()&&*rit!=it->second;++rit,++i);
+        for(;rit!=mUndoTransactions.rend()&&*rit!=it->second;++rit)
+            ++i;
         assert(rit!=mUndoTransactions.rend());
         return i+1;
     }
@@ -1365,7 +1413,8 @@ int Document::getAvailableRedos(int id) const
         if(it == mRedoMap.end())
             return 0;
         int i = 0;
-        for(auto rit=mRedoTransactions.rbegin();*rit!=it->second;++rit,++i);
+        for(auto rit=mRedoTransactions.rbegin();*rit!=it->second;++rit)
+            ++i;
         assert(i<(int)mRedoTransactions.size());
         return i+1;
     }
@@ -2092,6 +2141,9 @@ Document::readObjects(Base::XMLReader& reader)
             catch (const Base::RuntimeError &e) {
                 e.ReportException();
             }
+            catch (const Base::XMLAttributeError &e) {
+                e.ReportException();
+            }
 
             pObj->setStatus(ObjectStatus::Restore, false);
 
@@ -2694,7 +2746,9 @@ void Document::restore (const char *filename,
     catch (const Base::Exception& e) {
         Base::Console().Error("Invalid Document.xml: %s\n", e.what());
     }
+
     d->partialLoadObjects.clear();
+    d->programVersion = reader.ProgramVersion;
 
     // Special handling for Gui document, the view representations must already
     // exist, what is done in Restore().
@@ -2849,6 +2903,17 @@ std::string Document::getFullName() const {
     return myName;
 }
 
+const char* Document::getProgramVersion() const
+{
+    return d->programVersion.c_str();
+}
+
+const char* Document::getFileName() const
+{
+    return testStatus(TempDoc) ? TransientDir.getValue()
+                               : FileName.getValue();
+}
+
 /// Remove all modifications. After this call The document becomes valid again.
 void Document::purgeTouched()
 {
@@ -2894,7 +2959,7 @@ void Document::getLinksTo(std::set<DocumentObject*> &links,
         const DocumentObject *obj, int options, int maxCount,
         const std::vector<DocumentObject*> &objs) const 
 {
-    std::map<const App::DocumentObject*,App::DocumentObject*> linkMap;
+    std::map<const App::DocumentObject*, std::vector<App::DocumentObject*> > linkMap;
 
     for(auto o : objs.size()?objs:d->objectArray) {
         if(o == obj) continue;
@@ -2911,7 +2976,7 @@ void Document::getLinksTo(std::set<DocumentObject*> &links,
 
         if(linked && linked!=o) {
             if(options & GetLinkRecursive)
-                linkMap[linked] = o;
+                linkMap[linked].push_back(o);
             else if(linked == obj || !obj) {
                 if((options & GetLinkExternal)
                         && linked->getDocument()==o->getDocument())
@@ -2934,15 +2999,19 @@ void Document::getLinksTo(std::set<DocumentObject*> &links,
         if(!GetApplication().checkLinkDepth(depth,true))
             break;
         std::vector<const DocumentObject*> next;
-        for(auto o : current) {
+        for(const App::DocumentObject *o : current) {
             auto iter = linkMap.find(o);
-            if(iter!=linkMap.end() && links.insert(iter->second).second) {
-                if(maxCount && maxCount<=(int)links.size())
-                    return;
-                next.push_back(iter->second);
+            if(iter==linkMap.end())
+                continue;
+            for (App::DocumentObject *link : iter->second) {
+                if (links.insert(link).second) {
+                    if(maxCount && maxCount<=(int)links.size())
+                        return;
+                    next.push_back(link);
+                }
             }
         }
-        current.swap(next);
+        current = std::move(next);
     }
     return;
 }
@@ -3483,8 +3552,8 @@ int Document::recompute(const std::vector<App::DocumentObject*> &objs, bool forc
 
     FC_TIME_LOG(t,"Recompute total");
 
-    if(d->_RecomputeLog.size())
-        Base::Console().Error("Recompute failed! Please check report view.\n");
+    if (d->_RecomputeLog.size())
+        Base::Console().Log("Recompute failed! Please check report view.\n");
 
     return objectCount;
 }
@@ -3679,7 +3748,7 @@ int Document::_recomputeFeature(DocumentObject* Feat)
     }
     catch(Base::AbortException &e){
         e.ReportException();
-        FC_ERR("Failed to recompute " << Feat->getFullName() << ": " << e.what());
+        FC_LOG("Failed to recompute " << Feat->getFullName() << ": " << e.what());
         d->addRecomputeLog("User abort",Feat);
         return -1;
     }
@@ -3690,7 +3759,7 @@ int Document::_recomputeFeature(DocumentObject* Feat)
     }
     catch (Base::Exception &e) {
         e.ReportException();
-        FC_ERR("Failed to recompute " << Feat->getFullName() << ": " << e.what());
+        FC_LOG("Failed to recompute " << Feat->getFullName() << ": " << e.what());
         d->addRecomputeLog(e.what(),Feat);
         return 1;
     }
@@ -3707,12 +3776,13 @@ int Document::_recomputeFeature(DocumentObject* Feat)
     }
 #endif
 
-    if(returnCode == DocumentObject::StdReturn) {
+    if (returnCode == DocumentObject::StdReturn) {
         Feat->resetError();
-    }else{
+    }
+    else {
         returnCode->Which = Feat;
         d->addRecomputeLog(returnCode);
-        FC_ERR("Failed to recompute " << Feat->getFullName() << ": " << returnCode->Why);
+        FC_LOG("Failed to recompute " << Feat->getFullName() << ": " << returnCode->Why);
         return 1;
     }
     return 0;
@@ -4196,7 +4266,7 @@ void Document::breakDependency(DocumentObject* pcObject, bool clear)
 }
 
 std::vector<DocumentObject*> Document::copyObject(
-    const std::vector<DocumentObject*> &objs, bool recursive)
+    const std::vector<DocumentObject*> &objs, bool recursive, bool returnAll)
 {
     std::vector<DocumentObject*> deps;
     if(!recursive)
@@ -4204,10 +4274,11 @@ std::vector<DocumentObject*> Document::copyObject(
     else
         deps = getDependencyList(objs,DepNoXLinked|DepSort);
 
-    if(!isSaved() && PropertyXLink::hasXLink(deps))
+    if (!testStatus(TempDoc) && !isSaved() && PropertyXLink::hasXLink(deps)) {
         throw Base::RuntimeError(
                 "Document must be saved at least once before link to external objects");
-        
+    }
+
     MergeDocuments md(this);
     // if not copying recursively then suppress possible warnings
     md.setVerbose(recursive);
@@ -4246,7 +4317,7 @@ std::vector<DocumentObject*> Document::copyObject(
         imported = md.importObjects(istr);
     }
 
-    if(imported.size()!=deps.size())
+    if (returnAll || imported.size()!=deps.size())
         return imported;
 
     std::unordered_map<App::DocumentObject*,size_t> indices;
@@ -4340,7 +4411,7 @@ DocumentObject* Document::moveObject(DocumentObject* obj, bool recursive)
 
     // True object move without copy is only safe when undo is off on both
     // documents.
-    if(!recursive && !d->iUndoMode && !that->d->iUndoMode) {
+    if(!recursive && !d->iUndoMode && !that->d->iUndoMode && !that->d->rollback) {
         // all object of the other document that refer to this object must be nullified
         that->breakDependency(obj, false);
         std::string objname = getUniqueObjectName(obj->getNameInDocument());
@@ -4501,15 +4572,31 @@ std::vector< DocumentObject* > Document::getObjectsWithExtension(const Base::Typ
 }
 
 
-std::vector<DocumentObject*> Document::findObjects(const Base::Type& typeId, const char* objname) const
+std::vector<DocumentObject*> Document::findObjects(const Base::Type& typeId, const char* objname, const char* label) const
 {
-    boost::regex rx(objname);
     boost::cmatch what;
+    boost::regex rx_name, rx_label;
+
+    if (objname)
+        rx_name.set_expression(objname);
+
+    if (label)
+        rx_label.set_expression(label);
+
     std::vector<DocumentObject*> Objects;
+    DocumentObject* found = nullptr;
     for (std::vector<DocumentObject*>::const_iterator it = d->objectArray.begin(); it != d->objectArray.end(); ++it) {
         if ((*it)->getTypeId().isDerivedFrom(typeId)) {
-            if (boost::regex_match((*it)->getNameInDocument(), what, rx))
-                Objects.push_back(*it);
+            found = *it;
+
+            if (!rx_name.empty() && !boost::regex_search((*it)->getNameInDocument(), what, rx_name))
+                found = nullptr;
+
+            if (!rx_label.empty() && !boost::regex_search((*it)->Label.getValue(), what, rx_label))
+                found = nullptr;
+
+            if (found)
+                Objects.push_back(found);
         }
     }
     return Objects;

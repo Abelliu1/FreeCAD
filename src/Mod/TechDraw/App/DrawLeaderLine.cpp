@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2019 Wanderer Fan <wandererfan@gmail.com>               *
+ *   Copyright (c) 2019 WandererFan <wandererfan@gmail.com>                *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -36,6 +36,7 @@
 
 #include <Mod/TechDraw/App/DrawLeaderLinePy.h>  // generated from DrawLeaderLinePy.xml
 #include "DrawLeaderLine.h"
+#include "ArrowPropEnum.h"
 
 using namespace TechDraw;
 
@@ -44,6 +45,28 @@ using namespace TechDraw;
 //===========================================================================
 
 PROPERTY_SOURCE(TechDraw::DrawLeaderLine, TechDraw::DrawView)
+
+//TODO: share this between DrawViewBalloon, DrawLeaderLine, QGIArrow, Prefs, etc
+//const char* DrawLeaderLine::ArrowTypeEnums[]= {
+//                               "FILLED_ARROW",
+//                               "OPEN_ARROW",
+//                               "TICK",
+//                               "DOT",
+//                               "OPEN_CIRCLE",
+//                               "FORK",
+//                               "FILLED_TRIANGLE",
+//                               "NONE"
+//                               NULL};
+//const char* DrawLeaderLine::ArrowTypeEnums2[]= {
+//                               "FILLED_ARROW",
+//                               "OPEN_ARROW",
+//                               "TICK",
+//                               "DOT",
+//                               "OPEN_CIRCLE",
+//                               "FORK",
+//                               "FILLED_TRIANGLE",
+//                               "NONE"
+//                               NULL};
 
 DrawLeaderLine::DrawLeaderLine(void)
 {
@@ -54,8 +77,19 @@ DrawLeaderLine::DrawLeaderLine(void)
     LeaderParent.setScope(App::LinkScope::Global);
     ADD_PROPERTY_TYPE(WayPoints,(Base::Vector3d()) ,group, App::Prop_None,
                       "Intermediate points for Leader line");
-    ADD_PROPERTY_TYPE(StartSymbol, (-1), group, App::Prop_None, "Symbol (arrowhead) for start of line");
-    ADD_PROPERTY_TYPE(EndSymbol, (-1), group, App::Prop_None, "Symbol (arrowhead) for end of line");
+
+//    EndType.setEnums(ArrowTypeEnums);
+//    ADD_PROPERTY(EndType,(prefEnd()));
+
+    StartSymbol.setEnums(ArrowPropEnum::ArrowTypeEnums);
+    ADD_PROPERTY(StartSymbol,(0l));              //filled arrow
+
+//    ADD_PROPERTY_TYPE(StartSymbol, (0), group, App::Prop_None, "Symbol (arrowhead) for start of line");
+    EndSymbol.setEnums(ArrowPropEnum::ArrowTypeEnums);
+    ADD_PROPERTY(EndSymbol,(7l));                //no symbol
+//    ADD_PROPERTY_TYPE(EndSymbol, (0), group, App::Prop_None, "Symbol (arrowhead) for end of line");
+
+
     ADD_PROPERTY_TYPE(Scalable ,(false),group,App::Prop_None,"Scale line with LeaderParent");
     ADD_PROPERTY_TYPE(AutoHorizontal ,(getDefAuto()),group,App::Prop_None,"Forces last line segment to be horizontal");
 
@@ -90,7 +124,7 @@ short DrawLeaderLine::mustExecute() const
     if (result) {
         return result;
     }
-    
+
     const App::DocumentObject* docObj = getBaseObject();
     if (docObj != nullptr) {
         result = docObj->isTouched();                 //object property points to is touched
@@ -103,7 +137,7 @@ short DrawLeaderLine::mustExecute() const
 }
 
 App::DocumentObjectExecReturn *DrawLeaderLine::execute(void)
-{ 
+{
 //    Base::Console().Message("DLL::execute()\n");
     if (!keepUpdated()) {
         return App::DocumentObject::StdReturn;
@@ -131,7 +165,7 @@ App::DocumentObject* DrawLeaderLine::getBaseObject(void) const
     DrawView* view = getBaseView();
     if (view != nullptr) {
         result = view;
-    }       
+    }
     return result;
 }
 
@@ -185,7 +219,7 @@ Base::Vector3d DrawLeaderLine::getAttachPoint(void)
     return result;
 }
 
-void DrawLeaderLine::adjustLastSegment(void) 
+void DrawLeaderLine::adjustLastSegment(void)
 {
 //    Base::Console().Message("DLL::adjustLastSegment()\n");
     bool adjust = AutoHorizontal.getValue();

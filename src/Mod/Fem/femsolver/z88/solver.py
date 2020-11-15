@@ -53,7 +53,7 @@ class Proxy(solverbase.Proxy):
     """The Fem::FemSolver's Proxy python type, add solver specific properties
     """
 
-    Type = "Fem::FemSolverObjectZ88"
+    Type = "Fem::SolverZ88"
 
     def __init__(self, obj):
         super(Proxy, self).__init__(obj)
@@ -88,6 +88,8 @@ class Proxy(solverbase.Proxy):
 
 
 class ViewProxy(solverbase.ViewProxy):
-    pass
+
+    def getIcon(self):
+        return ":/icons/FEM_SolverZ88.svg"
 
 ##  @}

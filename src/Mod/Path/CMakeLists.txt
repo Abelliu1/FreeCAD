@@ -25,6 +25,8 @@ INSTALL(
 
 SET(PathScripts_SRCS
     PathCommands.py
+    PathScripts/PathAdaptive.py
+    PathScripts/PathAdaptiveGui.py
     PathScripts/PathAreaOp.py
     PathScripts/PathArray.py
     PathScripts/PathCircularHoleBase.py
@@ -32,6 +34,7 @@ SET(PathScripts_SRCS
     PathScripts/PathComment.py
     PathScripts/PathCopy.py
     PathScripts/PathCustom.py
+    PathScripts/PathCustomGui.py
     PathScripts/PathDeburr.py
     PathScripts/PathDeburrGui.py
     PathScripts/PathDressup.py
@@ -46,6 +49,7 @@ SET(PathScripts_SRCS
     PathScripts/PathDressupTag.py
     PathScripts/PathDressupTagGui.py
     PathScripts/PathDressupTagPreferences.py
+    PathScripts/PathDressupZCorrect.py
     PathScripts/PathDrilling.py
     PathScripts/PathDrillingGui.py
     PathScripts/PathEngrave.py
@@ -82,14 +86,16 @@ SET(PathScripts_SRCS
     PathScripts/PathPreferences.py
     PathScripts/PathPreferencesPathDressup.py
     PathScripts/PathPreferencesPathJob.py
-    PathScripts/PathProfileBase.py
-    PathScripts/PathProfileBaseGui.py
+    PathScripts/PathProbe.py
+    PathScripts/PathProbeGui.py
+    PathScripts/PathProfile.py
     PathScripts/PathProfileContour.py
     PathScripts/PathProfileContourGui.py
     PathScripts/PathProfileEdges.py
     PathScripts/PathProfileEdgesGui.py
     PathScripts/PathProfileFaces.py
     PathScripts/PathProfileFacesGui.py
+    PathScripts/PathProfileGui.py
     PathScripts/PathSanity.py
     PathScripts/PathSelection.py
     PathScripts/PathSetupSheet.py
@@ -97,10 +103,14 @@ SET(PathScripts_SRCS
     PathScripts/PathSetupSheetOpPrototype.py
     PathScripts/PathSetupSheetOpPrototypeGui.py
     PathScripts/PathSimpleCopy.py
+    PathScripts/PathSimulatorGui.py
+    PathScripts/PathSlot.py
+    PathScripts/PathSlotGui.py
     PathScripts/PathStock.py
     PathScripts/PathStop.py
     PathScripts/PathSurface.py
     PathScripts/PathSurfaceGui.py
+    PathScripts/PathSurfaceSupport.py
     PathScripts/PathToolBit.py
     PathScripts/PathToolBitCmd.py
     PathScripts/PathToolBitEdit.py
@@ -110,15 +120,16 @@ SET(PathScripts_SRCS
     PathScripts/PathToolController.py
     PathScripts/PathToolControllerGui.py
     PathScripts/PathToolEdit.py
-    PathScripts/PathToolLibraryManager.py
     PathScripts/PathToolLibraryEditor.py
+    PathScripts/PathToolLibraryManager.py
     PathScripts/PathUtil.py
     PathScripts/PathUtils.py
     PathScripts/PathUtilsGui.py
-    PathScripts/PathSimulatorGui.py
+    PathScripts/PathVcarve.py
+    PathScripts/PathVcarveGui.py
+    PathScripts/PathWaterline.py
+    PathScripts/PathWaterlineGui.py
     PathScripts/PostUtils.py
-    PathScripts/PathAdaptiveGui.py
-    PathScripts/PathAdaptive.py
     PathScripts/__init__.py
 )
 
@@ -128,9 +139,12 @@ SET(PathScripts_post_SRCS
     PathScripts/post/comparams_post.py
     PathScripts/post/dynapath_post.py
     PathScripts/post/example_pre.py
+    PathScripts/post/gcode_pre.py
     PathScripts/post/grbl_post.py
     PathScripts/post/jtech_post.py
     PathScripts/post/linuxcnc_post.py
+    PathScripts/post/mach3_mach4_post.py
+    PathScripts/post/nccad_post.py
     PathScripts/post/opensbp_post.py
     PathScripts/post/opensbp_pre.py
     PathScripts/post/philips_post.py
@@ -140,27 +154,27 @@ SET(PathScripts_post_SRCS
 )
 
 SET(Tools_Bit_SRCS
-  Tools/Bit/t1.fctb
-  Tools/Bit/t2.fctb
-  Tools/Bit/t3.fctb
-  Tools/Bit/t4.fctb
-  Tools/Bit/t5.fctb
-  Tools/Bit/t6.fctb
-  Tools/Bit/t7.fctb
-  Tools/Bit/t8.fctb
-  Tools/Bit/t9.fctb
+    Tools/Bit/t1.fctb
+    Tools/Bit/t2.fctb
+    Tools/Bit/t3.fctb
+    Tools/Bit/t4.fctb
+    Tools/Bit/t5.fctb
+    Tools/Bit/t6.fctb
+    Tools/Bit/t7.fctb
+    Tools/Bit/t8.fctb
+    Tools/Bit/t9.fctb
 )
 
 SET(Tools_Library_SRCS
-  Tools/Library/endmills.fctl
+    Tools/Library/endmills.fctl
 )
 
 SET(Tools_Shape_SRCS
-  Tools/Shape/ballend.fcstd
-  Tools/Shape/bullnose.fcstd
-  Tools/Shape/drill.fcstd
-  Tools/Shape/endmill.fcstd
-  Tools/Shape/v-bit.fcstd
+    Tools/Shape/ballend.fcstd
+    Tools/Shape/bullnose.fcstd
+    Tools/Shape/drill.fcstd
+    Tools/Shape/endmill.fcstd
+    Tools/Shape/v-bit.fcstd
 )
 
 SET(PathTests_SRCS
@@ -184,11 +198,12 @@ SET(PathTests_SRCS
     PathTests/TestPathToolController.py
     PathTests/TestPathTooltable.py
     PathTests/TestPathUtil.py
+    PathTests/TestPathVoronoi.py
     PathTests/boxtest.fcstd
     PathTests/test_centroid_00.ngc
     PathTests/test_geomop.fcstd
-    PathTests/test_linuxcnc_00.ngc
     PathTests/test_holes00.fcstd
+    PathTests/test_linuxcnc_00.ngc
 )
 
 SET(PathImages_Ops

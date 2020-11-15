@@ -119,6 +119,10 @@ public:
      */
     void appendRecentFile(const QString& filename);
     /**
+     * MRU: Appends \a macro to the list of recent macros.
+     */
+    void appendRecentMacro(const QString& filename);
+    /**
      * Returns true that the context menu contains the 'Customize...' menu item.
      */
     QMenu * createPopupMenu();
@@ -185,6 +189,10 @@ public:
 
 
 public Q_SLOTS:
+    /**
+     * Updates the standard actions of a text editor such as Cut, Copy, Paste, Undo and Redo.
+     */
+    void updateEditorActions();
     /**
      * Sets text to the pane in the status bar.
      */

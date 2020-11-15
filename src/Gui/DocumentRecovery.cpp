@@ -200,6 +200,8 @@ DocumentRecovery::DocumentRecovery(const QList<QFileInfo>& dirs, QWidget* parent
             d_ptr->ui.treeWidget->addTopLevelItem(item);
         }
     }
+
+    this->adjustSize();
 }
 
 DocumentRecovery::~DocumentRecovery()
@@ -229,10 +231,9 @@ QString DocumentRecovery::createProjectFile(const QString& documentXml)
 
 void DocumentRecovery::closeEvent(QCloseEvent* e)
 {
-    Q_D(DocumentRecovery);
-
-    if (!d->recoveryInfo.isEmpty())
-        e->ignore();
+    // Do not disable the X button in the title bar
+    // #0004281: Close Document Recovery
+    e->accept();
 }
 
 void DocumentRecovery::accept()
@@ -242,12 +243,10 @@ void DocumentRecovery::accept()
     if (!d->recovered) {
 
         WaitCursor wc;
-        int index = -1;
+        int index = 0;
         std::vector<int> indices;
         std::vector<std::string> filenames, paths, labels, errs;
-        for(auto &info : d->recoveryInfo) {
-            ++index;
-            std::string documentName;
+        for (auto &info : d->recoveryInfo) {
             QString errorInfo;
             QTreeWidgetItem* item = d_ptr->ui.treeWidget->topLevelItem(index);
 
@@ -261,6 +260,7 @@ void DocumentRecovery::accept()
                 filenames.emplace_back(info.fileName.toUtf8().constData());
                 labels.emplace_back(info.label.toUtf8().constData());
                 indices.push_back(index);
+                ++index;
             }
             catch (const std::exception& e) {
                 errorInfo = QString::fromLatin1(e.what());
@@ -285,23 +285,25 @@ void DocumentRecovery::accept()
 
         auto docs = App::GetApplication().openDocuments(filenames,&paths,&labels,&errs);
 
-        for(int i=0;i<(int)docs.size();++i) {
+        for (size_t i = 0; i < docs.size(); ++i) {
             auto &info = d->recoveryInfo[indices[i]];
             QTreeWidgetItem* item = d_ptr->ui.treeWidget->topLevelItem(indices[i]);
-            if(!docs[i] || errs[i].size()) {
-                if(docs[i])
+            if (!docs[i] || !errs[i].empty()) {
+                if (docs[i])
                     App::GetApplication().closeDocument(docs[i]->getName());
                 info.status = DocumentRecoveryPrivate::Failure;
+
                 if (item) {
                     item->setText(1, tr("Failed to recover"));
-                    item->setToolTip(1, QString::fromUtf8(errs[index].c_str()));
+                    item->setToolTip(1, QString::fromUtf8(errs[i].c_str()));
                     item->setForeground(1, QColor(170,0,0));
                 }
                 // write back current status
                 d->writeRecoveryInfo(info);
-            }else{
+            }
+            else {
                 auto gdoc = Application::Instance->getDocument(docs[i]);
-                if(gdoc)
+                if (gdoc)
                     gdoc->setModified(true);
 
                 info.status = DocumentRecoveryPrivate::Success;
@@ -315,21 +317,26 @@ void DocumentRecovery::accept()
                 QFileInfo xfi(info.xmlFile);
                 QFileInfo fi(info.projectFile);
                 bool res = false;
-                if(fi.fileName() == QLatin1String("fc_recovery_file.fcstd")) {
+
+                if (fi.fileName() == QLatin1String("fc_recovery_file.fcstd")) {
                     transDir.remove(fi.fileName());
                     res = transDir.rename(fi.absoluteFilePath(),fi.fileName());
-                }else{
+                }
+                else {
                     transDir.rmdir(fi.dir().dirName());
                     res = transDir.rename(fi.absolutePath(),fi.dir().dirName());
                 }
-                if(res) {
+
+                if (res) {
                     transDir.remove(xfi.fileName());
                     res = transDir.rename(xfi.absoluteFilePath(),xfi.fileName());
                 }
-                if(!res) {
+
+                if (!res) {
                     FC_WARN("Failed to move recovery file of document '"
                             << docs[i]->Label.getValue() << "'");
-                }else{
+                }
+                else {
                     clearDirectory(xfi.absolutePath());
                     QDir().rmdir(xfi.absolutePath());
                 }
@@ -355,28 +362,28 @@ void DocumentRecoveryPrivate::writeRecoveryInfo(const DocumentRecoveryPrivate::I
     if (file.open(QFile::WriteOnly)) {
         QTextStream str(&file);
         str.setCodec("UTF-8");
-        str << "<?xml version='1.0' encoding='utf-8'?>" << endl
-            << "<AutoRecovery SchemaVersion=\"1\">" << endl;
+        str << "<?xml version='1.0' encoding='utf-8'?>\n"
+            << "<AutoRecovery SchemaVersion=\"1\">\n";
         switch (info.status) {
         case Created:
-            str << "  <Status>Created</Status>" << endl;
+            str << "  <Status>Created</Status>\n";
             break;
         case Overage:
-            str << "  <Status>Deprecated</Status>" << endl;
+            str << "  <Status>Deprecated</Status>\n";
             break;
         case Success:
-            str << "  <Status>Success</Status>" << endl;
+            str << "  <Status>Success</Status>\n";
             break;
         case Failure:
-            str << "  <Status>Failure</Status>" << endl;
+            str << "  <Status>Failure</Status>\n";
             break;
         default:
-            str << "  <Status>Unknown</Status>" << endl;
+            str << "  <Status>Unknown</Status>\n";
             break;
         }
-        str << "  <Label>" << info.label << "</Label>" << endl;
-        str << "  <FileName>" << info.fileName << "</FileName>" << endl;
-        str << "</AutoRecovery>" << endl;
+        str << "  <Label>" << info.label << "</Label>\n";
+        str << "  <FileName>" << info.fileName << "</FileName>\n";
+        str << "</AutoRecovery>\n";
         file.close();
     }
 }

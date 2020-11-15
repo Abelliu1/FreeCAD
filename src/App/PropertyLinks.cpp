@@ -33,7 +33,7 @@
 #include <QDir>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/bind.hpp>
+#include <boost_bind_bind.hpp>
 
 /// Here the FreeCAD includes sorted by Base,App,Gui......
 #include <CXX/Objects.hxx>
@@ -55,6 +55,7 @@ FC_LOG_LEVEL_INIT("PropertyLinks",true,true)
 using namespace App;
 using namespace Base;
 using namespace std;
+namespace bp = boost::placeholders;
 
 //**************************************************************************
 //**************************************************************************
@@ -612,7 +613,7 @@ void PropertyLinkList::setSize(int newSize)
 {
     for(int i=newSize;i<(int)_lValueList.size();++i) {
         auto obj = _lValueList[i];
-        if(!obj && !obj->getNameInDocument())
+        if (!obj || !obj->getNameInDocument())
             continue;
         _nameMap.erase(obj->getNameInDocument());
 #ifndef USE_OLD_DAG
@@ -897,11 +898,10 @@ TYPESYSTEM_SOURCE(App::PropertyLinkSubHidden, App::PropertyLinkSub)
 
 
 PropertyLinkSub::PropertyLinkSub()
-:_pcLinkSub(0)
+  : _pcLinkSub(0), _restoreLabel(false)
 {
 
 }
-
 
 PropertyLinkSub::~PropertyLinkSub()
 {
@@ -2440,7 +2440,10 @@ bool PropertyLinkSubList::adjustLink(const std::set<App::DocumentObject*> &inLis
 
 // Key on absolute path.
 // Because of possible symbolic links, multiple entry may refer to the same
-// file. We use QFileInfo::canonicalPath to resolve that.
+// file. We used to rely on QFileInfo::canonicalFilePath to resolve it, but
+// has now been changed to simply use the absoluteFilePath(), and rely on user
+// to be aware of possible duplicated file location. The reason being that 
+// some user (especially Linux user) use symlink to organize file tree.
 typedef std::map<QString,DocInfoPtr> DocInfoMap;
 DocInfoMap _DocInfoMap;
 
@@ -2463,16 +2466,26 @@ public:
             const char *filename, App::Document *pDoc, bool relative, QString *fullPath = 0) 
     {
         bool absolute;
-        // make sure the filename is aboluste path
-        QString path = QDir::cleanPath(QString::fromUtf8(filename));
-        if((absolute=QFileInfo(path).isAbsolute())) {
+        // The path could be an URI, in that case
+        // TODO: build a far much more resilient approach to test for an URI
+        QString path = QString::fromUtf8(filename);
+        if (path.startsWith(QLatin1String("https://"))) {
+            // We do have an URI
+            if (fullPath)
+                *fullPath = path;
+               return std::string(filename);
+        }
+
+        // make sure the filename is absolute path
+        path = QDir::cleanPath(path);
+        if((absolute = QFileInfo(path).isAbsolute())) {
             if(fullPath)
                 *fullPath = path;
             if(!relative)
                 return std::string(path.toUtf8().constData());
         }
 
-        const char *docPath = pDoc->FileName.getValue();
+        const char *docPath = pDoc->getFileName();
         if(!docPath || *docPath==0)
             throw Base::RuntimeError("Owner document not saved");
         
@@ -2509,7 +2522,7 @@ public:
                        l->testFlag(PropertyLinkBase::LinkAllowPartial))==0) 
                 {
                     for(App::Document *doc : App::GetApplication().getDocuments()) {
-                        if(getFullPath(doc->FileName.getValue()) == fullpath) {
+                        if(getFullPath(doc->getFileName()) == fullpath) {
                             info->attach(doc);
                             break;
                         }
@@ -2534,12 +2547,26 @@ public:
     }
 
     static QString getFullPath(const char *p) {
-        if(!p) return QString();
-        return QFileInfo(QString::fromUtf8(p)).canonicalFilePath();
+        QString path = QString::fromUtf8(p);
+        if (path.isEmpty())
+            return path;
+
+        if (path.startsWith(QLatin1String("https://")))
+            return path;
+        else {
+            // return QFileInfo(path).canonicalFilePath();
+            return QFileInfo(path).absoluteFilePath();
+        }
     }
 
     QString getFullPath() const {
-        return QFileInfo(myPos->first).canonicalFilePath();
+        QString path = myPos->first;
+        if (path.startsWith(QLatin1String("https://")))
+            return path;
+        else {
+            // return QFileInfo(myPos->first).canonicalFilePath();
+            return QFileInfo(myPos->first).absoluteFilePath();
+        }
     }
 
     const char *filePath() const {
@@ -2573,18 +2600,18 @@ public:
         myPath = myPos->first.toUtf8().constData();
         App::Application &app = App::GetApplication();
         connFinishRestoreDocument = app.signalFinishRestoreDocument.connect(
-            boost::bind(&DocInfo::slotFinishRestoreDocument,this,_1));
+            boost::bind(&DocInfo::slotFinishRestoreDocument,this,bp::_1));
         connDeleteDocument = app.signalDeleteDocument.connect(
-            boost::bind(&DocInfo::slotDeleteDocument,this,_1));
+            boost::bind(&DocInfo::slotDeleteDocument,this,bp::_1));
         connSaveDocument = app.signalSaveDocument.connect(
-            boost::bind(&DocInfo::slotSaveDocument,this,_1));
+            boost::bind(&DocInfo::slotSaveDocument,this,bp::_1));
 
         QString fullpath(getFullPath());
         if(fullpath.isEmpty())
             FC_ERR("document not found " << filePath());
         else{
             for(App::Document *doc : App::GetApplication().getDocuments()) {
-                if(getFullPath(doc->FileName.getValue()) == fullpath) {
+                if(getFullPath(doc->getFileName()) == fullpath) {
                     attach(doc);
                     return;
                 }
@@ -2598,7 +2625,7 @@ public:
     void attach(Document *doc) {
         assert(!pcDoc);
         pcDoc = doc;
-        FC_LOG("attaching " << doc->getName() << ", " << doc->FileName.getValue());
+        FC_LOG("attaching " << doc->getName() << ", " << doc->getFileName());
         std::map<App::PropertyLinkBase*,std::vector<App::PropertyXLink*> > parentLinks;
         for(auto it=links.begin(),itNext=it;it!=links.end();it=itNext) {
             ++itNext;
@@ -2651,7 +2678,7 @@ public:
     void slotFinishRestoreDocument(const App::Document &doc) {
         if(pcDoc) return;
         QString fullpath(getFullPath());
-        if(!fullpath.isEmpty() && getFullPath(doc.FileName.getValue())==fullpath)
+        if(!fullpath.isEmpty() && getFullPath(doc.getFileName())==fullpath)
             attach(const_cast<App::Document*>(&doc));
     }
 
@@ -2663,14 +2690,15 @@ public:
         if(&doc!=pcDoc) return;
 
         QFileInfo info(myPos->first);
-        QString path(info.canonicalFilePath());
-        const char *filename = doc.FileName.getValue();
+        // QString path(info.canonicalFilePath());
+        QString path(info.absoluteFilePath());
+        const char *filename = doc.getFileName();
         QString docPath(getFullPath(filename));
 
         if(path.isEmpty() || path!=docPath) {
             FC_LOG("document '" << doc.getName() << "' path changed");
             auto me = shared_from_this();
-            auto ret = _DocInfoMap.insert(std::make_pair(path,me));
+            auto ret = _DocInfoMap.insert(std::make_pair(docPath,me));
             if(!ret.second) {
                 // is that even possible?
                 FC_WARN("document '" << doc.getName() << "' path exists, detach");
@@ -2936,7 +2964,7 @@ void PropertyXLink::setValue(App::DocumentObject *lValue,
         if(lValue->getDocument() != owner->getDocument()) {
             if(!docInfo || lValue->getDocument()!=docInfo->pcDoc)
             {
-                const char *filename = lValue->getDocument()->FileName.getValue();
+                const char *filename = lValue->getDocument()->getFileName();
                 if(!filename || *filename==0) 
                     throw Base::RuntimeError("Linked document not saved");
                 FC_LOG("xlink set to new document " << lValue->getDocument()->getName());
@@ -2984,6 +3012,7 @@ void PropertyXLink::setValue(std::string &&filename, std::string &&name,
     DocumentObject *pObject=0;
     DocInfoPtr info;
     if(filename.size()) {
+        owner->getDocument()->signalLinkXsetValue(filename);
         info = DocInfo::get(filename.c_str(),owner->getDocument(),this,name.c_str());
         if(info->pcDoc) 
             pObject = info->pcDoc->getObject(name.c_str());
@@ -3141,7 +3170,7 @@ void PropertyXLink::Save (Base::Writer &writer) const {
                 _path = docInfo->filePath();
             else {
                 auto pDoc = owner->getDocument();
-                const char *docPath = pDoc->FileName.getValue();
+                const char *docPath = pDoc->getFileName();
                 if(docPath && docPath[0]) {
                     if(filePath.size())
                         _path = DocInfo::getDocPath(filePath.c_str(),pDoc,false);
@@ -3218,9 +3247,9 @@ void PropertyXLink::Restore(Base::XMLReader &reader)
 {
     // read my element
     reader.readElement("XLink");
-    std::string stamp,file;
+    std::string stampAttr,file;
     if(reader.hasAttribute("stamp"))
-        stamp = reader.getAttribute("stamp");
+        stampAttr = reader.getAttribute("stamp");
     if(reader.hasAttribute("file"))
         file = reader.getAttribute("file");
     setFlag(LinkAllowPartial, 
@@ -3293,7 +3322,7 @@ void PropertyXLink::Restore(Base::XMLReader &reader)
     }
 
     if(file.size() || (!object && name.size())) {
-        this->stamp = stamp;
+        this->stamp = stampAttr;
         setValue(std::move(file),std::move(name),std::move(subs),std::move(shadows));
     }else
         setValue(object,std::move(subs),std::move(shadows));
@@ -3471,11 +3500,24 @@ PyObject *PropertyXLink::getPyObject(void)
 {
     if(!_pcLink)
         Py_Return;
-    if(_SubList.empty())
+    const auto &subs = getSubValues(false);
+    if(subs.empty())
         return _pcLink->getPyObject();
     Py::Tuple ret(2);
     ret.setItem(0,Py::Object(_pcLink->getPyObject(),true));
-    ret.setItem(1,Py::String(getSubName(true)));
+    PropertyString propString;
+    if (subs.size() == 1) {
+        propString.setValue(subs.front());
+        ret.setItem(1,Py::asObject(propString.getPyObject()));
+    } else {
+        Py::List list(subs.size());
+        int i = 0;
+        for (auto &sub : subs) {
+            propString.setValue(sub);
+            list[i++] = Py::asObject(propString.getPyObject());
+        }
+        ret.setItem(1, list);
+    }
     return Py::new_reference_to(ret);
 }
 
@@ -3492,16 +3534,19 @@ void PropertyXLink::setPyObject(PyObject *value) {
             return;
         } else if(!PyObject_TypeCheck(pyObj.ptr(), &DocumentObjectPy::Type))
             throw Base::TypeError("Expect the first element to be of 'DocumentObject'");
-        if(pySub.isString()) 
-            subs.push_back(pySub.as_string());
-        else if(pySub.isSequence()) {
+        PropertyString propString;
+        if(pySub.isString()) {
+            propString.setPyObject(pySub.ptr());
+            subs.push_back(propString.getStrValue());
+        } else if (pySub.isSequence()) {
             Py::Sequence seq(pySub);
             subs.reserve(seq.size());
             for(size_t i=0;i<seq.size();++i) {
                 Py::Object sub(seq[i]);
                 if(!sub.isString())
                     throw Base::TypeError("Expect only string inside second argument");
-                subs.push_back(sub.as_string());
+                propString.setPyObject(sub.ptr());
+                subs.push_back(propString.getStrValue());
             }
         }else
             throw Base::TypeError("Expect the second element to be a string or sequence of string");
@@ -3527,7 +3572,6 @@ void PropertyXLink::getLinks(std::vector<App::DocumentObject *> &objs,
 {
     if((all||_pcScope!=LinkScope::Hidden) && _pcLink && _pcLink->getNameInDocument()) {
         objs.push_back(_pcLink);
-        if(subs)
         if(subs && _SubList.size()==_ShadowSubList.size())
             *subs = getSubValues(newStyle);
     }
@@ -3616,19 +3660,20 @@ bool PropertyXLinkSub::upgrade(Base::XMLReader &reader, const char *typeName) {
 
 PyObject *PropertyXLinkSub::getPyObject(void)
 {
-    Py::Tuple tup(2);
-    Py::List list(static_cast<int>(_SubList.size()));
-    if (_pcLink) 
-        tup[0] = Py::asObject(_pcLink->getPyObject());
-    else {
-        tup[0] = Py::None();
-        if(_SubList.empty())
-            Py_Return;
+    if(!_pcLink)
+        Py_Return;
+    Py::Tuple ret(2);
+    ret.setItem(0,Py::Object(_pcLink->getPyObject(),true));
+    const auto &subs = getSubValues(false);
+    Py::List list(subs.size());
+    int i = 0;
+    PropertyString propString;
+    for (auto &sub : subs) {
+        propString.setValue(sub);
+        list[i++] = Py::asObject(propString.getPyObject());
     }
-    for(unsigned int i = 0;i<_SubList.size(); i++)
-        list[i] = Py::String(_SubList[i]);
-    tup[1] = list;
-    return Py::new_reference_to(tup);
+    ret.setItem(1, list);
+    return Py::new_reference_to(ret);
 }
 
 //**************************************************************************
@@ -4284,6 +4329,13 @@ void PropertyXLinkSubList::aboutToSetChildValue(Property &) {
         if(signalCounter)
             hasChanged = true;
     }
+}
+
+std::vector<App::DocumentObject*> PropertyXLinkSubList::getValues(void) const
+{
+    std::vector<DocumentObject*> xLinks;
+    getLinks(xLinks);
+    return(xLinks);
 }
 
 //**************************************************************************

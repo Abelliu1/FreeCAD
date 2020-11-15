@@ -429,6 +429,54 @@ void Workbench::removeTaskWatcher(void)
         taskView->clearTaskWatcher();
 }
 
+std::list<std::string> Workbench::listToolbars() const
+{
+    std::unique_ptr<ToolBarItem> tb(setupToolBars());
+    std::list<std::string> bars;
+    QList<ToolBarItem*> items = tb->getItems();
+    for (QList<ToolBarItem*>::ConstIterator item = items.begin(); item != items.end(); ++item)
+        bars.push_back((*item)->command());
+    return bars;
+}
+
+std::list<std::pair<std::string, std::list<std::string>>> Workbench::getToolbarItems() const
+{
+    std::unique_ptr<ToolBarItem> tb(setupToolBars());
+
+    std::list<std::pair<std::string, std::list<std::string>>> itemsList;
+    QList<ToolBarItem*> items = tb->getItems();
+    for (QList<ToolBarItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
+        QList<ToolBarItem*> sub = (*it)->getItems();
+        std::list<std::string> cmds;
+        for (QList<ToolBarItem*>::ConstIterator jt = sub.begin(); jt != sub.end(); ++jt) {
+            cmds.push_back((*jt)->command());
+        }
+
+        itemsList.emplace_back((*it)->command(), cmds);
+    }
+    return itemsList;
+}
+
+std::list<std::string> Workbench::listMenus() const
+{
+    std::unique_ptr<MenuItem> mb(setupMenuBar());
+    std::list<std::string> menus;
+    QList<MenuItem*> items = mb->getItems();
+    for ( QList<MenuItem*>::ConstIterator it = items.begin(); it != items.end(); ++it )
+        menus.push_back((*it)->command());
+    return menus;
+}
+
+std::list<std::string> Workbench::listCommandbars() const
+{
+    std::unique_ptr<ToolBarItem> cb(setupCommandBars());
+    std::list<std::string> bars;
+    QList<ToolBarItem*> items = cb->getItems();
+    for (QList<ToolBarItem*>::ConstIterator item = items.begin(); item != items.end(); ++item)
+        bars.push_back((*item)->command());
+    return bars;
+}
+
 // --------------------------------------------------------------------
 
 #if 0 // needed for Qt's lupdate utility
@@ -481,7 +529,7 @@ void StdWorkbench::setupContextMenu(const char* recipient, MenuItem* item) const
         MenuItem* StdViews = new MenuItem;
         StdViews->setCommand( "Standard views" );
 
-        *StdViews << "Std_ViewIsometric" << "Separator" << "Std_ViewFront" << "Std_ViewTop" << "Std_ViewRight"
+        *StdViews << "Std_ViewIsometric" << "Separator" << "Std_ViewHome" << "Std_ViewFront" << "Std_ViewTop" << "Std_ViewRight"
                   << "Std_ViewRear" << "Std_ViewBottom" << "Std_ViewLeft"
                   << "Separator" << "Std_ViewRotateLeft" << "Std_ViewRotateRight";
 
@@ -551,7 +599,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
     MenuItem* stdviews = new MenuItem;
     stdviews->setCommand("Standard views");
     *stdviews << "Std_ViewFitAll" << "Std_ViewFitSelection" << axoviews
-              << "Separator" << "Std_ViewFront" << "Std_ViewTop"
+              << "Separator" << "Std_ViewHome" << "Std_ViewFront" << "Std_ViewTop"
               << "Std_ViewRight" << "Separator" << "Std_ViewRear"
               << "Std_ViewBottom" << "Std_ViewLeft"
               << "Separator" << "Std_ViewRotateLeft" << "Std_ViewRotateRight";
@@ -598,12 +646,21 @@ MenuItem* StdWorkbench::setupMenuBar() const
     // Tools
     MenuItem* tool = new MenuItem( menuBar );
     tool->setCommand("&Tools");
-    *tool << "Std_DlgParameter" << "Separator"
-          << "Std_ViewScreenShot" << "Std_SceneInspector"
-          << "Std_ExportGraphviz" << "Std_ProjectUtil" << "Separator"
-          << "Std_MeasureDistance" << "Separator"
-          << "Std_TextDocument" << "Separator"
-          << "Std_DemoMode" << "Std_UnitsCalculator" << "Separator" << "Std_DlgCustomize";
+    *tool << "Std_DlgParameter"
+          << "Separator"
+          << "Std_ViewScreenShot"
+          << "Std_SceneInspector"
+          << "Std_DependencyGraph"
+          << "Std_ProjectUtil"
+          << "Separator"
+          << "Std_MeasureDistance"
+          << "Separator"
+          << "Std_TextDocument"
+          << "Separator"
+          << "Std_DemoMode"
+          << "Std_UnitsCalculator"
+          << "Separator"
+          << "Std_DlgCustomize";
 #ifdef BUILD_ADDONMGR
     *tool << "Std_AddonMgr";
 #endif
@@ -614,6 +671,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
     *macro << "Std_DlgMacroRecord"
            << "Std_MacroStopRecord"
            << "Std_DlgMacroExecute"
+           << "Std_RecentMacros"
            << "Separator"
            << "Std_DlgMacroExecuteDirect"
            << "Std_MacroAttachDebugger"
@@ -1001,15 +1059,6 @@ void PythonBaseWorkbench::removeMenu(const std::string& menu) const
     }
 }
 
-std::list<std::string> PythonBaseWorkbench::listMenus() const
-{
-    std::list<std::string> menus;
-    QList<MenuItem*> items = _menuBar->getItems();
-    for ( QList<MenuItem*>::ConstIterator it = items.begin(); it != items.end(); ++it )
-        menus.push_back((*it)->command());
-    return menus;
-}
-
 void PythonBaseWorkbench::appendContextMenu(const std::list<std::string>& menu, const std::list<std::string>& items) const
 {
     MenuItem* item = _contextMenu;
@@ -1062,15 +1111,6 @@ void PythonBaseWorkbench::removeToolbar(const std::string& bar) const
     }
 }
 
-std::list<std::string> PythonBaseWorkbench::listToolbars() const
-{
-    std::list<std::string> bars;
-    QList<ToolBarItem*> items = _toolBar->getItems();
-    for (QList<ToolBarItem*>::ConstIterator item = items.begin(); item != items.end(); ++item)
-        bars.push_back((*item)->command());
-    return bars;
-}
-
 void PythonBaseWorkbench::appendCommandbar(const std::string& bar, const std::list<std::string>& items) const
 {
     ToolBarItem* item = _commandBar->findItem( bar );
@@ -1091,15 +1131,6 @@ void PythonBaseWorkbench::removeCommandbar(const std::string& bar) const
         _commandBar->removeItem(item);
         delete item;
     }
-}
-
-std::list<std::string> PythonBaseWorkbench::listCommandbars() const
-{
-    std::list<std::string> bars;
-    QList<ToolBarItem*> items = _commandBar->getItems();
-    for (QList<ToolBarItem*>::ConstIterator item = items.begin(); item != items.end(); ++item)
-        bars.push_back((*item)->command());
-    return bars;
 }
 
 // -----------------------------------------------------------------------
