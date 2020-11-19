@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2018 Yorik van Havre <yorik@uncreated.net>              *
+ *   Copyright (c) 2020 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -21,31 +21,40 @@
  ***************************************************************************/
 
 
-#ifndef STARTGUI_DLGSTARTPREFERENCESIMP_H
-#define STARTGUI_DLGSTARTPREFERENCESIMP_H
+#ifndef PARTGUI_VIEWPROVIDERPRIMITIVE_H
+#define PARTGUI_VIEWPROVIDERPRIMITIVE_H
 
-#include <Gui/PropertyPage.h>
-#include <memory>
+#include <Mod/Part/Gui/ViewProvider.h>
+#include <Mod/Part/Gui/ViewProviderAttachExtension.h>
 
-class Ui_DlgStartPreferences;
-namespace StartGui {
-    class DlgStartPreferencesImp : public Gui::Dialog::PreferencePage
-    {
-        Q_OBJECT
 
-    public:
-        DlgStartPreferencesImp( QWidget* parent = 0 );
-        ~DlgStartPreferencesImp();
+namespace PartGui {
 
-    protected:
-        void saveSettings();
-        void loadSettings();
-        void changeEvent(QEvent *e);
+class PartGuiExport ViewProviderPrimitive : public ViewProviderPart
+{
+    PROPERTY_HEADER(PartGui::ViewProviderPrimitive);
 
-    private:
-        std::unique_ptr<Ui_DlgStartPreferences> ui;
-    };
+public:
+    /// constructor
+    ViewProviderPrimitive();
+    /// destructor
+    virtual ~ViewProviderPrimitive();
 
-} // namespace StartGui
+    void setupContextMenu(QMenu*, QObject*, const char*);
 
-#endif // STARTGUI_DLGSTARTPREFERENCESIMP_H
+protected:
+    bool setEdit(int ModNum);
+    void unsetEdit(int ModNum);
+
+private:
+    void startDefaultEditMode();
+
+private:
+    ViewProviderAttachExtension extension;
+};
+
+} // namespace PartGui
+
+
+#endif // PARTGUI_VIEWPROVIDERPRIMITIVE_H
+
